@@ -32,7 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Supabase Storage bucket exists and accepts photo uploads via signed URLs
   4. Placeholder properties for Cabo, Puerto Vallarta, and Miami are seeded with dummy data visible to guests
   5. Two separate Supabase client files exist (browser vs server) such that the service role key is never accessible in the browser
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Bootstrap Next.js app + apply full schema/RLS/storage migration
+- [ ] 01-02-PLAN.md — Create Supabase client factories (server.ts, browser.ts), DAL, and database types
+- [ ] 01-03-PLAN.md — Seed placeholder properties for Cabo, Puerto Vallarta, and Miami
 
 ### Phase 2: Auth
 **Goal**: Guests and owners can securely sign up, log in, and access their respective experiences — with no cross-role access possible
@@ -111,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/3 | Not started | - |
 | 2. Auth | 0/TBD | Not started | - |
 | 3. Owner Dashboard | 0/TBD | Not started | - |
 | 4. Guest Browsing | 0/TBD | Not started | - |
