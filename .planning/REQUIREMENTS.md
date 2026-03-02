@@ -124,13 +124,62 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| — | — | — |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Pending |
+| AUTH-06 | Phase 2 | Pending |
+| OWNER-01 | Phase 3 | Pending |
+| OWNER-02 | Phase 3 | Pending |
+| OWNER-03 | Phase 3 | Pending |
+| OWNER-04 | Phase 3 | Pending |
+| OWNER-05 | Phase 3 | Pending |
+| OWNER-06 | Phase 3 | Pending |
+| OWNER-07 | Phase 3 | Pending |
+| OWNER-08 | Phase 3 | Pending |
+| PROP-01 | Phase 4 | Pending |
+| PROP-02 | Phase 4 | Pending |
+| PROP-03 | Phase 4 | Pending |
+| PROP-04 | Phase 4 | Pending |
+| PROP-05 | Phase 4 | Pending |
+| PROP-06 | Phase 4 | Pending |
+| PROP-07 | Phase 4 | Pending |
+| PROP-08 | Phase 4 | Pending |
+| ADDON-01 | Phase 4 | Pending |
+| ADDON-02 | Phase 4 | Pending |
+| ADDON-03 | Phase 4 | Pending |
+| PAGE-04 | Phase 4 | Pending |
+| PAGE-05 | Phase 4 | Pending |
+| BOOK-01 | Phase 5 | Pending |
+| BOOK-02 | Phase 5 | Pending |
+| BOOK-03 | Phase 5 | Pending |
+| BOOK-04 | Phase 5 | Pending |
+| BOOK-05 | Phase 5 | Pending |
+| BOOK-06 | Phase 5 | Pending |
+| BOOK-07 | Phase 5 | Pending |
+| ADDON-04 | Phase 5 | Pending |
+| ADDON-05 | Phase 5 | Pending |
+| PAY-01 | Phase 6 | Pending |
+| PAY-02 | Phase 6 | Pending |
+| PAY-03 | Phase 6 | Pending |
+| PAY-04 | Phase 6 | Pending |
+| PAY-05 | Phase 6 | Pending |
+| PAGE-01 | Phase 7 | Pending |
+| PAGE-02 | Phase 7 | Pending |
+| PAGE-03 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 35 total
-- Mapped to phases: 0
-- Unmapped: 35
+- v1 requirements: 48 total
+- Mapped to phases: 48
+- Unmapped: 0
+
+Note: The initial requirements file stated 35 requirements. The actual count is 48 (6 AUTH + 8 PROP + 5 ADDON + 7 BOOK + 5 PAY + 8 OWNER + 5 PAGE + 4 DATA). All 48 are mapped.
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-02 after initial definition*
+*Last updated: 2026-03-02 after roadmap creation — traceability complete*
