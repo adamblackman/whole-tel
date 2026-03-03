@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-03T17:11:26.686Z"
+status: in_progress
+last_updated: "2026-03-03T18:52:30.000Z"
 progress:
-  total_phases: 1
+  total_phases: 7
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 7
+  completed_plans: 4
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
-**Current focus:** Phase 1 - Foundation
+**Current focus:** Phase 2 - Auth
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation)
-Plan: 3 of 3 in current phase (PHASE COMPLETE)
-Status: Phase 1 complete — ready for Phase 2
-Last activity: 2026-03-03 — 01-03 complete: Seed data migration written (3 properties + 12 add-ons)
+Phase: 2 of 7 (Auth)
+Plan: 1 of 4 in current phase
+Status: 02-01 complete — auth foundation laid (proxy, Server Actions, shadcn components)
+Last activity: 2026-03-03 — 02-01 complete: Session-refresh proxy + auth Server Actions + shadcn/ui form components installed
 
-Progress: [███░░░░░░░] 14%
+Progress: [████░░░░░░] 20%
 
 ## Performance Metrics
 
@@ -41,9 +41,10 @@ Progress: [███░░░░░░░] 14%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3 | ~35 min | ~12 min |
+| 2. Auth | 1 | ~2 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 29 min, ~3 min, ~6 min
+- Last 5 plans: 29 min, ~3 min, ~6 min, ~2 min
 - Trend: decreasing (simpler plans toward end of phase)
 
 *Updated after each plan completion*
@@ -71,6 +72,11 @@ Recent decisions affecting current work:
 - [01-03]: ON CONFLICT DO NOTHING on all seed inserts for idempotent migration re-runs
 - [01-03]: Fixed UUID constants for all seed rows — properties and owner use stable UUIDs for referential stability in future migrations
 - [01-03]: Seed migration requires manual application via Supabase SQL Editor (same pattern as 01-01)
+- [02-01]: tw-animate-css must be in runtime dependencies (not devDependencies) — shadcn init places it in dev but it's used in application CSS
+- [02-01]: proxy.ts uses named export 'proxy' not 'middleware' — Next.js 16 renamed the hook
+- [02-01]: signInAsOwner queries profiles.role post-login to verify owner access; signs out if role mismatch
+- [02-01]: signUpOwner is open registration (no secret URL) — v1 decision
+- [02-01]: revalidatePath('/', 'layout') must precede redirect in all auth mutations to clear server-component cache
 
 ### Pending Todos
 
@@ -78,7 +84,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 2]: Decide whether owners self-register or are admin-invited before building owner signup flow
 - [Phase 6]: Research flag — Stripe Embedded Checkout + ACH bank transfer + CC surcharge implementation has legal and technical nuance; consider /gsd:research-phase before Phase 6 planning
 - [Phase 2]: Research flag — Supabase custom access token hook + JWT claims refresh flow has sharp edges; verify current pattern before building owner dashboard
 - [01-01 PENDING]: Supabase schema migration must be applied manually via Dashboard SQL Editor. See 01-01-SUMMARY.md User Setup Required section.
@@ -87,5 +92,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 01-02-PLAN.md. Supabase client factories and DAL created. Phase 1 complete. Next is Phase 2 (Owner Auth) — both Supabase migrations (01-01 schema + 01-03 seed) must be applied manually first.
+Stopped at: Completed 02-01-PLAN.md. Auth foundation: session-refresh proxy, 5 Server Actions, shadcn/ui form components. Next: 02-02 (guest auth UI), 02-03 (owner auth UI), 02-04 (owner dashboard layout).
 Resume file: None
