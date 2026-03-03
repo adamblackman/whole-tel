@@ -74,10 +74,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Data & Infrastructure
 
-- [ ] **DATA-01**: Supabase database schema with RLS policies for all tables
-- [ ] **DATA-02**: PostgreSQL exclusion constraint preventing double-booking (overlapping dates)
+- [x] **DATA-01**: Supabase database schema with RLS policies for all tables
+- [x] **DATA-02**: PostgreSQL exclusion constraint preventing double-booking (overlapping dates)
 - [ ] **DATA-03**: Placeholder properties seeded for Cabo, Puerto Vallarta, and Miami
-- [ ] **DATA-04**: Supabase Storage bucket for property photos with signed URL uploads
+- [x] **DATA-04**: Supabase Storage bucket for property photos with signed URL uploads
 
 ## v2 Requirements
 
@@ -124,10 +124,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Complete |
 | AUTH-01 | Phase 2 | Pending |
 | AUTH-02 | Phase 2 | Pending |
 | AUTH-03 | Phase 2 | Pending |
