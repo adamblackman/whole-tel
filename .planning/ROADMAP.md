@@ -49,7 +49,13 @@ Plans:
   3. A new owner can sign up through a distinct owner path and receive the owner role (not guest role)
   4. An owner can log in and land on the owner dashboard — a guest account cannot access /dashboard routes
   5. The guest login and owner login flows are visually distinct pages, not a shared form with a role dropdown
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Install dependencies, create proxy.ts session refresh, and auth Server Actions
+- [ ] 02-02-PLAN.md — Guest login page, guest signup page, auth layout, and LogoutButton component
+- [ ] 02-03-PLAN.md — Owner login page, owner signup page, and protected dashboard layout + placeholder
+- [ ] 02-04-PLAN.md — Human verification: end-to-end auth flow testing (checkpoint)
 
 ### Phase 3: Owner Dashboard
 **Goal**: An owner can create, manage, and populate villa listings with all details and per-property add-on experiences from their dashboard
@@ -117,7 +123,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
-| 2. Auth | 0/TBD | Not started | - |
+| 2. Auth | 0/4 | Not started | - |
 | 3. Owner Dashboard | 0/TBD | Not started | - |
 | 4. Guest Browsing | 0/TBD | Not started | - |
 | 5. Booking Flow | 0/TBD | Not started | - |
