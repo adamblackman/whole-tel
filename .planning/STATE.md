@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-last_updated: "2026-03-03T18:52:30.000Z"
+last_updated: "2026-03-03T18:58:10.000Z"
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 7
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 2 of 7 (Auth)
-Plan: 1 of 4 in current phase
-Status: 02-01 complete — auth foundation laid (proxy, Server Actions, shadcn components)
-Last activity: 2026-03-03 — 02-01 complete: Session-refresh proxy + auth Server Actions + shadcn/ui form components installed
+Plan: 3 of 4 in current phase
+Status: 02-03 complete — owner auth UI (login/signup pages) and protected /dashboard route with requireOwner()
+Last activity: 2026-03-03 — 02-03 complete: Owner login/signup pages with amber HOST badge; dashboard layout with requireOwner() security boundary
 
-Progress: [████░░░░░░] 20%
+Progress: [█████░░░░░] 25%
 
 ## Performance Metrics
 
@@ -41,7 +41,7 @@ Progress: [████░░░░░░] 20%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 3 | ~35 min | ~12 min |
-| 2. Auth | 1 | ~2 min | ~2 min |
+| 2. Auth | 3 | ~6 min | ~2 min |
 
 **Recent Trend:**
 - Last 5 plans: 29 min, ~3 min, ~6 min, ~2 min
@@ -77,6 +77,8 @@ Recent decisions affecting current work:
 - [02-01]: signInAsOwner queries profiles.role post-login to verify owner access; signs out if role mismatch
 - [02-01]: signUpOwner is open registration (no secret URL) — v1 decision
 - [02-01]: revalidatePath('/', 'layout') must precede redirect in all auth mutations to clear server-component cache
+- [02-03]: React use() hook unwraps async searchParams in Client Components — Next.js 16 pattern (not converting to Server Component)
+- [02-03]: Dashboard security boundary in layout.tsx not page.tsx — one requireOwner() call protects all /dashboard/* child routes automatically
 
 ### Pending Todos
 
@@ -92,5 +94,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 02-01-PLAN.md. Auth foundation: session-refresh proxy, 5 Server Actions, shadcn/ui form components. Next: 02-02 (guest auth UI), 02-03 (owner auth UI), 02-04 (owner dashboard layout).
+Stopped at: Completed 02-03-PLAN.md. Owner auth UI: /owner/login, /owner/signup pages with amber HOST badge; /dashboard route protected by requireOwner() layout. Next: 02-04 (if remaining) — Phase 2 nearly complete.
 Resume file: None

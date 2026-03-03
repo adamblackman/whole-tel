@@ -14,7 +14,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **AUTH-03**: Guest can log out from any page
 - [x] **AUTH-04**: Owner can sign up with separate owner role
 - [x] **AUTH-05**: Owner can log in and access owner dashboard
-- [ ] **AUTH-06**: Guest and owner auth flows are visually distinct (separate login paths)
+- [x] **AUTH-06**: Guest and owner auth flows are visually distinct (separate login paths)
 
 ### Property Listings
 
@@ -133,7 +133,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 2 | Complete |
 | AUTH-04 | Phase 2 | Complete |
 | AUTH-05 | Phase 2 | Complete |
-| AUTH-06 | Phase 2 | Pending |
+| AUTH-06 | Phase 2 | Complete |
 | OWNER-01 | Phase 3 | Pending |
 | OWNER-02 | Phase 3 | Pending |
 | OWNER-03 | Phase 3 | Pending |

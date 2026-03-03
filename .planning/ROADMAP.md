@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
-| 2. Auth | 1/4 | In Progress|  |
+| 2. Auth | 3/4 | In Progress|  |
 | 3. Owner Dashboard | 0/TBD | Not started | - |
 | 4. Guest Browsing | 0/TBD | Not started | - |
 | 5. Booking Flow | 0/TBD | Not started | - |
