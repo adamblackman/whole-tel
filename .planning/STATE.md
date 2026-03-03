@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 1 of 7 (Foundation)
-Plan: 1 of 3 in current phase
-Status: Executing
-Last activity: 2026-03-03 — 01-01 complete: Next.js 16 bootstrap + Supabase schema migration written
+Plan: 3 of 3 in current phase (PHASE COMPLETE)
+Status: Phase 1 complete — ready for Phase 2
+Last activity: 2026-03-03 — 01-03 complete: Seed data migration written (3 properties + 12 add-ons)
 
-Progress: [█░░░░░░░░░] 5%
+Progress: [███░░░░░░░] 14%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 29 min
-- Total execution time: 29 min
+- Total plans completed: 3
+- Average duration: ~12 min (recent plans shorter)
+- Total execution time: ~35 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1 | 29 min | 29 min |
+| 1. Foundation | 3 | ~35 min | ~12 min |
 
 **Recent Trend:**
-- Last 5 plans: 29 min
-- Trend: —
+- Last 5 plans: 29 min, ~3 min, ~6 min
+- Trend: decreasing (simpler plans toward end of phase)
 
 *Updated after each plan completion*
 
@@ -51,6 +51,10 @@ Recent decisions affecting current work:
 - [01-01]: Exclusion constraint only on status='confirmed' — pending bookings don't block dates
 - [01-01]: daterange '[)' half-open bounds allow back-to-back bookings (checkout day = next checkin)
 - [01-01]: Migration file committed to repo; requires manual application via Supabase Dashboard SQL Editor (project IPv6-only, no management API access)
+- [01-03]: auth.users insert required before profiles insert to satisfy FK constraint (profiles.id REFERENCES auth.users)
+- [01-03]: ON CONFLICT DO NOTHING on all seed inserts for idempotent migration re-runs
+- [01-03]: Fixed UUID constants for all seed rows — properties and owner use stable UUIDs for referential stability in future migrations
+- [01-03]: Seed migration requires manual application via Supabase SQL Editor (same pattern as 01-01)
 
 ### Pending Todos
 
@@ -61,10 +65,11 @@ None yet.
 - [Phase 2]: Decide whether owners self-register or are admin-invited before building owner signup flow
 - [Phase 6]: Research flag — Stripe Embedded Checkout + ACH bank transfer + CC surcharge implementation has legal and technical nuance; consider /gsd:research-phase before Phase 6 planning
 - [Phase 2]: Research flag — Supabase custom access token hook + JWT claims refresh flow has sharp edges; verify current pattern before building owner dashboard
-- [01-01 PENDING]: Supabase migration must be applied manually via Dashboard SQL Editor before 01-02 can be tested. See 01-01-SUMMARY.md User Setup Required section.
+- [01-01 PENDING]: Supabase schema migration must be applied manually via Dashboard SQL Editor. See 01-01-SUMMARY.md User Setup Required section.
+- [01-03 PENDING]: Supabase seed data migration must be applied manually via Dashboard SQL Editor. See 01-03-SUMMARY.md User Setup Required section.
 
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 01-01-PLAN.md. Next step is 01-02 (Supabase client factories) after manual migration application.
+Stopped at: Completed 01-03-PLAN.md. Phase 1 Foundation complete. Next phase is 02 (Owner Auth) — but both Supabase migrations (01-01 schema + 01-03 seed) must be applied manually first.
 Resume file: None
