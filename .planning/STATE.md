@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-03T03:07:50.716Z"
+progress:
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+---
+
 # Project State
 
 ## Project Reference
@@ -51,6 +64,9 @@ Recent decisions affecting current work:
 - [01-01]: Exclusion constraint only on status='confirmed' — pending bookings don't block dates
 - [01-01]: daterange '[)' half-open bounds allow back-to-back bookings (checkout day = next checkin)
 - [01-01]: Migration file committed to repo; requires manual application via Supabase Dashboard SQL Editor (project IPv6-only, no management API access)
+- [01-02]: await cookies() required — Next.js 16 made cookies() async; not awaiting returns a Promise, not the cookie store
+- [01-02]: getUser() not getSession() in DAL — getSession() trusts cookie without server-side JWT signature validation
+- [01-02]: React.cache() wraps verifySession() and requireOwner() — deduplicates auth calls within a single request lifecycle
 - [01-03]: auth.users insert required before profiles insert to satisfy FK constraint (profiles.id REFERENCES auth.users)
 - [01-03]: ON CONFLICT DO NOTHING on all seed inserts for idempotent migration re-runs
 - [01-03]: Fixed UUID constants for all seed rows — properties and owner use stable UUIDs for referential stability in future migrations
@@ -71,5 +87,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 01-03-PLAN.md. Phase 1 Foundation complete. Next phase is 02 (Owner Auth) — but both Supabase migrations (01-01 schema + 01-03 seed) must be applied manually first.
+Stopped at: Completed 01-02-PLAN.md. Supabase client factories and DAL created. Phase 1 complete. Next is Phase 2 (Owner Auth) — both Supabase migrations (01-01 schema + 01-03 seed) must be applied manually first.
 Resume file: None
