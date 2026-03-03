@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-last_updated: "2026-03-03T18:58:10.000Z"
+last_updated: "2026-03-03T18:57:49.000Z"
 progress:
   total_phases: 7
   completed_phases: 1
@@ -77,6 +77,8 @@ Recent decisions affecting current work:
 - [02-01]: signInAsOwner queries profiles.role post-login to verify owner access; signs out if role mismatch
 - [02-01]: signUpOwner is open registration (no secret URL) — v1 decision
 - [02-01]: revalidatePath('/', 'layout') must precede redirect in all auth mutations to clear server-component cache
+- [02-02]: Login page split into Server Component page shell + Client Component LoginForm — Next.js 16 async searchParams require async function but useTransition is Client Component only
+- [02-02]: Signup page is a single Client Component — no async searchParams dependency so no split needed
 - [02-03]: React use() hook unwraps async searchParams in Client Components — Next.js 16 pattern (not converting to Server Component)
 - [02-03]: Dashboard security boundary in layout.tsx not page.tsx — one requireOwner() call protects all /dashboard/* child routes automatically
 
