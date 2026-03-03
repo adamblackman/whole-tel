@@ -13,7 +13,7 @@ Seven phases that build from the database foundation outward. Everything depends
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Supabase schema, RLS policies, double-booking constraint, and client infrastructure (completed 2026-03-03)
-- [ ] **Phase 2: Auth** - Guest and owner authentication with role-based access and route protection
+- [x] **Phase 2: Auth** - Guest and owner authentication with role-based access and route protection (completed 2026-03-03)
 - [ ] **Phase 3: Owner Dashboard** - Owner CRUD for properties, photos, and per-property add-on experiences
 - [ ] **Phase 4: Guest Browsing** - Property listing pages, destination browsing, add-on display, and brand design
 - [ ] **Phase 5: Booking Flow** - Date selection through add-on customization, price summary, and Stripe handoff
@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
-| 2. Auth | 3/4 | In Progress|  |
+| 2. Auth | 4/4 | Complete   | 2026-03-03 |
 | 3. Owner Dashboard | 0/TBD | Not started | - |
 | 4. Guest Browsing | 0/TBD | Not started | - |
 | 5. Booking Flow | 0/TBD | Not started | - |
