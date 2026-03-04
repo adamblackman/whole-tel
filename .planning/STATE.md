@@ -50,6 +50,7 @@ Progress: [███████░░░] 35%
 
 *Updated after each plan completion*
 | Phase 02-auth P04 | 1 | 2 tasks | 0 files |
+| Phase 03-owner-dashboard P01 | 2 min | 3 tasks + 1 fix | 4 files |
 | Phase 03-owner-dashboard P02 | 2 min | 2 tasks | 3 files |
 
 ## Accumulated Context
@@ -85,6 +86,10 @@ Recent decisions affecting current work:
 - [02-03]: React use() hook unwraps async searchParams in Client Components — Next.js 16 pattern (not converting to Server Component)
 - [02-03]: Dashboard security boundary in layout.tsx not page.tsx — one requireOwner() call protects all /dashboard/* child routes automatically
 - [Phase 02-auth]: Supabase email confirmation must be toggled OFF in Dashboard for dev auth flows to work — login fails with Email not confirmed without this step
+- [03-01]: Zod v4 uses 'error' key (not 'errorMap') for custom enum error messages — plan was written against v3 API, auto-fixed
+- [03-01]: owner_id always derived from requireOwner() return value, never from formData — enforced in all property/add-on Server Actions
+- [03-01]: createAddOn returns success message instead of redirecting — add-ons managed inline on property detail page
+- [03-01]: deleteProperty and deleteAddOn use direct call pattern (no useActionState) — invoked from confirmation dialogs
 - [03-02]: Storage paths use crypto.randomUUID() — avoids Date.now() collision risk under concurrent uploads
 - [03-02]: File input NOT inside a form — prevents accidental Server Action body routing (Next.js 1MB limit)
 - [03-02]: Storage deletion in deletePhoto is non-blocking — DB record removal is the authoritative cleanup step
