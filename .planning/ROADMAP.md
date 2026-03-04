@@ -67,7 +67,14 @@ Plans:
   3. An owner can create, edit, and delete add-on experiences for their property with pricing set as per-person or per-booking
   4. An owner can view all bookings made for their properties
   5. An owner cannot see or modify another owner's properties — data isolation is enforced at both the UI and database layer
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Server Actions and Zod schemas for property and add-on CRUD
+- [ ] 03-02-PLAN.md — Photo upload Server Actions (signed URL flow) and PhotoUploader component
+- [ ] 03-03-PLAN.md — Dashboard pages (property list, create, detail, edit) and add-on management UI
+- [ ] 03-04-PLAN.md — Bookings view page and property delete with confirmation dialog
+- [ ] 03-05-PLAN.md — Human verification: end-to-end owner dashboard testing (checkpoint)
 
 ### Phase 4: Guest Browsing
 **Goal**: A guest can browse party villas by destination, view full property details with add-ons and pricing, and see the per-person cost before starting a booking
@@ -124,7 +131,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
 | 2. Auth | 4/4 | Complete    | 2026-03-03 |
-| 3. Owner Dashboard | 0/TBD | Not started | - |
+| 3. Owner Dashboard | 2/5 | In Progress|  |
 | 4. Guest Browsing | 0/TBD | Not started | - |
 | 5. Booking Flow | 0/TBD | Not started | - |
 | 6. Payments | 0/TBD | Not started | - |

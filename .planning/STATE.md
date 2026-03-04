@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-03T22:07:30.737Z"
+last_updated: "2026-03-04T19:52:00Z"
 progress:
-  total_phases: 2
+  total_phases: 7
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 2 of 7 (Auth) — COMPLETE
-Plan: 4 of 4 in Phase 2 — COMPLETE
-Status: 02-04 complete — Phase 2 auth fully verified end-to-end. All 6 AUTH requirements satisfied.
-Last activity: 2026-03-03 — 02-04 complete: Human verification plan auto-approved in YOLO mode. Phase 2 Auth complete.
+Phase: 3 of 7 (Owner Dashboard) — IN PROGRESS
+Plan: 2 of N in Phase 3 — COMPLETE
+Status: 03-02 complete — Photo upload Server Actions and PhotoUploader Client Component built. Two-step signed URL upload pattern established.
+Last activity: 2026-03-04 — 03-02 complete: Photo management infrastructure (Server Actions + PhotoUploader) implemented with ownership verification and signed URL pattern.
 
-Progress: [██████░░░░] 29%
+Progress: [███████░░░] 35%
 
 ## Performance Metrics
 
@@ -42,13 +42,15 @@ Progress: [██████░░░░] 29%
 |-------|-------|-------|----------|
 | 1. Foundation | 3 | ~35 min | ~12 min |
 | 2. Auth | 4 | ~7 min | ~2 min |
+| 3. Owner Dashboard (in progress) | 2 | ~4 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 29 min, ~3 min, ~6 min, ~2 min
-- Trend: decreasing (simpler plans toward end of phase)
+- Last 5 plans: 29 min, ~3 min, ~6 min, ~2 min, ~2 min
+- Trend: stable at ~2 min for focused implementation plans
 
 *Updated after each plan completion*
 | Phase 02-auth P04 | 1 | 2 tasks | 0 files |
+| Phase 03-owner-dashboard P02 | 2 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -83,6 +85,10 @@ Recent decisions affecting current work:
 - [02-03]: React use() hook unwraps async searchParams in Client Components — Next.js 16 pattern (not converting to Server Component)
 - [02-03]: Dashboard security boundary in layout.tsx not page.tsx — one requireOwner() call protects all /dashboard/* child routes automatically
 - [Phase 02-auth]: Supabase email confirmation must be toggled OFF in Dashboard for dev auth flows to work — login fails with Email not confirmed without this step
+- [03-02]: Storage paths use crypto.randomUUID() — avoids Date.now() collision risk under concurrent uploads
+- [03-02]: File input NOT inside a form — prevents accidental Server Action body routing (Next.js 1MB limit)
+- [03-02]: Storage deletion in deletePhoto is non-blocking — DB record removal is the authoritative cleanup step
+- [03-02]: Supabase Storage hostname added to next.config.ts remotePatterns for next/image CDN optimization
 
 ### Pending Todos
 
@@ -97,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 02-04-PLAN.md. Phase 2 (Auth) COMPLETE — all 6 AUTH requirements satisfied. Guest signup/login/logout, owner signup/login/dashboard, route protection all verified. Next: Phase 3 (Owner Dashboard).
+Last session: 2026-03-04
+Stopped at: Completed 03-02-PLAN.md. Photo upload infrastructure complete — Server Actions (getSignedUploadUrl, savePhotoRecord, deletePhoto) and PhotoUploader Client Component with two-step signed URL pattern. Next: Plan 03-03 property detail page.
 Resume file: None
