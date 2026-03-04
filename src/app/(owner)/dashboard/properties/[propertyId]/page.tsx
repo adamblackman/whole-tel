@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import PhotoUploader from '@/components/dashboard/PhotoUploader'
 import { AddOnList } from '@/components/dashboard/AddOnList'
+import { DeletePropertyButton } from '@/components/dashboard/DeletePropertyButton'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -151,6 +152,17 @@ export default async function PropertyDetailPage({
           addOns={property.add_ons}
         />
       </section>
+
+      <Separator className="my-8" />
+
+      {/* Danger Zone */}
+      <div className="rounded-lg border border-destructive/20 p-6">
+        <h3 className="text-lg font-semibold text-destructive mb-2">Danger Zone</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Deleting this property will permanently remove all photos, add-on experiences, and booking records.
+        </p>
+        <DeletePropertyButton propertyId={propertyId} propertyName={property.name} />
+      </div>
     </div>
   )
 }
