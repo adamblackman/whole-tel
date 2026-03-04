@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T19:52:00Z"
+last_updated: "2026-03-04T19:57:41Z"
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 9
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 3 of 7 (Owner Dashboard) — IN PROGRESS
-Plan: 2 of N in Phase 3 — COMPLETE
-Status: 03-02 complete — Photo upload Server Actions and PhotoUploader Client Component built. Two-step signed URL upload pattern established.
-Last activity: 2026-03-04 — 03-02 complete: Photo management infrastructure (Server Actions + PhotoUploader) implemented with ownership verification and signed URL pattern.
+Phase: 3 of 7 (Owner Dashboard) — COMPLETE
+Plan: 3 of 3 in Phase 3 — COMPLETE
+Status: 03-03 complete — Dashboard pages, PropertyForm, PropertyCard, AddOnForm, AddOnList all built. Owner can manage the full property lifecycle.
+Last activity: 2026-03-04 — 03-03 complete: Dashboard UI pages and components implemented — property list, create, detail, edit, photo management, and add-on management.
 
-Progress: [███████░░░] 35%
+Progress: [████████░░] 45%
 
 ## Performance Metrics
 
@@ -94,6 +94,10 @@ Recent decisions affecting current work:
 - [03-02]: File input NOT inside a form — prevents accidental Server Action body routing (Next.js 1MB limit)
 - [03-02]: Storage deletion in deletePhoto is non-blocking — DB record removal is the authoritative cleanup step
 - [03-02]: Supabase Storage hostname added to next.config.ts remotePatterns for next/image CDN optimization
+- [03-03]: Server Action .bind(null, propertyId) called in Server Component, result passed as action prop to Client Component — Next.js 16 documented pattern
+- [03-03]: Public Supabase URL constructed directly in PropertyCard (no client import) — Server-compatible components cannot use createBrowserClient
+- [03-03]: Amenities hidden input with comma-joined values, parsed in action with split/filter — avoids checkbox array name collisions in FormData
+- [03-03]: useEffect in AddOnForm closes edit mode when state.message includes 'successfully' — clean UX without extra state
 
 ### Pending Todos
 
@@ -109,5 +113,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 03-02-PLAN.md. Photo upload infrastructure complete — Server Actions (getSignedUploadUrl, savePhotoRecord, deletePhoto) and PhotoUploader Client Component with two-step signed URL pattern. Next: Plan 03-03 property detail page.
+Stopped at: Completed 03-03-PLAN.md. Phase 3 (Owner Dashboard) is fully complete. Owner can manage the full property lifecycle: list, create, view detail, edit, manage photos, manage add-ons. Next: Phase 4 (Guest Browsing).
 Resume file: None
