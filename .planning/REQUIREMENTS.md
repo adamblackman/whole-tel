@@ -61,7 +61,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **OWNER-04**: Owner can upload and manage property photos
 - [x] **OWNER-05**: Owner can create, edit, and delete add-on experiences per property
 - [x] **OWNER-06**: Owner can set add-on pricing (per person or per booking)
-- [ ] **OWNER-07**: Owner can view bookings for their properties
+- [x] **OWNER-07**: Owner can view bookings for their properties
 - [x] **OWNER-08**: Owner can only see and manage their own properties (not other owners')
 
 ### Pages & Design
@@ -140,7 +140,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OWNER-04 | Phase 3 | Complete |
 | OWNER-05 | Phase 3 | Complete |
 | OWNER-06 | Phase 3 | Complete |
-| OWNER-07 | Phase 3 | Pending |
+| OWNER-07 | Phase 3 | Complete |
 | OWNER-08 | Phase 3 | Complete |
 | PROP-01 | Phase 4 | Pending |
 | PROP-02 | Phase 4 | Pending |

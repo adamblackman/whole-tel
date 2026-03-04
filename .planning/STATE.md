@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T19:57:41Z"
+last_updated: "2026-03-04T20:08:00Z"
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 3 of 7 (Owner Dashboard) — COMPLETE
-Plan: 3 of 3 in Phase 3 — COMPLETE
-Status: 03-03 complete — Dashboard pages, PropertyForm, PropertyCard, AddOnForm, AddOnList all built. Owner can manage the full property lifecycle.
-Last activity: 2026-03-04 — 03-03 complete: Dashboard UI pages and components implemented — property list, create, detail, edit, photo management, and add-on management.
+Plan: 4 of 4 in Phase 3 — COMPLETE
+Status: 03-04 complete — Bookings view and delete flow added. Phase 3 Owner Dashboard fully complete.
+Last activity: 2026-03-04 — 03-04 complete: Bookings page at /dashboard/bookings, BookingsTable with status badges, DeletePropertyButton with AlertDialog confirmation, Danger Zone on property detail page.
 
-Progress: [████████░░] 45%
+Progress: [████████░░] 50%
 
 ## Performance Metrics
 
@@ -42,7 +42,7 @@ Progress: [████████░░] 45%
 |-------|-------|-------|----------|
 | 1. Foundation | 3 | ~35 min | ~12 min |
 | 2. Auth | 4 | ~7 min | ~2 min |
-| 3. Owner Dashboard (in progress) | 2 | ~4 min | ~2 min |
+| 3. Owner Dashboard | 4 | ~20 min | ~5 min |
 
 **Recent Trend:**
 - Last 5 plans: 29 min, ~3 min, ~6 min, ~2 min, ~2 min
@@ -52,6 +52,8 @@ Progress: [████████░░] 45%
 | Phase 02-auth P04 | 1 | 2 tasks | 0 files |
 | Phase 03-owner-dashboard P01 | 2 min | 3 tasks + 1 fix | 4 files |
 | Phase 03-owner-dashboard P02 | 2 min | 2 tasks | 3 files |
+| Phase 03-owner-dashboard P03 | ~6 min | 3 tasks | 8 files |
+| Phase 03-owner-dashboard P04 | 8 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -98,6 +100,9 @@ Recent decisions affecting current work:
 - [03-03]: Public Supabase URL constructed directly in PropertyCard (no client import) — Server-compatible components cannot use createBrowserClient
 - [03-03]: Amenities hidden input with comma-joined values, parsed in action with split/filter — avoids checkbox array name collisions in FormData
 - [03-03]: useEffect in AddOnForm closes edit mode when state.message includes 'successfully' — clean UX without extra state
+- [03-04]: Supabase !inner JOIN infers properties as array at compile time but returns single object at runtime — normalize with .map() at page level rather than unsafe cast
+- [03-04]: AlertDialogAction styled with explicit destructive classes — default shadcn variant does not apply destructive styling to AlertDialogAction
+- [03-04]: BookingRow type exported from BookingsTable component for page-level reuse in normalization
 
 ### Pending Todos
 
@@ -113,5 +118,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 03-03-PLAN.md. Phase 3 (Owner Dashboard) is fully complete. Owner can manage the full property lifecycle: list, create, view detail, edit, manage photos, manage add-ons. Next: Phase 4 (Guest Browsing).
+Stopped at: Completed 03-04-PLAN.md. Phase 3 (Owner Dashboard) is fully complete. Owner can manage the full property lifecycle: list, create, view detail, edit, manage photos, manage add-ons, view all bookings, and delete properties with confirmation. Next: Phase 4 (Guest Browsing).
 Resume file: None
