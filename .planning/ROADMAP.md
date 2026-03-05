@@ -105,7 +105,12 @@ Plans:
   3. A guest can select or deselect add-ons for the property during the booking flow and the price summary updates in real time
   4. The price summary shows a complete breakdown: nightly rate times nights, each selected add-on cost, credit card processing fee (if applicable), and total — plus the total divided by number of guests
   5. A guest can reach Stripe Checkout from the price summary, and a guest can view their past and upcoming bookings in their booking history
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Install Stripe SDK, create stripe.ts singleton + booking Zod schema, extend PricingWidget with guest count, add-on selection, and full price breakdown
+- [ ] 05-02-PLAN.md — createBookingAndCheckout Server Action, wire Reserve button, GuestNav auth-awareness
+- [ ] 05-03-PLAN.md — Guest booking history page + human verification checkpoint
 
 ### Phase 6: Payments
 **Goal**: Guests can complete payment via credit card or ACH bank transfer through Stripe Checkout, with bookings confirmed only after webhook verification
@@ -140,6 +145,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Auth | 4/4 | Complete    | 2026-03-03 |
 | 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
 | 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
-| 5. Booking Flow | 0/TBD | Not started | - |
+| 5. Booking Flow | 0/3 | Not started | - |
 | 6. Payments | 0/TBD | Not started | - |
 | 7. Landing Page and Polish | 0/TBD | Not started | - |
