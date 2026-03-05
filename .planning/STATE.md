@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T02:32:50.537Z"
+last_updated: "2026-03-04T02:09:00Z"
 progress:
-  total_phases: 4
+  total_phases: 7
   completed_phases: 4
-  total_plans: 17
-  completed_plans: 17
+  total_plans: 20
+  completed_plans: 18
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
-**Current focus:** Phase 4 - Guest Browsing
+**Current focus:** Phase 5 - Booking Flow
 
 ## Current Position
 
-Phase: 4 of 7 (Guest Browsing) — IN PROGRESS
-Plan: 4 of 5 in Phase 4 — COMPLETE
-Status: 04-04 complete — PricingWidget with shadcn Calendar (range mode), disabled past + confirmed booking dates, real-time price breakdown.
-Last activity: 2026-03-05 — 04-04 complete: PricingWidget Client Component (DateRange state, disabled matchers with [) half-open interval logic), property listing page updated with parallel bookings query, sticky widget sidebar.
+Phase: 5 of 7 (Booking Flow) — IN PROGRESS
+Plan: 1 of 3 in Phase 5 — COMPLETE
+Status: 05-01 complete — Stripe SDK installed, booking Zod schema, PricingWidget extended with guest count stepper, add-on toggles, full price breakdown, Reserve button placeholder.
+Last activity: 2026-03-04 — 05-01 complete: Stripe singleton (stripe.ts), bookingInputSchema (validations/booking.ts), PricingWidget with guestCount/selectedAddOnIds state and comprehensive price breakdown.
 
-Progress: [█████████░] 58%
+Progress: [█████████░] 62%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [█████████░] 58%
 | Phase 04-guest-browsing P02 | 2 min | 2 tasks | 3 files |
 | Phase 04-guest-browsing P03 | 3 min | 2 tasks | 4 files |
 | Phase 04-guest-browsing P04 | 2 min | 2 tasks | 2 files |
+| Phase 05-booking-flow P01 | 5 min | 2 tasks + 1 fix | 4 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,10 @@ Recent decisions affecting current work:
 - [04-04]: PricingWidget uses numberOfMonths=1 — 380px sidebar can't fit two months side by side
 - [04-04]: Sticky wrapper on parent div (lg:sticky lg:top-8), not inside PricingWidget — keeps widget layout-agnostic
 - [04-04]: disabledDates subtracts 86400000ms from check_out to honor [) half-open interval allowing back-to-back bookings
+- [05-01]: Stripe apiVersion pinned to 2026-02-25.clover to match installed SDK v20.4.0 (plan specified 2025-01-27.acacia which is no longer valid)
+- [05-01]: PricingWidget propertyId prop accepted but unused in Plan 01 — Plan 02 Server Action wiring will consume it
+- [05-01]: Add-on pricing: per_person multiplies by guestCount, per_booking is flat — client-side display only, server re-validates in Plan 02
+- [05-01]: Per-person line only shown when guestCount > 1 AND nights > 0 to avoid meaningless display
 
 ### Pending Todos
 
@@ -133,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: Completed 04-04-PLAN.md. PricingWidget with availability calendar and price calculation integrated into property listing page. Phase 4 Plan 4 of 5 complete. Next: Plan 05 (guest browsing phase 5 — likely review/search or booking flow initiation).
+Last session: 2026-03-04
+Stopped at: Completed 05-01-PLAN.md. Stripe SDK installed, booking Zod schema created, PricingWidget extended with guest count stepper, add-on experience toggles, full price breakdown (nightly + cleaning + add-ons + processing fee + total + per-person), and Reserve button placeholder. Phase 5 Plan 1 of 3 complete. Next: 05-02 (Server Action + Stripe Checkout session creation).
 Resume file: None

@@ -32,16 +32,16 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **ADDON-01**: Each property has unique add-on experiences (boat rides, chefs, alcohol, etc.)
 - [x] **ADDON-02**: Add-ons have name, description, price, and pricing unit (per person or per booking)
 - [x] **ADDON-03**: Add-ons are displayed on property listing page with pricing
-- [ ] **ADDON-04**: Guest can select add-ons during booking flow before checkout
-- [ ] **ADDON-05**: Add-on costs are included in total price breakdown and per-person calculator
+- [x] **ADDON-04**: Guest can select add-ons during booking flow before checkout
+- [x] **ADDON-05**: Add-on costs are included in total price breakdown and per-person calculator
 
 ### Booking Flow
 
-- [ ] **BOOK-01**: Guest can select check-in and check-out dates via date range picker
-- [ ] **BOOK-02**: Guest can select number of guests with occupancy limit enforcement
-- [ ] **BOOK-03**: Guest sees add-on selection step with per-property add-ons
-- [ ] **BOOK-04**: Guest sees full price summary (nightly rate x nights + add-ons + CC fee if applicable)
-- [ ] **BOOK-05**: Guest sees per-person cost calculator (total ÷ number of guests)
+- [x] **BOOK-01**: Guest can select check-in and check-out dates via date range picker
+- [x] **BOOK-02**: Guest can select number of guests with occupancy limit enforcement
+- [x] **BOOK-03**: Guest sees add-on selection step with per-property add-ons
+- [x] **BOOK-04**: Guest sees full price summary (nightly rate x nights + add-ons + CC fee if applicable)
+- [x] **BOOK-05**: Guest sees per-person cost calculator (total ÷ number of guests)
 - [ ] **BOOK-06**: Guest can proceed to Stripe Checkout from price summary
 - [ ] **BOOK-07**: Guest can view their booking history (past and upcoming stays)
 
@@ -155,15 +155,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADDON-03 | Phase 4 | Complete |
 | PAGE-04 | Phase 4 | Complete |
 | PAGE-05 | Phase 4 | Complete |
-| BOOK-01 | Phase 5 | Pending |
-| BOOK-02 | Phase 5 | Pending |
-| BOOK-03 | Phase 5 | Pending |
-| BOOK-04 | Phase 5 | Pending |
-| BOOK-05 | Phase 5 | Pending |
+| BOOK-01 | Phase 5 | Complete |
+| BOOK-02 | Phase 5 | Complete |
+| BOOK-03 | Phase 5 | Complete |
+| BOOK-04 | Phase 5 | Complete |
+| BOOK-05 | Phase 5 | Complete |
 | BOOK-06 | Phase 5 | Pending |
 | BOOK-07 | Phase 5 | Pending |
-| ADDON-04 | Phase 5 | Pending |
-| ADDON-05 | Phase 5 | Pending |
+| ADDON-04 | Phase 5 | Complete |
+| ADDON-05 | Phase 5 | Complete |
 | PAY-01 | Phase 6 | Pending |
 | PAY-02 | Phase 6 | Pending |
 | PAY-03 | Phase 6 | Pending |
