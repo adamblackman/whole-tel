@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T04:58:00Z"
+last_updated: "2026-03-05T05:32:26.370Z"
 progress:
-  total_phases: 7
+  total_phases: 5
   completed_phases: 5
   total_plans: 20
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -24,8 +24,8 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 Phase: 5 of 7 (Booking Flow) — COMPLETE
 Plan: 3 of 3 in Phase 5 — COMPLETE
-Status: 05-03 complete — Guest booking history page at /bookings with upcoming/past sections, status badges, success banner. Phase 5 booking flow fully implemented.
-Last activity: 2026-03-05 — 05-03 complete: /bookings Server Component page with verifySession() auth gate, StatusBadge (Confirmed/Payment pending/Cancelled), BookingCard with property join, success banner on ?success=true, Zod v4 .issues fix in bookings.ts.
+Status: 05-02 + 05-03 complete — 05-02: createBookingAndCheckout Server Action (server-side price validation, pending booking insert, Stripe Checkout redirect), Reserve button wired in PricingWidget via useTransition, GuestNav auth-aware. 05-03: Guest booking history page at /bookings with upcoming/past sections, status badges, success banner. Phase 5 booking flow fully implemented.
+Last activity: 2026-03-05 — 05-02 complete: createBookingAndCheckout Server Action, PricingWidget Reserve wired, GuestNav auth-conditional. Phase 5 all 3 plans complete.
 
 Progress: [██████████] 95%
 
@@ -60,6 +60,7 @@ Progress: [██████████] 95%
 | Phase 04-guest-browsing P04 | 2 min | 2 tasks | 2 files |
 | Phase 05-booking-flow P01 | 5 min | 2 tasks + 1 fix | 4 files |
 | Phase 05-booking-flow P03 | 4 min | 2 tasks + 1 fix | 2 files |
+| Phase 05-booking-flow P02 | 35 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,9 @@ Recent decisions affecting current work:
 - [05-03]: searchParams typed as Promise<{ success?: string }> and awaited — required for Next.js 16 async Server Components
 - [05-03]: Zod v4 uses .issues not .errors on ZodError — auto-fixed in bookings.ts (same pattern as 03-01)
 - [05-03]: Defense-in-depth .eq('guest_id', user.id) retained alongside Supabase RLS policy for clarity
+- [Phase 05-booking-flow]: redirect() must be outside try/catch in Server Actions — Next.js implements redirect via thrown error internally
+- [Phase 05-02]: GuestNav uses getUser() not verifySession() — verifySession redirects unauthenticated users which would break browsing
+- [Phase 05-02]: Add-ons fetched with .eq('property_id', propertyId) to prevent cross-property injection attack
 
 ### Pending Todos
 

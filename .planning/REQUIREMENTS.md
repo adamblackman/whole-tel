@@ -42,7 +42,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **BOOK-03**: Guest sees add-on selection step with per-property add-ons
 - [x] **BOOK-04**: Guest sees full price summary (nightly rate x nights + add-ons + CC fee if applicable)
 - [x] **BOOK-05**: Guest sees per-person cost calculator (total ÷ number of guests)
-- [ ] **BOOK-06**: Guest can proceed to Stripe Checkout from price summary
+- [x] **BOOK-06**: Guest can proceed to Stripe Checkout from price summary
 - [x] **BOOK-07**: Guest can view their booking history (past and upcoming stays)
 
 ### Payments
@@ -160,7 +160,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BOOK-03 | Phase 5 | Complete |
 | BOOK-04 | Phase 5 | Complete |
 | BOOK-05 | Phase 5 | Complete |
-| BOOK-06 | Phase 5 | Pending |
+| BOOK-06 | Phase 5 | Complete |
 | BOOK-07 | Phase 5 | Complete |
 | ADDON-04 | Phase 5 | Complete |
 | ADDON-05 | Phase 5 | Complete |

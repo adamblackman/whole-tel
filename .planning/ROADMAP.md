@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Auth** - Guest and owner authentication with role-based access and route protection (completed 2026-03-03)
 - [x] **Phase 3: Owner Dashboard** - Owner CRUD for properties, photos, and per-property add-on experiences (completed 2026-03-04)
 - [x] **Phase 4: Guest Browsing** - Property listing pages, destination browsing, add-on display, and brand design (completed 2026-03-05)
-- [ ] **Phase 5: Booking Flow** - Date selection through add-on customization, price summary, and Stripe handoff
+- [x] **Phase 5: Booking Flow** - Date selection through add-on customization, price summary, and Stripe handoff (completed 2026-03-05)
 - [ ] **Phase 6: Payments** - Stripe Checkout (CC + ACH), webhook confirmation, and booking email
 - [ ] **Phase 7: Landing Page and Polish** - Homepage, about/contact pages, and final brand polish
 
@@ -145,6 +145,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Auth | 4/4 | Complete    | 2026-03-03 |
 | 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
 | 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
-| 5. Booking Flow | 2/3 | In Progress|  |
+| 5. Booking Flow | 3/3 | Complete   | 2026-03-05 |
 | 6. Payments | 0/TBD | Not started | - |
 | 7. Landing Page and Polish | 0/TBD | Not started | - |
