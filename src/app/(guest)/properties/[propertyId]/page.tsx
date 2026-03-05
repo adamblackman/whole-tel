@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { PhotoGallery } from '@/components/property/PhotoGallery'
 import { AmenityList } from '@/components/property/AmenityList'
 import { AddOnCard } from '@/components/property/AddOnCard'
+import { PricingWidget } from '@/components/property/PricingWidget'
 import type { PricingUnit } from '@/types/database'
 
 interface AddOnRow {
@@ -39,17 +40,34 @@ export default async function PropertyListingPage({
   const { propertyId } = await params
   const supabase = await createClient()
 
-  const { data: property, error } = await supabase
-    .from('properties')
-    .select(
-      `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit)`
-    )
-    .eq('id', propertyId)
-    .single()
+  const [propertyResult, bookingsResult] = await Promise.all([
+    supabase
+      .from('properties')
+      .select(
+        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit)`
+      )
+      .eq('id', propertyId)
+      .single(),
+    supabase
+      .from('bookings')
+      .select('check_in, check_out')
+      .eq('property_id', propertyId)
+      .eq('status', 'confirmed'),
+  ])
+
+  const { data: property, error } = propertyResult
 
   if (error || !property) {
     notFound()
   }
+
+  const bookings = bookingsResult.data ?? []
+  // Half-open [) interval: checkout day is NOT part of the booked range.
+  // Subtract 1 day so back-to-back bookings are allowed.
+  const disabledDates = bookings.map((b) => ({
+    from: new Date(b.check_in),
+    to: new Date(new Date(b.check_out).getTime() - 86400000),
+  }))
 
   const sortedPhotos = [...(property.property_photos ?? [])].sort(
     (a, b) => a.display_order - b.display_order
@@ -176,17 +194,14 @@ export default async function PropertyListingPage({
           )}
         </div>
 
-        {/* Right column: pricing widget placeholder */}
-        <div>
-          <div className="rounded-xl border p-6 shadow-sm sticky top-8">
-            <p className="text-2xl font-bold">
-              ${property.nightly_rate.toLocaleString()}{' '}
-              <span className="text-base font-normal text-muted-foreground">/ night</span>
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Select dates to see total price
-            </p>
-          </div>
+        {/* Right column: pricing widget */}
+        <div className="lg:sticky lg:top-8">
+          <PricingWidget
+            nightlyRate={Number(property.nightly_rate)}
+            cleaningFee={Number(property.cleaning_fee)}
+            maxGuests={property.max_guests}
+            disabledDates={disabledDates}
+          />
         </div>
       </div>
     </div>
