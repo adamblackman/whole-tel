@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T20:58:27.505Z"
+last_updated: "2026-03-05T02:21:21Z"
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 13
+  completed_plans: 13
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 4 of 7 (Guest Browsing) — IN PROGRESS
-Plan: 1 of 5 in Phase 4 — COMPLETE
-Status: 04-01 complete — Phase 4 foundation: dependencies installed, brand palette, GuestNav, (guest) route group layout.
-Last activity: 2026-03-04 — 04-01 complete: yet-another-react-lightbox + react-day-picker installed, shadcn Calendar added, brand CSS variables (amber, teal, sand, palm), GuestNav server component, (guest) layout with placeholder /properties page.
+Plan: 2 of 5 in Phase 4 — COMPLETE
+Status: 04-02 complete — /properties browse page with DestinationFilter tabs and PropertyListingCard grid.
+Last activity: 2026-03-05 — 04-02 complete: DestinationFilter client component (URL param tabs), PropertyListingCard server-compatible card (cover photo, icons, price), /properties page with Supabase query + allowlist-validated destination filter + responsive grid.
 
-Progress: [████████░░] 52%
+Progress: [████████░░] 55%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 52%
 | Phase 03-owner-dashboard P03 | ~6 min | 3 tasks | 8 files |
 | Phase 03-owner-dashboard P04 | 8 min | 2 tasks | 5 files |
 | Phase 04-guest-browsing P01 | 2 min | 2 tasks | 7 files |
+| Phase 04-guest-browsing P02 | 2 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,9 @@ Recent decisions affecting current work:
 - [04-01]: (guest) route group URL is /properties not /guest/properties — route groups with parentheses are layout-only and do not affect URL structure
 - [04-01]: GuestNav is a Server Component — no client interactivity needed for link-only navigation header
 - [04-01]: Brand oklch tokens defined once in :root as --brand-*, mirrored to @theme inline as --color-brand-* for Tailwind utility class access
+- [04-02]: Destination allowlist (VALID_DESTINATIONS) validated before .eq() Supabase query — raw ?destination= value never reaches DB filter
+- [04-02]: property_photos normalized with Array.isArray() guard in page component — Supabase join can return object or array depending on join type
+- [04-02]: Suspense wraps all useSearchParams-dependent Client Components to prevent Next.js production build failure
 
 ### Pending Todos
 
@@ -121,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Completed 04-01-PLAN.md. Phase 4 (Guest Browsing) is in progress. Foundation wave complete: dependencies installed, brand palette, GuestNav, (guest) layout. Next: Plan 02 (browse/search page).
+Last session: 2026-03-05
+Stopped at: Completed 04-02-PLAN.md. Phase 4 (Guest Browsing) is in progress. Browse page wave complete: /properties page with DestinationFilter + PropertyListingCard grid. Next: Plan 03 (property detail page).
 Resume file: None
