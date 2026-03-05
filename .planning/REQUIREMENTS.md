@@ -69,8 +69,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PAGE-01**: Homepage with hero section, brand story, featured properties, and testimonials
 - [ ] **PAGE-02**: About Us page with brand story
 - [ ] **PAGE-03**: Contact page with form routing to adam@whole-tel.com
-- [ ] **PAGE-04**: Mobile-responsive design across all pages (Airbnb-level polish)
-- [ ] **PAGE-05**: Tropical chill party brand aesthetic throughout (shadcn/ui + React Bits animations)
+- [x] **PAGE-04**: Mobile-responsive design across all pages (Airbnb-level polish)
+- [x] **PAGE-05**: Tropical chill party brand aesthetic throughout (shadcn/ui + React Bits animations)
 
 ### Data & Infrastructure
 
@@ -153,8 +153,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADDON-01 | Phase 4 | Pending |
 | ADDON-02 | Phase 4 | Pending |
 | ADDON-03 | Phase 4 | Pending |
-| PAGE-04 | Phase 4 | Pending |
-| PAGE-05 | Phase 4 | Pending |
+| PAGE-04 | Phase 4 | Complete |
+| PAGE-05 | Phase 4 | Complete |
 | BOOK-01 | Phase 5 | Pending |
 | BOOK-02 | Phase 5 | Pending |
 | BOOK-03 | Phase 5 | Pending |

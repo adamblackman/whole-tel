@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
-**Current focus:** Phase 3 - Owner Dashboard
+**Current focus:** Phase 4 - Guest Browsing
 
 ## Current Position
 
-Phase: 3 of 7 (Owner Dashboard) — COMPLETE
-Plan: 4 of 4 in Phase 3 — COMPLETE
-Status: 03-04 complete — Bookings view and delete flow added. Phase 3 Owner Dashboard fully complete.
-Last activity: 2026-03-04 — 03-04 complete: Bookings page at /dashboard/bookings, BookingsTable with status badges, DeletePropertyButton with AlertDialog confirmation, Danger Zone on property detail page.
+Phase: 4 of 7 (Guest Browsing) — IN PROGRESS
+Plan: 1 of 5 in Phase 4 — COMPLETE
+Status: 04-01 complete — Phase 4 foundation: dependencies installed, brand palette, GuestNav, (guest) route group layout.
+Last activity: 2026-03-04 — 04-01 complete: yet-another-react-lightbox + react-day-picker installed, shadcn Calendar added, brand CSS variables (amber, teal, sand, palm), GuestNav server component, (guest) layout with placeholder /properties page.
 
-Progress: [████████░░] 50%
+Progress: [████████░░] 52%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [████████░░] 50%
 | Phase 03-owner-dashboard P02 | 2 min | 2 tasks | 3 files |
 | Phase 03-owner-dashboard P03 | ~6 min | 3 tasks | 8 files |
 | Phase 03-owner-dashboard P04 | 8 min | 2 tasks | 5 files |
+| Phase 04-guest-browsing P01 | 2 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -103,6 +104,9 @@ Recent decisions affecting current work:
 - [03-04]: Supabase !inner JOIN infers properties as array at compile time but returns single object at runtime — normalize with .map() at page level rather than unsafe cast
 - [03-04]: AlertDialogAction styled with explicit destructive classes — default shadcn variant does not apply destructive styling to AlertDialogAction
 - [03-04]: BookingRow type exported from BookingsTable component for page-level reuse in normalization
+- [04-01]: (guest) route group URL is /properties not /guest/properties — route groups with parentheses are layout-only and do not affect URL structure
+- [04-01]: GuestNav is a Server Component — no client interactivity needed for link-only navigation header
+- [04-01]: Brand oklch tokens defined once in :root as --brand-*, mirrored to @theme inline as --color-brand-* for Tailwind utility class access
 
 ### Pending Todos
 
@@ -118,5 +122,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 03-04-PLAN.md. Phase 3 (Owner Dashboard) is fully complete. Owner can manage the full property lifecycle: list, create, view detail, edit, manage photos, manage add-ons, view all bookings, and delete properties with confirmation. Next: Phase 4 (Guest Browsing).
+Stopped at: Completed 04-01-PLAN.md. Phase 4 (Guest Browsing) is in progress. Foundation wave complete: dependencies installed, brand palette, GuestNav, (guest) layout. Next: Plan 02 (browse/search page).
 Resume file: None

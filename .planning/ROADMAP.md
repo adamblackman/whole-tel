@@ -139,7 +139,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
 | 2. Auth | 4/4 | Complete    | 2026-03-03 |
 | 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
-| 4. Guest Browsing | 0/5 | Not started | - |
+| 4. Guest Browsing | 1/5 | In Progress|  |
 | 5. Booking Flow | 0/TBD | Not started | - |
 | 6. Payments | 0/TBD | Not started | - |
 | 7. Landing Page and Polish | 0/TBD | Not started | - |
