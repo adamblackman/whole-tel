@@ -72,7 +72,7 @@ Each task was committed atomically:
 1. **Task 1: Create server and browser Supabase client factories** - `ffd50ed` (feat)
 2. **Task 2: Create DAL and TypeScript database types** - `b73515e` (feat)
 
-**Plan metadata:** see final commit below (docs: complete plan)
+**Plan metadata:** `7e1ec81` (docs: complete plan)
 
 ## Files Created/Modified
 - `src/lib/supabase/server.ts` — Async createClient() using createServerClient + await cookies(), for Server Components/Actions/Route Handlers
