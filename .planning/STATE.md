@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T02:09:00Z"
+last_updated: "2026-03-05T04:58:00Z"
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 5 of 7 (Booking Flow) — IN PROGRESS
-Plan: 1 of 3 in Phase 5 — COMPLETE
-Status: 05-01 complete — Stripe SDK installed, booking Zod schema, PricingWidget extended with guest count stepper, add-on toggles, full price breakdown, Reserve button placeholder.
-Last activity: 2026-03-04 — 05-01 complete: Stripe singleton (stripe.ts), bookingInputSchema (validations/booking.ts), PricingWidget with guestCount/selectedAddOnIds state and comprehensive price breakdown.
+Phase: 5 of 7 (Booking Flow) — COMPLETE
+Plan: 3 of 3 in Phase 5 — COMPLETE
+Status: 05-03 complete — Guest booking history page at /bookings with upcoming/past sections, status badges, success banner. Phase 5 booking flow fully implemented.
+Last activity: 2026-03-05 — 05-03 complete: /bookings Server Component page with verifySession() auth gate, StatusBadge (Confirmed/Payment pending/Cancelled), BookingCard with property join, success banner on ?success=true, Zod v4 .issues fix in bookings.ts.
 
-Progress: [█████████░] 62%
+Progress: [██████████] 95%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [█████████░] 62%
 | Phase 04-guest-browsing P03 | 3 min | 2 tasks | 4 files |
 | Phase 04-guest-browsing P04 | 2 min | 2 tasks | 2 files |
 | Phase 05-booking-flow P01 | 5 min | 2 tasks + 1 fix | 4 files |
+| Phase 05-booking-flow P03 | 4 min | 2 tasks + 1 fix | 2 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,9 @@ Recent decisions affecting current work:
 - [05-01]: PricingWidget propertyId prop accepted but unused in Plan 01 — Plan 02 Server Action wiring will consume it
 - [05-01]: Add-on pricing: per_person multiplies by guestCount, per_booking is flat — client-side display only, server re-validates in Plan 02
 - [05-01]: Per-person line only shown when guestCount > 1 AND nights > 0 to avoid meaningless display
+- [05-03]: searchParams typed as Promise<{ success?: string }> and awaited — required for Next.js 16 async Server Components
+- [05-03]: Zod v4 uses .issues not .errors on ZodError — auto-fixed in bookings.ts (same pattern as 03-01)
+- [05-03]: Defense-in-depth .eq('guest_id', user.id) retained alongside Supabase RLS policy for clarity
 
 ### Pending Todos
 
@@ -138,6 +142,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Completed 05-01-PLAN.md. Stripe SDK installed, booking Zod schema created, PricingWidget extended with guest count stepper, add-on experience toggles, full price breakdown (nightly + cleaning + add-ons + processing fee + total + per-person), and Reserve button placeholder. Phase 5 Plan 1 of 3 complete. Next: 05-02 (Server Action + Stripe Checkout session creation).
+Last session: 2026-03-05
+Stopped at: Completed 05-03-PLAN.md. Guest booking history page created at /bookings with verifySession() auth gate, upcoming/past sections, StatusBadge, BookingCard with property join, success banner, and Zod v4 fix. Phase 5 Booking Flow COMPLETE. Next: Phase 6.
 Resume file: None
