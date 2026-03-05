@@ -86,7 +86,14 @@ Plans:
   3. When a guest selects check-in and check-out dates, the nightly rate and total price display on the listing page before entering the booking flow
   4. A property listing page shows its unique add-on experiences (name, description, price, pricing unit) so guests can evaluate the full trip cost before booking
   5. All pages render correctly on mobile and match the tropical chill brand aesthetic using shadcn/ui and React Bits components
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Install dependencies (lightbox, Calendar), brand color palette, GuestNav + (guest) layout
+- [ ] 04-02-PLAN.md — Browse page with destination filter tabs and PropertyListingCard grid
+- [ ] 04-03-PLAN.md — Property detail page with photo gallery + lightbox, details, amenities, add-ons
+- [ ] 04-04-PLAN.md — PricingWidget with availability calendar and real-time price calculation
+- [ ] 04-05-PLAN.md — Human verification: end-to-end guest browsing testing (checkpoint)
 
 ### Phase 5: Booking Flow
 **Goal**: A logged-in guest can select dates, choose add-ons, see a full price breakdown with per-person calculator, and hand off to Stripe Checkout
@@ -132,7 +139,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 3/3 | Complete    | 2026-03-03 |
 | 2. Auth | 4/4 | Complete    | 2026-03-03 |
 | 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
-| 4. Guest Browsing | 0/TBD | Not started | - |
+| 4. Guest Browsing | 0/5 | Not started | - |
 | 5. Booking Flow | 0/TBD | Not started | - |
 | 6. Payments | 0/TBD | Not started | - |
 | 7. Landing Page and Polish | 0/TBD | Not started | - |
