@@ -23,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 4 of 7 (Guest Browsing) — IN PROGRESS
-Plan: 3 of 5 in Phase 4 — COMPLETE
-Status: 04-03 complete — Property listing page at /properties/[propertyId] with photo gallery, amenities, add-ons, two-column layout.
-Last activity: 2026-03-05 — 04-03 complete: PhotoGallery (Airbnb-style 5-photo grid + yet-another-react-lightbox), AmenityList (Lucide icon mappings), AddOnCard (shadcn Card + Badge), property detail page with nested Supabase query, notFound() for missing IDs, dynamic SEO title.
+Plan: 4 of 5 in Phase 4 — COMPLETE
+Status: 04-04 complete — PricingWidget with shadcn Calendar (range mode), disabled past + confirmed booking dates, real-time price breakdown.
+Last activity: 2026-03-05 — 04-04 complete: PricingWidget Client Component (DateRange state, disabled matchers with [) half-open interval logic), property listing page updated with parallel bookings query, sticky widget sidebar.
 
 Progress: [█████████░] 58%
 
@@ -57,6 +57,7 @@ Progress: [█████████░] 58%
 | Phase 04-guest-browsing P01 | 2 min | 2 tasks | 7 files |
 | Phase 04-guest-browsing P02 | 2 min | 2 tasks | 3 files |
 | Phase 04-guest-browsing P03 | 3 min | 2 tasks | 4 files |
+| Phase 04-guest-browsing P04 | 2 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,9 @@ Recent decisions affecting current work:
 - [04-03]: AddOnRow interface typed locally in page.tsx — Supabase nested select infers add_ons as any[], typed cast required to prevent TypeScript build error
 - [04-03]: Single nested Supabase query (*, property_photos, add_ons) — one round-trip fetches all property detail page data
 - [04-03]: Photo URLs constructed server-side before passing to PhotoGallery — keeps client component purely presentational
+- [04-04]: PricingWidget uses numberOfMonths=1 — 380px sidebar can't fit two months side by side
+- [04-04]: Sticky wrapper on parent div (lg:sticky lg:top-8), not inside PricingWidget — keeps widget layout-agnostic
+- [04-04]: disabledDates subtracts 86400000ms from check_out to honor [) half-open interval allowing back-to-back bookings
 
 ### Pending Todos
 
@@ -130,5 +134,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 04-03-PLAN.md. Phase 4 (Guest Browsing) is in progress. Property detail wave complete: /properties/[propertyId] with PhotoGallery + lightbox, AmenityList, AddOnCards, two-column layout. Next: Plan 04 (booking date picker widget).
+Stopped at: Completed 04-04-PLAN.md. PricingWidget with availability calendar and price calculation integrated into property listing page. Phase 4 Plan 4 of 5 complete. Next: Plan 05 (guest browsing phase 5 — likely review/search or booking flow initiation).
 Resume file: None

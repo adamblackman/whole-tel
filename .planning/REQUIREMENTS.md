@@ -21,10 +21,10 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **PROP-01**: Property listing page displays photo gallery with full-screen view
 - [x] **PROP-02**: Property listing page shows details (bedrooms, bathrooms, max guests)
 - [x] **PROP-03**: Property listing page displays amenities list with icons (pool, hot tub, BBQ, etc.)
-- [ ] **PROP-04**: Property listing page shows availability calendar with booked/available dates
+- [x] **PROP-04**: Property listing page shows availability calendar with booked/available dates
 - [x] **PROP-05**: Property listing page displays location info (area description, neighborhood context)
 - [x] **PROP-06**: Property listing page shows per-property add-on experiences with pricing
-- [ ] **PROP-07**: Property listing page displays nightly rate and total price when dates are selected
+- [x] **PROP-07**: Property listing page displays nightly rate and total price when dates are selected
 - [x] **PROP-08**: Properties can be browsed/filtered by destination (Cabo, PV, Miami)
 
 ### Add-On Experiences
@@ -145,10 +145,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROP-01 | Phase 4 | Complete |
 | PROP-02 | Phase 4 | Complete |
 | PROP-03 | Phase 4 | Complete |
-| PROP-04 | Phase 4 | Pending |
+| PROP-04 | Phase 4 | Complete |
 | PROP-05 | Phase 4 | Complete |
 | PROP-06 | Phase 4 | Complete |
-| PROP-07 | Phase 4 | Pending |
+| PROP-07 | Phase 4 | Complete |
 | PROP-08 | Phase 4 | Complete |
 | ADDON-01 | Phase 4 | Complete |
 | ADDON-02 | Phase 4 | Complete |
