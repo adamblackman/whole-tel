@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { createBookingAndCheckout } from '@/lib/actions/bookings'
 import type { DateRange } from 'react-day-picker'
 import { Minus, Plus } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
@@ -30,11 +31,13 @@ export function PricingWidget({
   maxGuests,
   disabledDates,
   addOns,
-  propertyId: _propertyId, // stored for Plan 02 Server Action wiring
+  propertyId,
 }: PricingWidgetProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [guestCount, setGuestCount] = useState(1)
   const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(new Set())
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
 
   const nights =
     dateRange?.from && dateRange?.to
@@ -59,6 +62,25 @@ export function PricingWidget({
 
   const total = subtotal + (nights > 0 ? cleaningFee : 0) + addOnsTotal + processingFee
   const perPerson = guestCount > 1 && nights > 0 ? total / guestCount : null
+
+  const handleReserve = () => {
+    if (!dateRange?.from || !dateRange?.to) return
+    setError(null)
+
+    startTransition(async () => {
+      try {
+        await createBookingAndCheckout({
+          propertyId,
+          checkIn: dateRange.from!.toISOString().slice(0, 10),
+          checkOut: dateRange.to!.toISOString().slice(0, 10),
+          guestCount,
+          selectedAddOnIds: Array.from(selectedAddOnIds),
+        })
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Something went wrong')
+      }
+    })
+  }
 
   const toggleAddOn = (id: string) => {
     setSelectedAddOnIds((prev) => {
@@ -209,9 +231,16 @@ export function PricingWidget({
         <p className="mt-3 text-sm text-muted-foreground">Select dates for pricing</p>
       )}
 
-      {/* Reserve button (Plan 02 will wire this to a Server Action) */}
-      <Button className="w-full mt-4" disabled={nights < 1}>
-        Reserve
+      {/* Reserve button — wired to createBookingAndCheckout Server Action */}
+      {error && (
+        <p className="text-sm text-destructive mt-2">{error}</p>
+      )}
+      <Button
+        onClick={handleReserve}
+        disabled={isPending || nights < 1}
+        className="w-full mt-4"
+      >
+        {isPending ? 'Redirecting to checkout…' : 'Reserve'}
       </Button>
     </div>
   )
