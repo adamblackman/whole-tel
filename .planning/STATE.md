@@ -18,7 +18,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
-**Current focus:** Phase 5 - Booking Flow
+**Current focus:** Phase 6 - Payments
 
 ## Current Position
 
@@ -147,5 +147,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 05-03-PLAN.md. Guest booking history page created at /bookings with verifySession() auth gate, upcoming/past sections, StatusBadge, BookingCard with property join, success banner, and Zod v4 fix. Phase 5 Booking Flow COMPLETE. Next: Phase 6.
+Stopped at: Phase 5 COMPLETE. Phases 1-5 all done (Foundation, Auth, Owner Dashboard, Guest Browsing, Booking Flow). Next: Phase 6 (Payments — Stripe webhook, ACH, confirmation email) then Phase 7 (Landing Page & Polish). User wants FULL AUTONOMOUS execution — no questions, no checkpoints, just build everything.
 Resume file: None
