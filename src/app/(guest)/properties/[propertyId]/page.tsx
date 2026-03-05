@@ -201,6 +201,8 @@ export default async function PropertyListingPage({
             cleaningFee={Number(property.cleaning_fee)}
             maxGuests={property.max_guests}
             disabledDates={disabledDates}
+            addOns={addOns}
+            propertyId={propertyId}
           />
         </div>
       </div>
