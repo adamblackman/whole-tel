@@ -18,20 +18,20 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Property Listings
 
-- [ ] **PROP-01**: Property listing page displays photo gallery with full-screen view
-- [ ] **PROP-02**: Property listing page shows details (bedrooms, bathrooms, max guests)
-- [ ] **PROP-03**: Property listing page displays amenities list with icons (pool, hot tub, BBQ, etc.)
+- [x] **PROP-01**: Property listing page displays photo gallery with full-screen view
+- [x] **PROP-02**: Property listing page shows details (bedrooms, bathrooms, max guests)
+- [x] **PROP-03**: Property listing page displays amenities list with icons (pool, hot tub, BBQ, etc.)
 - [ ] **PROP-04**: Property listing page shows availability calendar with booked/available dates
-- [ ] **PROP-05**: Property listing page displays location info (area description, neighborhood context)
-- [ ] **PROP-06**: Property listing page shows per-property add-on experiences with pricing
+- [x] **PROP-05**: Property listing page displays location info (area description, neighborhood context)
+- [x] **PROP-06**: Property listing page shows per-property add-on experiences with pricing
 - [ ] **PROP-07**: Property listing page displays nightly rate and total price when dates are selected
-- [ ] **PROP-08**: Properties can be browsed/filtered by destination (Cabo, PV, Miami)
+- [x] **PROP-08**: Properties can be browsed/filtered by destination (Cabo, PV, Miami)
 
 ### Add-On Experiences
 
-- [ ] **ADDON-01**: Each property has unique add-on experiences (boat rides, chefs, alcohol, etc.)
-- [ ] **ADDON-02**: Add-ons have name, description, price, and pricing unit (per person or per booking)
-- [ ] **ADDON-03**: Add-ons are displayed on property listing page with pricing
+- [x] **ADDON-01**: Each property has unique add-on experiences (boat rides, chefs, alcohol, etc.)
+- [x] **ADDON-02**: Add-ons have name, description, price, and pricing unit (per person or per booking)
+- [x] **ADDON-03**: Add-ons are displayed on property listing page with pricing
 - [ ] **ADDON-04**: Guest can select add-ons during booking flow before checkout
 - [ ] **ADDON-05**: Add-on costs are included in total price breakdown and per-person calculator
 
@@ -142,17 +142,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OWNER-06 | Phase 3 | Complete |
 | OWNER-07 | Phase 3 | Complete |
 | OWNER-08 | Phase 3 | Complete |
-| PROP-01 | Phase 4 | Pending |
-| PROP-02 | Phase 4 | Pending |
-| PROP-03 | Phase 4 | Pending |
+| PROP-01 | Phase 4 | Complete |
+| PROP-02 | Phase 4 | Complete |
+| PROP-03 | Phase 4 | Complete |
 | PROP-04 | Phase 4 | Pending |
-| PROP-05 | Phase 4 | Pending |
-| PROP-06 | Phase 4 | Pending |
+| PROP-05 | Phase 4 | Complete |
+| PROP-06 | Phase 4 | Complete |
 | PROP-07 | Phase 4 | Pending |
-| PROP-08 | Phase 4 | Pending |
-| ADDON-01 | Phase 4 | Pending |
-| ADDON-02 | Phase 4 | Pending |
-| ADDON-03 | Phase 4 | Pending |
+| PROP-08 | Phase 4 | Complete |
+| ADDON-01 | Phase 4 | Complete |
+| ADDON-02 | Phase 4 | Complete |
+| ADDON-03 | Phase 4 | Complete |
 | PAGE-04 | Phase 4 | Complete |
 | PAGE-05 | Phase 4 | Complete |
 | BOOK-01 | Phase 5 | Pending |

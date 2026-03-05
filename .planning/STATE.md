@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T02:21:21Z"
+last_updated: "2026-03-05T02:23:00Z"
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 ## Current Position
 
 Phase: 4 of 7 (Guest Browsing) — IN PROGRESS
-Plan: 2 of 5 in Phase 4 — COMPLETE
-Status: 04-02 complete — /properties browse page with DestinationFilter tabs and PropertyListingCard grid.
-Last activity: 2026-03-05 — 04-02 complete: DestinationFilter client component (URL param tabs), PropertyListingCard server-compatible card (cover photo, icons, price), /properties page with Supabase query + allowlist-validated destination filter + responsive grid.
+Plan: 3 of 5 in Phase 4 — COMPLETE
+Status: 04-03 complete — Property listing page at /properties/[propertyId] with photo gallery, amenities, add-ons, two-column layout.
+Last activity: 2026-03-05 — 04-03 complete: PhotoGallery (Airbnb-style 5-photo grid + yet-another-react-lightbox), AmenityList (Lucide icon mappings), AddOnCard (shadcn Card + Badge), property detail page with nested Supabase query, notFound() for missing IDs, dynamic SEO title.
 
-Progress: [████████░░] 55%
+Progress: [█████████░] 58%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [████████░░] 55%
 | Phase 03-owner-dashboard P04 | 8 min | 2 tasks | 5 files |
 | Phase 04-guest-browsing P01 | 2 min | 2 tasks | 7 files |
 | Phase 04-guest-browsing P02 | 2 min | 2 tasks | 3 files |
+| Phase 04-guest-browsing P03 | 3 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,9 @@ Recent decisions affecting current work:
 - [04-02]: Destination allowlist (VALID_DESTINATIONS) validated before .eq() Supabase query — raw ?destination= value never reaches DB filter
 - [04-02]: property_photos normalized with Array.isArray() guard in page component — Supabase join can return object or array depending on join type
 - [04-02]: Suspense wraps all useSearchParams-dependent Client Components to prevent Next.js production build failure
+- [04-03]: AddOnRow interface typed locally in page.tsx — Supabase nested select infers add_ons as any[], typed cast required to prevent TypeScript build error
+- [04-03]: Single nested Supabase query (*, property_photos, add_ons) — one round-trip fetches all property detail page data
+- [04-03]: Photo URLs constructed server-side before passing to PhotoGallery — keeps client component purely presentational
 
 ### Pending Todos
 
@@ -126,5 +130,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Completed 04-02-PLAN.md. Phase 4 (Guest Browsing) is in progress. Browse page wave complete: /properties page with DestinationFilter + PropertyListingCard grid. Next: Plan 03 (property detail page).
+Stopped at: Completed 04-03-PLAN.md. Phase 4 (Guest Browsing) is in progress. Property detail wave complete: /properties/[propertyId] with PhotoGallery + lightbox, AmenityList, AddOnCards, two-column layout. Next: Plan 04 (booking date picker widget).
 Resume file: None
