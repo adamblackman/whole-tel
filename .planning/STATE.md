@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T04:29:20.819Z"
+last_updated: "2026-03-06T05:47:22Z"
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 22
-  completed_plans: 22
+  total_phases: 7
+  completed_phases: 7
+  total_plans: 24
+  completed_plans: 24
 ---
 
 # Project State
@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
-**Current focus:** Phase 6 - Payments
+**Current focus:** Phase 7 - Landing Page and Polish
 
 ## Current Position
 
-Phase: 6 of 7 (Payments) — COMPLETE
-Plan: 2 of 2 in Phase 6 — COMPLETE
-Status: Phase 6 complete — Stripe webhook + Resend confirmation email. Full payment flow: Checkout -> webhook -> booking confirmed -> email sent.
-Last activity: 2026-03-06 — 06-02 complete: Resend email client, BookingConfirmedEmail template, webhook email integration.
+Phase: 7 of 7 (Landing Page and Polish)
+Plan: 2 of 2 in Phase 7 — COMPLETE
+Status: 07-02 complete — About Us and Contact pages with working email form via Resend.
+Last activity: 2026-03-06 — 07-02 complete: About page with brand story, Contact page with Zod-validated form sending to adam@whole-tel.com.
 
-Progress: [██████████] 100%
+Progress: [█████████░] 96%
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [██████████] 100%
 | Phase 05-booking-flow P02 | 35 | 2 tasks | 3 files |
 | Phase 06-payments P01 | 2 min | 2 tasks | 3 files |
 | Phase 06-payments P02 | 2 min | 2 tasks | 4 files |
+| Phase 07-landing-page P02 | 3 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,8 @@ Recent decisions affecting current work:
 - [06-02]: Lazy-init Resend client via getResend() — constructor throws at module evaluation when RESEND_API_KEY missing, breaking next build
 - [06-02]: Email send in webhook wrapped in try/catch — failure must never block 200 response to Stripe
 - [06-02]: Guest email fetched via auth.admin.getUserById, not profiles table — authoritative email source
+- [07-02]: Contact email from address uses noreply@whole-tel.com (distinct from bookings@whole-tel.com for booking confirmations)
+- [07-02]: Form reset via useRef + form.reset() in useEffect on success state
 
 ### Pending Todos
 
@@ -156,5 +159,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 06-02-PLAN.md. Phase 6 (Payments) complete. Resend confirmation email wired into webhook. Next: Phase 7.
+Stopped at: Completed 07-02-PLAN.md. About Us and Contact pages added. Phase 7 Plan 1 (homepage/hero) still pending.
 Resume file: None

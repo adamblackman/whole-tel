@@ -67,8 +67,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Pages & Design
 
 - [ ] **PAGE-01**: Homepage with hero section, brand story, featured properties, and testimonials
-- [ ] **PAGE-02**: About Us page with brand story
-- [ ] **PAGE-03**: Contact page with form routing to adam@whole-tel.com
+- [x] **PAGE-02**: About Us page with brand story
+- [x] **PAGE-03**: Contact page with form routing to adam@whole-tel.com
 - [x] **PAGE-04**: Mobile-responsive design across all pages (Airbnb-level polish)
 - [x] **PAGE-05**: Tropical chill party brand aesthetic throughout (shadcn/ui + React Bits animations)
 
@@ -170,8 +170,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAY-04 | Phase 6 | Complete |
 | PAY-05 | Phase 6 | Complete |
 | PAGE-01 | Phase 7 | Pending |
-| PAGE-02 | Phase 7 | Pending |
-| PAGE-03 | Phase 7 | Pending |
+| PAGE-02 | Phase 7 | Complete |
+| PAGE-03 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 48 total
