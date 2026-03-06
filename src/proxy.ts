@@ -3,42 +3,43 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  if (!url || !anonKey) {
+    return NextResponse.next({ request })
+  }
+
+  try {
+    let response = NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
+
+    const supabase = createServerClient(url, anonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          // Step 1: Write to request cookies so Server Components see refreshed token
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          // Step 2: Rebuild response with updated request headers
-          response = NextResponse.next({
-            request,
-          })
-          // Step 3: Write to response cookies so browser stores refreshed token
+          response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
         },
       },
-    }
-  )
+    })
 
-  // Trigger token refresh — use getUser() NOT getSession()
-  await supabase.auth.getUser()
-
-  return response
+    await supabase.auth.getUser()
+    return response
+  } catch (err) {
+    console.error('[proxy] Auth refresh failed:', err)
+    return NextResponse.next({ request })
+  }
 }
 
 export const config = {
