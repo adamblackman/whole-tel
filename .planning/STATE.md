@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-06T04:21:01Z"
+last_updated: "2026-03-06T04:26:25.435Z"
 progress:
-  total_phases: 7
-  completed_phases: 5
+  total_phases: 6
+  completed_phases: 6
   total_plans: 22
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 6 of 7 (Payments) — IN PROGRESS
-Plan: 1 of 2 in Phase 6 — COMPLETE
-Status: 06-01 complete — Stripe webhook handler at /api/webhooks/stripe with idempotent booking confirmation for card and ACH payments. Service role admin client created. ACH bank transfer added to Checkout session. Plan 06-02 (confirmation email) remaining.
-Last activity: 2026-03-06 — 06-01 complete: webhook handler, admin client, ACH payment method.
+Phase: 6 of 7 (Payments) — COMPLETE
+Plan: 2 of 2 in Phase 6 — COMPLETE
+Status: Phase 6 complete — Stripe webhook + Resend confirmation email. Full payment flow: Checkout -> webhook -> booking confirmed -> email sent.
+Last activity: 2026-03-06 — 06-02 complete: Resend email client, BookingConfirmedEmail template, webhook email integration.
 
-Progress: [█████████░] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [█████████░] 96%
 | Phase 05-booking-flow P03 | 4 min | 2 tasks + 1 fix | 2 files |
 | Phase 05-booking-flow P02 | 35 | 2 tasks | 3 files |
 | Phase 06-payments P01 | 2 min | 2 tasks | 3 files |
+| Phase 06-payments P02 | 2 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,9 @@ Recent decisions affecting current work:
 - [06-01]: fulfillCheckout guards on payment_status !== 'unpaid' to handle ACH processing delay before async_payment_succeeded
 - [06-01]: Idempotent update via .eq('status', 'pending') prevents duplicate webhook confirmations
 - [06-01]: Always return 200 to Stripe after signature verification to prevent retry storms
+- [06-02]: Lazy-init Resend client via getResend() — constructor throws at module evaluation when RESEND_API_KEY missing, breaking next build
+- [06-02]: Email send in webhook wrapped in try/catch — failure must never block 200 response to Stripe
+- [06-02]: Guest email fetched via auth.admin.getUserById, not profiles table — authoritative email source
 
 ### Pending Todos
 
@@ -152,5 +156,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 06-01-PLAN.md. Stripe webhook handler and ACH support done. Next: 06-02 (confirmation email).
+Stopped at: Completed 06-02-PLAN.md. Phase 6 (Payments) complete. Resend confirmation email wired into webhook. Next: Phase 7.
 Resume file: None
