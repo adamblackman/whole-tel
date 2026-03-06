@@ -136,7 +136,11 @@ Plans:
   1. The homepage displays a hero section, brand story, featured properties from the database, and destination browsing — all with the tropical chill party brand aesthetic and React Bits animations
   2. An About Us page explains the Whole-Tel brand story
   3. A Contact page has a form that routes inquiries to adam@whole-tel.com
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Homepage rewrite with hero, brand story, featured properties, destination cards, and testimonials
+- [ ] 07-02-PLAN.md — About Us page and Contact page with email form via Resend
 
 ## Progress
 
@@ -151,4 +155,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
 | 5. Booking Flow | 3/3 | Complete    | 2026-03-05 |
 | 6. Payments | 0/2 | Not started | - |
-| 7. Landing Page and Polish | 0/TBD | Not started | - |
+| 7. Landing Page and Polish | 0/2 | Not started | - |
