@@ -122,7 +122,11 @@ Plans:
   3. The credit card processing fee is displayed transparently before the guest commits to payment — labeled as "processing fee" not "credit card surcharge"
   4. A booking confirmation email arrives in the guest's inbox after successful payment
   5. If a guest closes the browser after Stripe redirects but before returning to the site, the booking is still confirmed (webhook-driven confirmation, not redirect-driven)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Stripe webhook handler (card + ACH confirmation), admin Supabase client, ACH payment method support
+- [ ] 06-02-PLAN.md — Booking confirmation email via Resend + React Email, wired into webhook fulfillment
 
 ### Phase 7: Landing Page and Polish
 **Goal**: Whole-Tel has a compelling public homepage with hero, brand story, featured properties, and supporting pages that convert visitors to bookings
@@ -146,5 +150,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
 | 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
 | 5. Booking Flow | 3/3 | Complete    | 2026-03-05 |
-| 6. Payments | 0/TBD | Not started | - |
+| 6. Payments | 0/2 | Not started | - |
 | 7. Landing Page and Polish | 0/TBD | Not started | - |
