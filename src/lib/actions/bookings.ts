@@ -173,6 +173,7 @@ export async function createBookingAndCheckout(input: {
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      payment_method_types: ['card', 'us_bank_account'],
       line_items: lineItems,
       client_reference_id: booking.id,
       metadata: { booking_id: booking.id },
