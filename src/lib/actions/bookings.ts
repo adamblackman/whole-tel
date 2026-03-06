@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { verifySession } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { bookingInputSchema } from '@/lib/validations/booking'
 
 /**
@@ -171,7 +171,7 @@ export async function createBookingAndCheckout(input: {
       'http://localhost:3000'
 
     // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card', 'us_bank_account'],
       line_items: lineItems,
