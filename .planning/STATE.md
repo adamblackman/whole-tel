@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T05:36:38.681Z"
+last_updated: "2026-03-06T04:21:01Z"
 progress:
-  total_phases: 5
+  total_phases: 7
   completed_phases: 5
-  total_plans: 20
-  completed_plans: 20
+  total_plans: 22
+  completed_plans: 21
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 5 of 7 (Booking Flow) — COMPLETE
-Plan: 3 of 3 in Phase 5 — COMPLETE
-Status: 05-02 + 05-03 complete — 05-02: createBookingAndCheckout Server Action (server-side price validation, pending booking insert, Stripe Checkout redirect), Reserve button wired in PricingWidget via useTransition, GuestNav auth-aware. 05-03: Guest booking history page at /bookings with upcoming/past sections, status badges, success banner. Phase 5 booking flow fully implemented.
-Last activity: 2026-03-05 — 05-02 complete: createBookingAndCheckout Server Action, PricingWidget Reserve wired, GuestNav auth-conditional. Phase 5 all 3 plans complete.
+Phase: 6 of 7 (Payments) — IN PROGRESS
+Plan: 1 of 2 in Phase 6 — COMPLETE
+Status: 06-01 complete — Stripe webhook handler at /api/webhooks/stripe with idempotent booking confirmation for card and ACH payments. Service role admin client created. ACH bank transfer added to Checkout session. Plan 06-02 (confirmation email) remaining.
+Last activity: 2026-03-06 — 06-01 complete: webhook handler, admin client, ACH payment method.
 
-Progress: [██████████] 95%
+Progress: [█████████░] 96%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [██████████] 95%
 | Phase 05-booking-flow P01 | 5 min | 2 tasks + 1 fix | 4 files |
 | Phase 05-booking-flow P03 | 4 min | 2 tasks + 1 fix | 2 files |
 | Phase 05-booking-flow P02 | 35 | 2 tasks | 3 files |
+| Phase 06-payments P01 | 2 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,10 @@ Recent decisions affecting current work:
 - [Phase 05-booking-flow]: redirect() must be outside try/catch in Server Actions — Next.js implements redirect via thrown error internally
 - [Phase 05-02]: GuestNav uses getUser() not verifySession() — verifySession redirects unauthenticated users which would break browsing
 - [Phase 05-02]: Add-ons fetched with .eq('property_id', propertyId) to prevent cross-property injection attack
+- [06-01]: Admin client uses @supabase/supabase-js createClient (not @supabase/ssr) — webhooks have no cookie context
+- [06-01]: fulfillCheckout guards on payment_status !== 'unpaid' to handle ACH processing delay before async_payment_succeeded
+- [06-01]: Idempotent update via .eq('status', 'pending') prevents duplicate webhook confirmations
+- [06-01]: Always return 200 to Stripe after signature verification to prevent retry storms
 
 ### Pending Todos
 
@@ -146,6 +151,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: Phase 5 COMPLETE. Phases 1-5 all done (Foundation, Auth, Owner Dashboard, Guest Browsing, Booking Flow). Next: Phase 6 (Payments — Stripe webhook, ACH, confirmation email) then Phase 7 (Landing Page & Polish). User wants FULL AUTONOMOUS execution — no questions, no checkpoints, just build everything.
+Last session: 2026-03-06
+Stopped at: Completed 06-01-PLAN.md. Stripe webhook handler and ACH support done. Next: 06-02 (confirmation email).
 Resume file: None

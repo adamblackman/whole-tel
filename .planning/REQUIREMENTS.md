@@ -47,11 +47,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Payments
 
-- [ ] **PAY-01**: Guest can pay via credit card through Stripe Checkout
-- [ ] **PAY-02**: Guest can pay via ACH bank transfer through Stripe Checkout
-- [ ] **PAY-03**: Credit card processing fee is passed to customer and displayed transparently
+- [x] **PAY-01**: Guest can pay via credit card through Stripe Checkout
+- [x] **PAY-02**: Guest can pay via ACH bank transfer through Stripe Checkout
+- [x] **PAY-03**: Credit card processing fee is passed to customer and displayed transparently
 - [ ] **PAY-04**: Guest receives booking confirmation email after successful payment
-- [ ] **PAY-05**: Booking is confirmed only after Stripe webhook verifies payment (not on redirect)
+- [x] **PAY-05**: Booking is confirmed only after Stripe webhook verifies payment (not on redirect)
 
 ### Owner Dashboard
 
@@ -164,11 +164,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BOOK-07 | Phase 5 | Complete |
 | ADDON-04 | Phase 5 | Complete |
 | ADDON-05 | Phase 5 | Complete |
-| PAY-01 | Phase 6 | Pending |
-| PAY-02 | Phase 6 | Pending |
-| PAY-03 | Phase 6 | Pending |
+| PAY-01 | Phase 6 | Complete |
+| PAY-02 | Phase 6 | Complete |
+| PAY-03 | Phase 6 | Complete |
 | PAY-04 | Phase 6 | Pending |
-| PAY-05 | Phase 6 | Pending |
+| PAY-05 | Phase 6 | Complete |
 | PAGE-01 | Phase 7 | Pending |
 | PAGE-02 | Phase 7 | Pending |
 | PAGE-03 | Phase 7 | Pending |
