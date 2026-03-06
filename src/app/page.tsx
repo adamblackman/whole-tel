@@ -35,10 +35,10 @@ export default async function HomePage() {
             <Link href="/properties" className="hover:text-white transition-colors">
               Browse Villas
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/about" className="hover:text-white transition-colors">
               About
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/contact" className="hover:text-white transition-colors">
               Contact
             </Link>
           </nav>
