@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Guest Browsing** - Property listing pages, destination browsing, add-on display, and brand design (completed 2026-03-05)
 - [x] **Phase 5: Booking Flow** - Date selection through add-on customization, price summary, and Stripe handoff (completed 2026-03-05)
 - [ ] **Phase 6: Payments** - Stripe Checkout (CC + ACH), webhook confirmation, and booking email
-- [ ] **Phase 7: Landing Page and Polish** - Homepage, about/contact pages, and final brand polish
+- [x] **Phase 7: Landing Page and Polish** - Homepage, about/contact pages, and final brand polish (completed 2026-03-06)
 
 ## Phase Details
 
@@ -155,4 +155,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
 | 5. Booking Flow | 3/3 | Complete    | 2026-03-05 |
 | 6. Payments | 0/2 | Not started | - |
-| 7. Landing Page and Polish | 0/2 | Not started | - |
+| 7. Landing Page and Polish | 2/2 | Complete   | 2026-03-06 |

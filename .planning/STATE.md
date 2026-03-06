@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-03-02)
 
 ## Current Position
 
-Phase: 7 of 7 (Landing Page and Polish)
+Phase: 7 of 7 (Landing Page and Polish) — COMPLETE
 Plan: 2 of 2 in Phase 7 — COMPLETE
-Status: 07-02 complete — About Us and Contact pages with working email form via Resend.
-Last activity: 2026-03-06 — 07-02 complete: About page with brand story, Contact page with Zod-validated form sending to adam@whole-tel.com.
+Status: Phase 7 complete — Marketing landing page + About/Contact pages. All 7 phases done.
+Last activity: 2026-03-06 — 07-01 complete: Landing page with hero, brand story, featured properties, destination cards, testimonials, footer.
 
-Progress: [█████████░] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [█████████░] 96%
 | Phase 06-payments P01 | 2 min | 2 tasks | 3 files |
 | Phase 06-payments P02 | 2 min | 2 tasks | 4 files |
 | Phase 07-landing-page P02 | 3 min | 2 tasks | 4 files |
+| Phase 07-landing-page P01 | 3 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -144,6 +145,9 @@ Recent decisions affecting current work:
 - [06-02]: Guest email fetched via auth.admin.getUserById, not profiles table — authoritative email source
 - [07-02]: Contact email from address uses noreply@whole-tel.com (distinct from bookings@whole-tel.com for booking confirmations)
 - [07-02]: Form reset via useRef + form.reset() in useEffect on success state
+- [07-01]: Hero is only 'use client' component on landing page — all other sections are Server Components
+- [07-01]: FeaturedProperties reuses PropertyListingCard rather than duplicating card rendering logic
+- [07-01]: Destination cards use gradient backgrounds as photo placeholders until real images available
 
 ### Pending Todos
 
@@ -159,5 +163,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed 07-02-PLAN.md. About Us and Contact pages added. Phase 7 Plan 1 (homepage/hero) still pending.
+Stopped at: Completed 07-01-PLAN.md. Phase 7 (Landing Page and Polish) complete. All 7 phases done. v1.0 milestone complete.
 Resume file: None
