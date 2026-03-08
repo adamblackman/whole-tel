@@ -22,6 +22,8 @@ interface AddOnFormProps {
     price?: number
     pricing_unit?: 'per_person' | 'per_booking'
     max_quantity?: number | null
+    included_guests?: number | null
+    per_person_above?: number | null
   }
   submitLabel?: string
   onCancel?: () => void
@@ -123,6 +125,41 @@ export function AddOnForm({ action, initialData, submitLabel, onCancel }: AddOnF
             <p className="text-sm text-destructive">{state.errors.max_quantity[0]}</p>
           )}
         </div>
+      </div>
+
+      {/* Tiered Pricing */}
+      <div className="space-y-2">
+        <Label>Tiered Pricing</Label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="addon-included-guests" className="text-xs">Included Guests</Label>
+            <Input
+              id="addon-included-guests"
+              name="included_guests"
+              type="number"
+              min="1"
+              defaultValue={initialData?.included_guests ?? ''}
+            />
+            {state.errors?.included_guests && (
+              <p className="text-sm text-destructive">{state.errors.included_guests[0]}</p>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="addon-per-person-above" className="text-xs">Per Person Above ($)</Label>
+            <Input
+              id="addon-per-person-above"
+              name="per_person_above"
+              type="number"
+              min="0"
+              step="0.01"
+              defaultValue={initialData?.per_person_above ?? ''}
+            />
+            {state.errors?.per_person_above && (
+              <p className="text-sm text-destructive">{state.errors.per_person_above[0]}</p>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">Optional. Base price includes up to this many guests, then charge per additional person.</p>
       </div>
 
       <div className="flex items-center gap-2">

@@ -24,7 +24,7 @@ export default async function PropertyDetailPage({
     .select(`
       *,
       property_photos(id, storage_path, display_order),
-      add_ons(id, name, description, price, pricing_unit, max_quantity)
+      add_ons(id, name, description, price, pricing_unit, max_quantity, included_guests, per_person_above)
     `)
     .eq('id', propertyId)
     .eq('owner_id', user.id)
