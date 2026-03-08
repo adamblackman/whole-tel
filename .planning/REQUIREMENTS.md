@@ -22,9 +22,9 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 
 ### Rebrand
 
-- [ ] **BRAND-01**: All user-facing copy updated from "party villas" to "Whole-Tel all-inclusive hotels"
-- [ ] **BRAND-02**: Hero section updated with new tagline ("Your next unforgettable group trip starts with a Whole-Tel!")
-- [ ] **BRAND-03**: Meta tags, SEO, and page titles reflect Whole-Tel all-inclusive hotel branding
+- [x] **BRAND-01**: All user-facing copy updated from "party villas" to "Whole-Tel all-inclusive hotels"
+- [x] **BRAND-02**: Hero section updated with new tagline ("Your next unforgettable group trip starts with a Whole-Tel!")
+- [x] **BRAND-03**: Meta tags, SEO, and page titles reflect Whole-Tel all-inclusive hotel branding
 
 ### Photo Management
 
@@ -167,9 +167,9 @@ Explicitly excluded. Documented to prevent scope creep.
 |-------------|-------|--------|
 | FIX-01 | Phase 8 | Complete |
 | FIX-02 | Phase 8 | Complete |
-| BRAND-01 | Phase 8 | Pending |
-| BRAND-02 | Phase 8 | Pending |
-| BRAND-03 | Phase 8 | Pending |
+| BRAND-01 | Phase 8 | Complete |
+| BRAND-02 | Phase 8 | Complete |
+| BRAND-03 | Phase 8 | Complete |
 | PROP-09 | Phase 9 | Pending |
 | PROP-10 | Phase 9 | Pending |
 | PROP-11 | Phase 9 | Pending |
