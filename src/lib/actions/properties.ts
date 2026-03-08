@@ -48,7 +48,7 @@ export async function createProperty(
   }
 
   revalidatePath('/dashboard')
-  redirect(`/dashboard/properties/${data.id}`)
+  return { message: 'Property created successfully', propertyId: data.id }
 }
 
 /**

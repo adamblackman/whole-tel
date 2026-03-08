@@ -45,4 +45,5 @@ export type ActionState = {
   errors?: Record<string, string[]>
   message?: string
   addOnId?: string
+  propertyId?: string
 }

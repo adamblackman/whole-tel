@@ -128,60 +128,67 @@ export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabe
         <p className="text-sm text-destructive">{state.message}</p>
       )}
 
-      {/* Photo Upload (only when editing an existing add-on) */}
-      {canUploadPhoto && (
-        <div className="space-y-2">
-          <Label>Photo</Label>
-          {photoUrl ? (
-            <div className="relative w-full max-w-xs aspect-video rounded-lg overflow-hidden border">
-              <Image
-                src={photoUrl}
-                alt="Experience photo"
-                fill
-                className="object-cover"
-                sizes="320px"
-              />
+      {/* Photo Upload */}
+      <div className="space-y-2">
+        <Label>Photo</Label>
+        {canUploadPhoto ? (
+          <>
+            {photoUrl ? (
+              <div className="relative w-full max-w-xs aspect-video rounded-lg overflow-hidden border">
+                <Image
+                  src={photoUrl}
+                  alt="Experience photo"
+                  fill
+                  className="object-cover"
+                  sizes="320px"
+                />
+                <button
+                  type="button"
+                  onClick={handlePhotoRemove}
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-destructive transition-colors"
+                  aria-label="Remove photo"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={handlePhotoRemove}
-                className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-destructive transition-colors"
-                aria-label="Remove photo"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer"
               >
-                <X className="h-3.5 w-3.5" />
+                {uploading ? (
+                  <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
+                ) : (
+                  <>
+                    <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                    <span className="text-sm text-muted-foreground">Upload Photo</span>
+                  </>
+                )}
               </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer"
-            >
-              {uploading ? (
-                <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
-              ) : (
-                <>
-                  <Upload className="h-6 w-6 text-muted-foreground mb-1" />
-                  <span className="text-sm text-muted-foreground">Upload Photo</span>
-                </>
-              )}
-            </button>
-          )}
+            )}
 
-          {/* Hidden file input */}
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handlePhotoUpload}
-            className="hidden"
-          />
+            {/* Hidden file input */}
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
 
-          {photoError && (
-            <p className="text-sm text-destructive">{photoError}</p>
-          )}
-        </div>
-      )}
+            {photoError && (
+              <p className="text-sm text-destructive">{photoError}</p>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/15">
+            <Upload className="h-6 w-6 text-muted-foreground/40 mb-1" />
+            <span className="text-sm text-muted-foreground/60">Save to upload a photo</span>
+          </div>
+        )}
+      </div>
 
       {/* Name */}
       <div className="space-y-1.5">
