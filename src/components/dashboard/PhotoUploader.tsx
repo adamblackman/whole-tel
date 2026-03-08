@@ -159,7 +159,7 @@ export default function PhotoUploader({ propertyId, photos, activeSection, showG
           variant="outline"
           size="sm"
           onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
+          disabled={isUploading || !propertyId}
         >
           {isUploading ? (
             <>

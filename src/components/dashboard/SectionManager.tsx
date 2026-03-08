@@ -59,6 +59,9 @@ export function SectionManager({
       onSectionChange(null)
     }
 
+    // Skip server call if no property exists yet (sections are client-state only during creation)
+    if (!propertyId) return
+
     const result = await deleteSection(propertyId, sectionName)
     if (result.error) {
       console.error('Failed to delete section:', result.error)

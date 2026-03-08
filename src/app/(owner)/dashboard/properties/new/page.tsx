@@ -26,15 +26,11 @@ export default function NewPropertyPage() {
       <div>
         <h1 className="text-2xl font-bold mb-6">Add New Property</h1>
         <PropertyForm action={wrappedAction} submitLabel="Create Property">
-          {createdPropertyId && (
-            <>
-              <Separator />
-              <PhotoManager
-                propertyId={createdPropertyId}
-                photos={[]}
-              />
-            </>
-          )}
+          <Separator />
+          <PhotoManager
+            propertyId={createdPropertyId ?? ''}
+            photos={[]}
+          />
         </PropertyForm>
       </div>
 
