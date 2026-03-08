@@ -182,3 +182,101 @@ export async function deleteSection(
   revalidatePath(`/properties/${propertyId}`)
   return {}
 }
+
+// ─── Experience (Add-On) Photo Actions ─────────────────────────────────────
+
+/**
+ * Generates a signed upload URL for an experience/add-on photo.
+ * Verifies the add-on belongs to the owner's property before generating.
+ * Uses `experiences/` path prefix to avoid collision with property photos.
+ */
+export async function getExperienceUploadUrl(
+  addOnId: string,
+  propertyId: string
+): Promise<{ signedUrl: string; token: string; path: string } | { error: string }> {
+  const user = await requireOwner()
+  const supabase = await createClient()
+
+  // Verify add-on belongs to this owner's property
+  const { data: addOn } = await supabase
+    .from('add_ons')
+    .select('id, property_id')
+    .eq('id', addOnId)
+    .eq('property_id', propertyId)
+    .single()
+
+  if (!addOn) return { error: 'Add-on not found' }
+
+  const { data: prop } = await supabase
+    .from('properties')
+    .select('id')
+    .eq('id', propertyId)
+    .eq('owner_id', user.id)
+    .single()
+
+  if (!prop) return { error: 'Access denied' }
+
+  const path = `experiences/${user.id}/${addOnId}/${crypto.randomUUID()}`
+
+  const { data, error } = await supabase.storage
+    .from('property-photos')
+    .createSignedUploadUrl(path)
+
+  if (error) return { error: error.message }
+
+  return { signedUrl: data.signedUrl, token: data.token, path }
+}
+
+/**
+ * Saves an experience photo URL after successful upload.
+ * Constructs public URL from storage path and updates add_ons.photo_url.
+ */
+export async function saveExperiencePhoto(
+  addOnId: string,
+  storagePath: string
+): Promise<{ error?: string }> {
+  await requireOwner()
+  const supabase = await createClient()
+
+  const { data } = supabase.storage
+    .from('property-photos')
+    .getPublicUrl(storagePath)
+
+  const { error } = await supabase
+    .from('add_ons')
+    .update({ photo_url: data.publicUrl })
+    .eq('id', addOnId)
+
+  if (error) return { error: error.message }
+  return {}
+}
+
+/**
+ * Removes an experience photo — deletes storage object and nulls photo_url.
+ */
+export async function removeExperiencePhoto(
+  addOnId: string,
+  propertyId: string,
+  storagePath: string
+): Promise<{ error?: string }> {
+  await requireOwner()
+  const supabase = await createClient()
+
+  const { error: storageError } = await supabase.storage
+    .from('property-photos')
+    .remove([storagePath])
+
+  if (storageError) {
+    console.error('Experience photo storage deletion failed:', storageError.message)
+  }
+
+  const { error } = await supabase
+    .from('add_ons')
+    .update({ photo_url: null })
+    .eq('id', addOnId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/dashboard/properties/${propertyId}`)
+  return {}
+}

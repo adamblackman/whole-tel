@@ -33,7 +33,7 @@ export default async function PropertyDetailPage({
     .from('properties')
     .select(`
       *,
-      property_photos(id, storage_path, display_order),
+      property_photos(id, storage_path, display_order, section),
       add_ons(id, name, description, price, pricing_unit, max_quantity, included_guests, per_person_above)
     `)
     .eq('id', propertyId)
