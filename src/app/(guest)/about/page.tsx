@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 export const metadata = {
-  title: 'About Us | Whole-Tel',
+  title: 'About Us',
+  description: 'Whole-Tel pairs hand-picked all-inclusive hotels with curated local experiences for unforgettable group trips.',
 }
 
 export default function AboutPage() {
@@ -20,15 +21,24 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto py-16 px-4 space-y-6">
         <h2 className="text-2xl font-semibold text-brand-palm">Our Story</h2>
         <p className="text-zinc-600 leading-relaxed">
-          Whole-Tel was born from a simple idea: why book a villa and then spend
-          hours coordinating everything else? Private chefs, boat excursions,
-          nightlife packages, local guides — we curate it all so you can focus
-          on what matters: the experience.
+          Whole-Tel started with a question every group trip planner knows too well:
+          why is it so hard to book one amazing trip for everyone? You find the
+          perfect hotel, then spend weeks coordinating restaurants, activities,
+          transportation, and a dozen group chats that never reach consensus.
         </p>
         <p className="text-zinc-600 leading-relaxed">
-          Our villas are handpicked for groups who want more than a vacation —
-          they want a trip worth talking about. Every property comes with a menu
-          of curated local add-ons you won&apos;t find on Airbnb.
+          We built Whole-Tel to fix that. We hand-pick all-inclusive hotels made
+          for groups -- bachelor and bachelorette weekends, corporate retreats,
+          family reunions, friend getaways -- and pair each property with curated
+          local experiences you can add in a single booking. Private chefs, yacht
+          tours, surf lessons, VIP nightlife -- it&apos;s all there. One booking,
+          one crew, one unforgettable trip.
+        </p>
+        <p className="text-zinc-600 leading-relaxed">
+          Every Whole-Tel property is vetted for group travel: enough bedrooms for
+          the whole crew, kitchens stocked for late-night snacks, pools that
+          actually fit your group, and the kind of spaces where memories happen
+          naturally. We handle the logistics so you can focus on being there.
         </p>
       </section>
 
@@ -41,22 +51,22 @@ export default function AboutPage() {
           <div className="space-y-2">
             <h3 className="font-medium text-zinc-900">Cabo San Lucas</h3>
             <p className="text-sm text-zinc-600">
-              Sun-drenched coastline meets world-class nightlife. Perfect for
-              groups who want adventure by day and energy by night.
+              Sun-drenched coastline meets world-class dining. Perfect for
+              groups who want adventure by day and relaxation by night.
             </p>
           </div>
           <div className="space-y-2">
             <h3 className="font-medium text-zinc-900">Puerto Vallarta</h3>
             <p className="text-sm text-zinc-600">
               Charming cobblestone streets, jungle excursions, and beachfront
-              dining. A laid-back vibe with plenty to explore.
+              dining. A laid-back vibe with plenty to explore together.
             </p>
           </div>
           <div className="space-y-2">
             <h3 className="font-medium text-zinc-900">Miami</h3>
             <p className="text-sm text-zinc-600">
-              Art Deco glamour, boat parties, and rooftop cocktails. The
-              ultimate playground for groups who love the city scene.
+              Art Deco glamour, waterfront properties, and rooftop cocktails.
+              The ultimate playground for groups who love the city scene.
             </p>
           </div>
         </div>
@@ -68,10 +78,10 @@ export default function AboutPage() {
           Ready to plan your trip?
         </h2>
         <p className="mt-2 text-zinc-600">
-          Browse our handpicked villas and start building your perfect getaway.
+          Browse our hand-picked hotels and start building your perfect group getaway.
         </p>
         <Button asChild className="mt-6 bg-brand-teal text-white hover:bg-brand-teal/90">
-          <Link href="/properties">Browse Properties</Link>
+          <Link href="/properties">Browse Hotels</Link>
         </Button>
       </section>
     </div>

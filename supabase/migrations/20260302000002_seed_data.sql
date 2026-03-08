@@ -45,7 +45,7 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- CABO SAN LUCAS: Villa Paraiso
+-- CABO SAN LUCAS: Cabo San Lucas Casa Paraiso
 -- ============================================================
 INSERT INTO properties (
   id, owner_id, name, description, location, address,
@@ -54,13 +54,13 @@ INSERT INTO properties (
 ) VALUES (
   'a1000000-0000-0000-0000-000000000001',
   '00000000-0000-0000-0000-000000000001',
-  'Villa Paraiso',
-  'Your private paradise perched above the Sea of Cortez. Villa Paraiso is where the Baja sun hits different — think infinity pool views that stretch to the horizon, eight bathrooms for the whole squad, and a rooftop terrace made for golden hour. This is not a hotel. This is your house for the week, and it happens to be the best house in Cabo.',
+  'Cabo San Lucas Casa Paraiso',
+  'Your private paradise perched above the Sea of Cortez. Casa Paraiso is where the Baja sun hits different -- infinity pool views that stretch to the horizon, seven bathrooms for the whole crew, and a rooftop terrace made for golden hour. All-inclusive group travel the way it should be: everything handled, nothing to worry about.',
   'Cabo San Lucas',
   'Pedregal de Cabo San Lucas, Cabo San Lucas, BCS, Mexico',
   6, 7, 16, 1200.00, 350.00,
   '["Infinity pool", "Hot tub", "Rooftop terrace", "Ocean view", "Full kitchen", "BBQ grill", "WiFi", "Air conditioning", "Parking (4 cars)", "Outdoor dining area", "Fire pit", "Smart TV", "Washer/dryer", "Beach towels & gear"]'::jsonb,
-  'No smoking indoors. Parties welcome — just be respectful of the villa. Pool hours: sunrise to midnight. All guests must be registered.',
+  'No smoking indoors. Pool hours: sunrise to midnight. All guests must be registered.',
   '3:00 PM',
   '11:00 AM'
 )
@@ -77,7 +77,7 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 (
   'a1000000-0000-0000-0000-000000000001',
   'Private Chef Dinner',
-  'A professional Cabo chef comes to the villa and prepares a four-course dinner with locally sourced ingredients. Think fresh-caught mahi-mahi, tableside guacamole, and churros with homemade cajeta. You just show up hungry.',
+  'A professional Cabo chef comes to the property and prepares a four-course dinner with locally sourced ingredients. Think fresh-caught mahi-mahi, tableside guacamole, and churros with homemade cajeta. You just show up hungry.',
   80.00,
   'per_person'
 ),
@@ -91,13 +91,13 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 (
   'a1000000-0000-0000-0000-000000000001',
   'Airport Transfer (Round Trip)',
-  'Door-to-door luxury SUV transfer between SJD airport and Villa Paraiso. Air-conditioned, punctual, no haggling with taxi drivers after a red-eye. Driver monitors your flight status.',
+  'Door-to-door luxury SUV transfer between SJD airport and Casa Paraiso. Air-conditioned, punctual, no haggling with taxi drivers after a red-eye. Driver monitors your flight status.',
   200.00,
   'per_booking'
 );
 
 -- ============================================================
--- PUERTO VALLARTA: Casa del Sol
+-- PUERTO VALLARTA: Puerto Vallarta Casa del Sol
 -- ============================================================
 INSERT INTO properties (
   id, owner_id, name, description, location, address,
@@ -106,8 +106,8 @@ INSERT INTO properties (
 ) VALUES (
   'b2000000-0000-0000-0000-000000000002',
   '00000000-0000-0000-0000-000000000001',
-  'Casa del Sol',
-  'Tucked into the lush hills of Zona Romántica, Casa del Sol is Puerto Vallarta''s best-kept secret for groups who want culture with their chill. Wake up to jungle birds, stumble downhill to cobblestone streets and the best tacos of your life, then come back to a private pool with nobody else in it. Five bedrooms, old-town soul, new-world comfort.',
+  'Puerto Vallarta Casa del Sol',
+  'Tucked into the lush hills of Zona Romantica, Casa del Sol is Puerto Vallarta''s best-kept secret for groups who want culture with their chill. Wake up to jungle birds, stumble downhill to cobblestone streets and the best tacos of your life, then come back to a private pool with nobody else in it. Five bedrooms, old-town soul, all-inclusive comfort.',
   'Puerto Vallarta',
   'Zona Romántica, Puerto Vallarta, Jalisco, Mexico',
   5, 5, 12, 800.00, 250.00,
@@ -129,7 +129,7 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 (
   'b2000000-0000-0000-0000-000000000002',
   'Mariachi Band (2-Hour Set)',
-  'A five-piece mariachi band comes to Casa del Sol and plays for two hours straight. They know all the classics and they''re genuinely excellent. This is the thing your group will talk about for years. Book early — weekends fill fast.',
+  'A five-piece mariachi band comes to your property and plays for two hours straight. They know all the classics and they''re genuinely excellent. This is the thing your group will talk about for years. Book early -- weekends fill fast.',
   400.00,
   'per_booking'
 ),
@@ -149,7 +149,7 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 );
 
 -- ============================================================
--- MIAMI: The Palms Estate
+-- MIAMI: Miami South Beach Azure
 -- ============================================================
 INSERT INTO properties (
   id, owner_id, name, description, location, address,
@@ -158,13 +158,13 @@ INSERT INTO properties (
 ) VALUES (
   'c3000000-0000-0000-0000-000000000003',
   '00000000-0000-0000-0000-000000000001',
-  'The Palms Estate',
-  'Eight bedrooms. Nine bathrooms. A pool that glows at night. The Palms Estate is Miami at its most unapologetically extra — waterfront in Miami Beach, walking distance to the strip, with enough private space that you never have to leave if you don''t want to. For the group that wants Miami to come to them.',
+  'Miami South Beach Azure',
+  'Eight bedrooms. Nine bathrooms. A pool that glows at night. South Beach Azure is Miami at its most unapologetically stylish -- waterfront in Miami Beach, walking distance to the strip, with enough private space that you never have to leave if you don''t want to. All-inclusive group travel for the crew that wants Miami to come to them.',
   'Miami',
   'Miami Beach, Miami, FL 33139',
   8, 9, 20, 2500.00, 600.00,
   '["Waterfront pool", "Hot tub", "Private dock", "Outdoor kitchen", "Fire pit", "Home theater", "Game room", "WiFi", "Air conditioning", "Parking (6 cars)", "BBQ grill", "Smart TVs (all rooms)", "Washer/dryer", "Gym", "Towels & beach chairs"]'::jsonb,
-  'No smoking indoors. Pool parties welcome with advance notice. All guests on guest list required for insurance purposes. No outside catering without approval.',
+  'No smoking indoors. Events welcome with advance notice. All guests on guest list required for insurance purposes. No outside catering without approval.',
   '4:00 PM',
   '11:00 AM'
 )
@@ -181,21 +181,21 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 (
   'c3000000-0000-0000-0000-000000000003',
   'Private DJ (4-Hour Set)',
-  'A professional Miami DJ sets up at The Palms Estate and plays a four-hour set tailored to your group. Full sound system included. They''ll read the room from deep house to hip-hop to whatever the group decides at 1 AM.',
+  'A professional Miami DJ sets up at South Beach Azure and plays a four-hour set tailored to your group. Full sound system included. They''ll read the room from deep house to hip-hop to whatever the group decides at 1 AM.',
   800.00,
   'per_booking'
 ),
 (
   'c3000000-0000-0000-0000-000000000003',
   'Catered Pool Party',
-  'A full catering crew arrives with a setup: charcuterie boards, passed appetizers, a live grill station, and dessert. Serves up to 20 guests. You swim, they cook. They clean up too.',
+  'A full catering crew arrives with a setup: charcuterie boards, passed appetizers, a live grill station, and dessert. Serves up to 20 guests. You relax, they cook. They clean up too.',
   120.00,
   'per_person'
 ),
 (
   'c3000000-0000-0000-0000-000000000003',
   'Yacht Day Trip (Full Day)',
-  'A 65-foot luxury motor yacht for your entire group, all day. Captain and crew. Open bar. Water toys — jet ski, paddleboards, snorkel gear. Departs from the private dock at The Palms Estate. This is the Miami day.',
+  'A 65-foot luxury motor yacht for your entire group, all day. Captain and crew. Open bar. Water toys -- jet ski, paddleboards, snorkel gear. Departs from the private dock at South Beach Azure. This is the Miami day.',
   200.00,
   'per_person'
 );
@@ -208,4 +208,4 @@ INSERT INTO add_ons (property_id, name, description, price, pricing_unit) VALUES
 -- LEFT JOIN add_ons a ON a.property_id = p.id
 -- GROUP BY p.id, p.name, p.location
 -- ORDER BY p.nightly_rate;
--- Expected: Casa del Sol/4, Villa Paraiso/4, The Palms Estate/4
+-- Expected: Puerto Vallarta Casa del Sol/4, Cabo San Lucas Casa Paraiso/4, Miami South Beach Azure/4

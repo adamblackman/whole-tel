@@ -128,7 +128,7 @@ export default async function PropertyListingPage({
           {property.description && (
             <>
               <div>
-                <h2 className="text-xl font-semibold mb-3">About this villa</h2>
+                <h2 className="text-xl font-semibold mb-3">About this property</h2>
                 <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
                   {property.description}
                 </p>

@@ -6,7 +6,7 @@ import { DestinationFilter } from '@/components/browse/DestinationFilter'
 import { PropertyListingCard } from '@/components/browse/PropertyListingCard'
 
 export const metadata: Metadata = {
-  title: 'Browse Villas — Whole-Tel',
+  title: 'Browse Hotels',
 }
 
 const VALID_DESTINATIONS = ['Cabo San Lucas', 'Puerto Vallarta', 'Miami']
@@ -45,7 +45,7 @@ export default async function PropertiesPage({
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">Browse Party Villas</h1>
+      <h1 className="text-3xl font-bold mb-2">Browse Hotels</h1>
       <p className="text-muted-foreground mb-6">
         Find your perfect getaway in Cabo, Puerto Vallarta, or Miami
       </p>
@@ -57,13 +57,13 @@ export default async function PropertiesPage({
       {propertyList.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-muted-foreground text-lg mb-4">
-            No villas found for this destination.
+            No hotels found for this destination.
           </p>
           <Link
             href="/properties"
             className="text-brand-teal hover:underline font-medium"
           >
-            Clear filter and view all villas
+            Clear filter and view all hotels
           </Link>
         </div>
       ) : (

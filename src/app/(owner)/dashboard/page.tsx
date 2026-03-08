@@ -35,7 +35,7 @@ export default async function DashboardPage() {
       {!properties || properties.length === 0 ? (
         <div className="text-center py-16 border-2 border-dashed rounded-lg">
           <p className="text-muted-foreground mb-4">
-            You haven&apos;t listed any properties yet. Add your first villa to get started.
+            You haven&apos;t listed any properties yet. Add your first property to get started.
           </p>
           <Button asChild>
             <Link href="/dashboard/properties/new">

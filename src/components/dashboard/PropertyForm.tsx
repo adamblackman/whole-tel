@@ -77,7 +77,7 @@ export function PropertyForm({ action, initialData, submitLabel }: PropertyFormP
           id="name"
           name="name"
           defaultValue={initialData?.name}
-          placeholder="Villa Paraiso"
+          placeholder="Puerto Vallarta Casa del Mar"
           required
         />
         {state.errors?.name && (
@@ -239,7 +239,7 @@ export function PropertyForm({ action, initialData, submitLabel }: PropertyFormP
           name="description"
           rows={4}
           defaultValue={initialData?.description ?? ''}
-          placeholder="Describe your villa..."
+          placeholder="Describe your property..."
         />
         {state.errors?.description && (
           <p className="text-sm text-destructive">{state.errors.description[0]}</p>
