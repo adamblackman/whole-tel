@@ -1,230 +1,208 @@
-# Feature Research
+# Feature Landscape: Whole-Tel v1.1 Enhancements
 
-**Domain:** Party villa / luxury vacation rental booking platform
-**Researched:** 2026-03-02
-**Confidence:** MEDIUM — based on competitor analysis, industry research, and direct review of comparable sites (Sun Cabo, Cabo Platinum, Airbnb 2025 release notes). Feature categorizations draw on observable patterns across multiple sources.
-
----
-
-## Feature Landscape
-
-### Table Stakes (Users Expect These)
-
-Features users assume exist. Missing these = product feels incomplete or untrustworthy.
-
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Property listing page with photo gallery | Every rental site has this; without it guests can't evaluate the property | LOW | Full-screen hero photo + scrollable gallery. Min 8-10 photos per property. Professional quality critical for luxury positioning. |
-| Availability calendar | Guests need to know if dates are open before committing time to the booking | LOW | Block dates, show booked/available visually. Must update on booking confirmation. |
-| Date picker in booking flow | Industry standard entry point for any rental | LOW | Check-in/check-out date range picker. Show pricing for selected range. |
-| Guest count selector | Villas have occupancy limits; guests need to know if their group fits | LOW | Dropdown or stepper. Show occupancy max on listing. |
-| Total price breakdown before payment | Guests have been burned by hidden fees; expect full transparency | LOW | Show nightly rate x nights + cleaning fee + any add-ons + CC fee if applicable before checkout. |
-| Property amenities list | Guests use amenities to qualify properties (pool, beach access, AC, etc.) | LOW | Structured list with icons. Required for filtering. |
-| Property location info | Guests need to understand where the villa is — neighborhood, proximity to beach/airport | LOW | Area description + map embed (Google Maps). No exact address until confirmed booking. |
-| Max occupancy display | Group travel requires knowing how many people fit | LOW | Bedrooms + bathrooms + guest count prominently shown. |
-| Mobile-responsive design | Majority of browsing happens on phones; non-responsive = users leave | MEDIUM | Full booking flow must work on mobile. Airbnb-level polish. |
-| Booking confirmation email | Guests expect immediate proof of booking | LOW | Automated transactional email via Supabase + Resend or similar. Include booking details, dates, total paid. |
-| Secure payment processing | Guests won't enter CC details on an untrusted-looking form | MEDIUM | Stripe Checkout handles this — guests see Stripe's branded UI, not a custom form. Trust signal. |
-| Contact / inquiry option | Not every booking happens via instant checkout; some guests want to ask questions first | LOW | Contact form or email link. For complex group bookings, direct contact builds trust. |
-| Homepage with property browsing | Guests land here and need to see what's available to get excited | MEDIUM | Hero section, featured properties grid, destination filtering. |
-| Property search / filter by destination | With multiple properties across Cabo/PV/Miami, guests filter by where they want to go | LOW | Destination dropdown or filter. Expand to bedroom count, price range later. |
-| FAQ / cancellation policy display | Guests want to know refund rules before booking; missing = trust killer | LOW | Per-property cancellation terms + site-wide FAQ page. |
-| Owner listing management | Owners need to add/edit property details, photos, pricing, availability | HIGH | CRUD for properties. Photo upload to Supabase Storage. Calendar management. |
-| Guest account / booking history | Return guests expect to see their past bookings and upcoming stays | MEDIUM | Supabase Auth guest accounts. Booking history page. No complex state needed. |
-| Owner account / dashboard | Owners need separate login and view of their properties | MEDIUM | Role-based auth. Owner sees only their properties and bookings. |
+**Domain:** Boutique hotel booking platform -- owner management tools, photo management, pricing tiers, guest invites
+**Researched:** 2026-03-07
+**Focus:** NEW features only (v1.0 property listing, booking flow, auth, Stripe payment already built)
 
 ---
 
-### Differentiators (Competitive Advantage)
+## Table Stakes
 
-Features that set the product apart from Airbnb/VRBO for the party villa niche.
+Features users expect from a property booking platform at this maturity level. Missing = product feels incomplete or amateurish.
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Per-property customizable add-on experiences | Cabo gets boat tours; Miami gets club packages; PV gets private chefs. No generic catalog — each villa's add-ons reflect what's actually available locally. This is the core differentiator vs Airbnb where guests have to coordinate extras themselves. | HIGH | Add-ons linked to a specific property, not a global catalog. Each add-on has name, description, price, unit (per person / per booking), optional max quantity. Guest selects add-ons during booking flow before checkout. |
-| Per-person cost calculator | Party groups always think in "how much per person?" not total. Showing this prominently removes a mental step and makes pricing feel accessible. No competitor does this at the listing level. | LOW | Total cost / guest count = per person. Update dynamically as dates + add-ons change. Show prominently on booking summary. |
-| Party-brand positioning (not generic luxury) | Airbnb is everything. VRBO is family-focused. Whole-Tel is explicitly tropical chill party villas. Guests self-select and show up with the right expectations. | LOW | Copy, photography, brand voice. Not a tech feature — but must be baked into the homepage, listing descriptions, and overall UX. |
-| Curated destination-specific add-ons shown at booking time | Rather than a post-booking concierge call, guests see available experiences during the booking flow and can add them immediately. Reduces coordination overhead for both guest and owner. | MEDIUM | Add-on selector step between date selection and payment. Show add-on cards with photos, descriptions, prices. Support "per person" pricing on add-ons (e.g., boat tour = $80/person x 10 guests). |
-| Dual payment options: CC with fee passthrough + bank transfer | High-ticket villa bookings ($2,000-$15,000+) make guests sensitive to CC fees. Offering ACH/bank transfer lets guests who care about fees avoid them. Neither Airbnb nor VRBO offers this. | MEDIUM | Stripe Checkout supports both. CC fee: present as separate line item (e.g., 3% surcharge). Bank transfer: Stripe ACH (US only). Note: Stripe surcharge rules require careful compliance — charge must be included in submitted amount, not added on top. |
-| Placeholder-first listings that owners fill in | Rather than waiting for owner-generated content to launch, ship with curated placeholder properties for Cabo/PV/Miami. Demonstrates the concept before real inventory exists. | LOW | Admin/owner can update listing content after launch. Placeholder photos and dummy data for initial launch. |
-| Transparent all-in pricing display | Industry problem: guests see low nightly rate, then sticker shock at checkout fees. Whole-Tel shows complete total — nightly subtotal + cleaning + add-ons + CC fee — from the listing page. Builds trust. | LOW | Show full price breakdown on listing page when dates are selected, not just at checkout. |
+| Feature | Why Expected | Complexity | Dependencies on Existing | Notes |
+|---------|--------------|------------|--------------------------|-------|
+| **Multi-photo upload (batch)** | Single-photo upload feels broken -- every competitor supports batch. Owners won't tolerate uploading 30 photos one at a time. | Low | Extends existing `PhotoUploader` component and `getSignedUploadUrl` action. Same signed-URL pattern, just loop over files. | Parallel uploads with progress indicators per file. Limit to ~5 concurrent uploads to avoid browser memory issues. |
+| **Photo ordering (drag-to-reorder)** | Without ordering, hero image is random. First photo is the listing's "cover" -- owners must control it. | Medium | Extends `property_photos.display_order` column (already exists). New `updatePhotoOrder` server action needed. | Use `@dnd-kit/sortable` -- modern, maintained, lightweight (10kB). `react-beautiful-dnd` is officially deprecated by Atlassian. |
+| **Bed configuration** | "5 bedrooms" tells guests nothing. They need to know bed types to plan sleeping arrangements for groups. Standard on Airbnb, Booking.com, VRBO. | Low | New JSONB column on `properties` or new `bed_configurations` table. PropertyForm gets a new section. | Simple repeatable row UI: bed type dropdown (King, Queen, Double, Twin, Bunk) + count stepper. No drag-and-drop needed. |
+| **Expandable booking detail view** | Current booking cards show summary only. Guests need to see add-ons selected, price breakdown, dates, and property details without navigating away. | Low | Extends existing `BookingCard` in bookings page. Needs `booking_add_ons` join query (already typed as `BookingWithDetails`). | Accordion/collapsible pattern with shadcn `Collapsible` or simple state toggle. |
+| **Correct guest count display/editing** | If guest count is wrong on a booking, the per-person cost calculator is meaningless. | Low | Updates `bookings` table `guest_count` field. New server action `updateGuestCount`. | Must recalculate per-person add-on costs when count changes. If booking is already paid, this is display-only (no price change post-payment). |
 
----
+## Differentiators
 
-### Anti-Features (Commonly Requested, Often Problematic)
+Features that set Whole-Tel apart. Not strictly expected at this stage, but add significant value for the group booking use case.
 
-Features that seem good but create complexity without proportional value for v1.
+| Feature | Value Proposition | Complexity | Dependencies on Existing | Notes |
+|---------|-------------------|------------|--------------------------|-------|
+| **Photo sections (Rooms, Common Area, Pool, custom)** | Organized photo tours help guests visualize the property. Airbnb uses AI to auto-categorize into 19 room types. For Whole-Tel, owner-managed sections are simpler and sufficient. Groups care about common areas and sleeping arrangements -- sections let them find what matters. | Medium | New `photo_sections` table (id, property_id, name, display_order). `property_photos` gets `section_id` FK (nullable for uncategorized). | Preset sections: "Rooms", "Common Areas", "Pool & Outdoor", "Kitchen & Dining". Plus custom sections. Owner assigns photos to sections during upload or via management view. Guest-facing gallery groups by section with tabs or scrollable anchors. |
+| **Tiered per-person pricing (property)** | Core to the Whole-Tel model: "$X/night base, +$Y/person/night above N guests." This is how large group properties actually price -- Booking.com calls it "occupancy-based pricing." Without it, pricing is either too expensive for small groups or unprofitable for large ones. | Medium | Extends `properties` table with `extra_guest_rate` (decimal), `extra_guest_threshold` (int). `PricingWidget` calculation logic changes. `createBookingAndCheckout` server-side pricing must match. | Formula: `base_rate + max(0, guest_count - threshold) * extra_guest_rate * nights`. Display in PricingWidget as: "$2,500/night (up to 25 guests) + $100/person/night above 25". Must be calculated server-side in booking action -- never trust client math. |
+| **Tiered experience pricing** | Experiences like "private chef dinner" have a base price for up to X people, then $Y per person above. Current flat per_person/per_booking model can't express this. | Medium | Extends `add_ons` table with `included_guests` (int, nullable) and `extra_person_rate` (decimal, nullable). AddOnForm gets conditional fields. PricingWidget add-on cost calculation changes. | Formula: `base_price + max(0, guest_count - included_guests) * extra_person_rate`. When `included_guests` is null, falls back to current flat pricing. Backward compatible. |
+| **Experience photos** | Experiences with photos convert better. A "sunset yacht cruise" with a photo is far more compelling than text alone. | Low | `add_ons.photo_url` column already exists in the schema but isn't populated via UI. AddOnForm needs photo upload field. Guest-facing `AddOnCard` already handles `photo_url`. | Same signed-URL upload pattern as property photos. Single photo per experience is sufficient (not a gallery). Can reuse `PhotoUploader` pattern but simplified to single-file. |
+| **Guest invite system** | The killer feature for group bookings. Booking organizer invites friends, they can view booking details and potentially see what's planned. Turns a solo booking into a group coordination tool. | High | New `booking_invites` table (id, booking_id, invited_email, invited_user_id nullable, status, token_hash, expires_at, created_at). Email sending (already have Resend integration via `src/lib/email.ts`). | Two invite methods: (1) email invite with secure token link, (2) shareable booking link. Invited user sees booking details (property, dates, guest list) but cannot modify the booking itself. Status flow: pending -> accepted / declined. Security: hashed tokens in DB, expiration. |
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| Real-time guest-owner chat | Guests want to ask questions; owners want to vet guests | Creates support burden, notification infrastructure, and moderation complexity. Airbnb has a team managing this. For v1, email is sufficient. | Contact form on listing page routes to adam@whole-tel.com. Owner email shown post-booking. Add messaging in v2 once volume justifies it. |
-| Reviews and ratings system | Social proof drives bookings | Requires two-sided moderation, fake review prevention, and handling negative reviews. Before you have real guests, you have no reviews. Placeholder reviews create trust issues if they look fake. | Curated testimonials section on homepage (manually controlled). Add real review system in v2 after bookings happen. |
-| Stripe Connect / owner payouts | Owners naturally want their money going directly to them | Stripe Connect requires significant compliance, KYC for each owner, and complex fee splitting. For a small portfolio (Cabo/PV/Miami), manual payouts are totally viable. | All payments to Whole-Tel Stripe account. Manual owner payouts via bank transfer. Revisit Stripe Connect when >10 active owners. |
-| Individual payment splitting (each guest pays their share) | Groups of 10 don't want one person fronting the cost | Technically complex — requires Stripe Payment Links per-person, tracking partial payments, and handling cases where not everyone pays. High support overhead when it breaks. | Show per-person cost calculator prominently. One person books and pays; they handle splitting with their group via Venmo/Zelle. Clear UX about this expectation. |
-| Dynamic pricing (demand-based) | Maximize revenue during peak seasons | Requires pricing model, market data, and ongoing tuning. Premature optimization for a platform that doesn't have booking volume data yet. | Owner sets pricing manually in the dashboard. Static pricing with ability for owner to create date-based rate overrides in v2. |
-| Channel manager (list on Airbnb/VRBO too) | Broader reach, more bookings | For a brand-differentiated platform, listing on Airbnb commoditizes the product. Channel sync also requires iCal or API integration, doubling-booking risk, and fee complications. | Direct booking only for v1. The platform IS the brand — keep guests on Whole-Tel. |
-| Mobile app (iOS/Android) | Native app feels premium | App Store approval delays, dual codebase maintenance, and push notification infrastructure for a v1 platform that hasn't validated its booking volume. | Mobile-responsive web app with PWA potential. Airbnb started as web-first. Ship and validate before committing to native. |
-| AI-powered recommendation engine | "Personalize which villas guests see" | Requires behavioral data and ML infrastructure. With 3 properties at launch, every guest sees every property anyway. | Manual featured properties curation on homepage. Simple destination filter handles discovery for small catalog. Add recommendations in v2+ when catalog grows. |
-| Multi-currency support | International guests | Adds complexity to pricing display, Stripe currency routing, and tax considerations. Most bookings will be US-based guests at launch (Cabo, PV, Miami target market is Americans). | USD only at launch. Stripe handles international cards automatically — guests pay in USD. Add currency display in v2 if international bookings materialize. |
-| Instant automated refunds | Feels like better UX | Villa refund policies are complex (cancellation windows, damage deposits). Automated refunds create fraud exposure and override edge-case policies. | Manual refund process via Stripe dashboard with clear cancellation policy displayed pre-booking. Stripe Checkout captures payment; owner/admin initiates refund manually. |
+## Anti-Features
 
----
+Features to explicitly NOT build in v1.1. Each has been considered and rejected for good reason.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **AI-powered photo categorization** | Airbnb built this with a massive ML pipeline across millions of listings. Whole-Tel has a handful of properties. Owner-managed sections are simpler, more accurate for small scale, and zero infrastructure cost. | Owner manually assigns photos to sections during upload. Preset section names cover 90% of cases. |
+| **Individual payment splitting** | PROJECT.md explicitly defers this. Stripe Connect complexity, per-person checkout flows, partial refund handling -- massive scope. | Per-person cost calculator (already built) shows "your share." Venmo/Zelle between friends handles the rest. |
+| **Guest add-on customization per invitee** | Each invited guest choosing their own add-ons creates order amendment complexity, partial payment flows, and Stripe session management headaches. | Booking organizer selects add-ons for the whole group. Invited guests can view but not modify. |
+| **Drag-and-drop photo sections** | Reordering photos within sections is valuable. Reordering the sections themselves adds complexity for minimal value -- section order is predictable (Rooms first, then common areas). | Fixed section display order based on preset priority. Custom sections appear at the end. |
+| **Real-time collaborative booking editing** | WebSocket infrastructure, conflict resolution, operational transforms -- way out of scope. | Single organizer edits. Invited guests are read-only viewers of booking details. |
+| **Photo cropping/editing in browser** | Canvas manipulation, aspect ratio management, quality loss -- complex client-side work for marginal value. | Accept photos as-is. Use `object-cover` CSS for consistent display. Recommend photo guidelines to owners. |
+| **Guest count changes post-payment** | Changing guest count after Stripe payment means recalculating per-person add-ons, potentially issuing partial refunds or collecting additional payment. Enormous complexity. | Guest count is locked after payment. Display per-person cost as informational. If group size changes, contact support. |
 
 ## Feature Dependencies
 
 ```
-Guest Auth (Supabase)
-    └──required by──> Booking Flow
-                          └──required by──> Booking History (guest account)
-                          └──required by──> Add-On Selection (attached to booking)
-                          └──required by──> Payment (Stripe Checkout session with booking ID)
+Batch Photo Upload -----> Photo Ordering (reorder needs multiple photos)
+                    \
+                     +--> Photo Sections (assign to section needs photos)
 
-Owner Auth (Supabase roles)
-    └──required by──> Owner Dashboard
-                          └──required by──> Property CRUD (create/edit listings)
-                                                └──required by──> Add-On Management (per-property add-ons)
-                                                └──required by──> Availability Calendar (block dates)
-                                                └──required by──> Booking Visibility (owner sees their bookings)
+Photo Sections ---------> Section-grouped Gallery (guest-facing display)
 
-Property Listing (database record)
-    └──required by──> Property Page (display)
-    └──required by──> Availability Calendar (tied to property)
-    └──required by──> Add-Ons Catalog (per-property)
-    └──required by──> Booking Flow (which property is being booked)
+Tiered Property Pricing -> PricingWidget Update -> Booking Action Update
+                                                    (server-side calc must match)
 
-Availability Calendar
-    └──required by──> Date Picker (show available dates)
-    └──required by──> Booking Confirmation (marks dates as booked)
+Tiered Experience Pricing -> AddOnForm Update -> PricingWidget Add-on Calc Update
+                                                  -> Booking Action Update
 
-Add-On Catalog (per-property)
-    └──required by──> Add-On Selection in Booking Flow
-    └──required by──> Checkout Total Calculation (add-on prices summed)
+Experience Photos -------> AddOnForm Photo Upload (independent of other photo work)
 
-Stripe Checkout Session
-    └──required by──> Booking Confirmation (webhook confirms payment)
-    └──required by──> Booking Record Creation (happens after payment success)
+Guest Invite System -----> Email Integration (already exists via Resend)
+                     \---> Booking Detail View (invitees need to see details)
+                      \--> Auth Flow (invited user may not have account yet)
 
-Per-Person Calculator ──enhances──> Booking Flow (no dependency, pure display logic)
-Total Price Display ──enhances──> Property Page (no dependency, computed from available data)
+Bed Configuration -------> PropertyForm Update (independent, no dependencies)
+
+Expandable Booking Detail -> Booking Query Update (join booking_add_ons)
+
+Rebrand -----------------> All UI copy changes (independent, can be done in parallel)
 ```
 
-### Dependency Notes
+## MVP Recommendation
 
-- **Booking Flow requires Guest Auth:** Guests must be logged in (or create account) before completing a booking. This prevents orphaned bookings with no contact info.
-- **Add-On Management requires Property CRUD:** Add-ons are children of properties. You can't manage add-ons until property records exist.
-- **Stripe Checkout requires Booking Record:** Create a pending booking record first, pass its ID to Stripe as metadata, then confirm via webhook. Don't create the booking after payment — create it before, mark as pending, confirm on webhook.
-- **Availability Calendar requires Booking Confirmation:** Calendar blocking only happens after Stripe webhook confirms payment. Prevents double-booking if user abandons checkout.
-- **Per-Person Calculator has no blocking dependencies:** Pure frontend math. Can be built at any time.
+### Phase 1: Foundation (do first -- unblocks everything else)
 
----
+1. **Rebrand** -- Copy/UI changes across site. Independent work, can parallelize with everything.
+2. **Bed configuration** -- Simple schema + form addition. Low risk, immediate value, no dependencies.
+3. **Batch photo upload** -- Unblocks photo ordering and sections. Core owner workflow improvement.
+4. **Experience photos** -- Quick win, `photo_url` column already exists in schema.
 
-## MVP Definition
+### Phase 2: Photo Management + Pricing
 
-### Launch With (v1)
+5. **Photo ordering (drag-to-reorder)** -- Requires batch upload to be useful. Use `@dnd-kit/sortable`.
+6. **Photo sections** -- Requires photos to exist. Owner assigns, guest gallery groups by section.
+7. **Tiered property pricing** -- Schema change + PricingWidget + booking action update. Medium complexity but high business value.
+8. **Tiered experience pricing** -- Same pattern as property pricing tiers. Do together to share the pricing logic patterns.
 
-Minimum viable product — what's needed to take real bookings and validate demand.
+### Phase 3: Booking Enhancements
 
-- [ ] Homepage with hero, brand story, featured properties, destination filter — establishes trust and brand
-- [ ] Property listing pages (photo gallery, amenities, calendar, add-ons, pricing) — the sales page for each villa
-- [ ] Availability calendar (date picker that shows open dates) — prevents invalid bookings
-- [ ] Booking flow: dates → guest count → add-on selection → price summary → payment — the core transaction
-- [ ] Per-person cost calculator on booking summary — core differentiator, low complexity
-- [ ] Stripe Checkout with CC fee option and bank transfer option — required to take money
-- [ ] Booking confirmation email to guest — bare minimum post-booking communication
-- [ ] Guest auth (Supabase) with booking history — guests can log in and see their bookings
-- [ ] Owner auth (separate role) with property management dashboard — owners can manage listings
-- [ ] Per-property add-on management (CRUD) — owners configure their unique experiences
-- [ ] Photo upload for properties (Supabase Storage) — owner-managed property photos
-- [ ] Placeholder properties for Cabo, Puerto Vallarta, Miami — launch with real-looking content
+9. **Expandable booking detail view** -- Low complexity, improves guest experience.
+10. **Guest count display/editing** -- Quick fix alongside detail view.
+11. **Guest invite system** -- Highest complexity feature. Needs email tokens, new tables, invite acceptance flow, possibly signup-during-accept flow. Do last because it has the most unknowns.
 
-### Add After Validation (v1.x)
+**Defer to v1.2:** Guest invite system polish (notifications, reminders, decline handling, RSVP tracking) -- get basic invite/accept working first, iterate later.
 
-Features to add once first bookings are happening and patterns emerge.
+## Implementation Notes
 
-- [ ] Email inquiry form on listing page — once bookings start, some guests will have questions pre-booking
-- [ ] Owner booking notifications (email when new booking comes in) — owners need to know
-- [ ] Cancellation policy display per property — reduces support requests
-- [ ] Property search with more filters (bedrooms, price range, amenities) — once catalog grows beyond 3 properties
-- [ ] Owner availability blocking (mark dates as unavailable without a booking) — maintenance windows, owner personal use
+### Batch Photo Upload
 
-### Future Consideration (v2+)
+The existing signed-URL pattern (`getSignedUploadUrl` -> browser upload -> `savePhotoRecord`) is correct and should be preserved. For batch:
+- Accept `multiple` attribute on file input
+- Generate signed URLs in parallel (one per file via `Promise.all`)
+- Upload files concurrently with a limit of 3-5 simultaneous uploads
+- Show per-file progress with status indicators (pending/uploading/done/error)
+- Call `savePhotoRecord` for each successful upload with incrementing `display_order`
+- Supabase Storage does not support batch upload -- must loop. This is confirmed by Supabase community discussions.
 
-Features to defer until product-market fit is established.
+### Photo Ordering with dnd-kit
 
-- [ ] Reviews and ratings — requires real bookings first; placeholder reviews look fake
-- [ ] Real-time guest-owner messaging — high infrastructure cost, low v1 value
-- [ ] Stripe Connect / owner payouts — once more than ~10 active owners
-- [ ] Dynamic pricing / seasonal rate overrides — once booking volume provides data
-- [ ] Wishlists / saved properties — nice for returning users, low priority until repeat booking rate is known
-- [ ] Referral program — premature before baseline conversion is established
-- [ ] Multi-language support — validate US market first
+Use `@dnd-kit/core` + `@dnd-kit/sortable` packages. Key pieces:
+- `SortableContext` wraps the photo grid
+- `useSortable` hook on each photo item
+- `arrayMove` utility for reordering the array on drag end
+- On drag end, compute new `display_order` values and batch update via a single server action `reorderPhotos(propertyId, orderedIds[])`
+- Touch support built in (important for mobile owner management)
 
----
+### Tiered Pricing Calculation
 
-## Feature Prioritization Matrix
+Server-side formula (in `createBookingAndCheckout`):
+```
+nightlyCost = property.nightly_rate * nights
+extraGuestCost = max(0, guestCount - property.extra_guest_threshold) * property.extra_guest_rate * nights
+subtotal = nightlyCost + extraGuestCost + cleaningFee
+```
+Client-side mirror in `PricingWidget` for preview only (never authoritative). Both must produce identical results -- extract shared calculation logic into a pure function in `src/lib/pricing.ts`.
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Property listing page (photos, details, amenities) | HIGH | LOW | P1 |
-| Date picker + availability calendar | HIGH | LOW | P1 |
-| Add-on selection in booking flow | HIGH | MEDIUM | P1 |
-| Per-person cost calculator | HIGH | LOW | P1 |
-| Stripe Checkout (CC + bank transfer) | HIGH | MEDIUM | P1 |
-| Homepage with featured properties | HIGH | MEDIUM | P1 |
-| Guest auth + booking history | HIGH | MEDIUM | P1 |
-| Owner dashboard + property management | HIGH | HIGH | P1 |
-| Booking confirmation email | HIGH | LOW | P1 |
-| Per-property add-on CRUD (owner side) | HIGH | MEDIUM | P1 |
-| Photo upload (Supabase Storage) | HIGH | LOW | P1 |
-| Mobile-responsive design | HIGH | MEDIUM | P1 |
-| Total price transparency (pre-checkout) | MEDIUM | LOW | P1 |
-| Property search / destination filter | MEDIUM | LOW | P1 |
-| FAQ / cancellation policy | MEDIUM | LOW | P2 |
-| Owner availability blocking | MEDIUM | LOW | P2 |
-| Owner new-booking email notification | MEDIUM | LOW | P2 |
-| Property inquiry / contact form | MEDIUM | LOW | P2 |
-| Reviews and ratings | HIGH | HIGH | P3 |
-| Guest-owner messaging | MEDIUM | HIGH | P3 |
-| Wishlists / saved properties | LOW | MEDIUM | P3 |
-| Stripe Connect / owner payouts | HIGH | HIGH | P3 |
-| Dynamic pricing | MEDIUM | HIGH | P3 |
+### Guest Invite System
 
-**Priority key:**
-- P1: Must have for launch
-- P2: Should have, add when possible
-- P3: Nice to have, future consideration
+Database design:
+- `booking_invites` table: `id`, `booking_id`, `inviter_id`, `invited_email`, `invited_user_id` (nullable, set on accept), `status` (pending/accepted/declined), `token_hash` (SHA-256 of raw token), `expires_at`, `created_at`
+- Raw token sent in email link, hashed token stored in DB (same pattern as password reset tokens)
+- Accept flow: `/bookings/invite/[token]` -> verify hash -> if logged in, link user to booking; if not logged in, redirect to signup with return URL
+- RLS: booking owner can INSERT invites; invited user (matched by email) can UPDATE their own invite status
+- Invitees are read-only viewers -- they see property details, dates, guest list, and add-ons but cannot modify anything
 
----
+### Bed Configuration Schema
 
-## Competitor Feature Analysis
+JSONB column on `properties` is simplest (avoids a separate table for a small, property-scoped dataset):
+```json
+{
+  "beds": [
+    { "type": "King", "count": 4 },
+    { "type": "Queen", "count": 2 },
+    { "type": "Bunk", "count": 3 }
+  ]
+}
+```
+Standard bed types: King, Queen, Double, Twin, Bunk. UI is a repeatable row with type dropdown + count stepper + remove button. Total sleeping capacity should display alongside `max_guests`.
 
-| Feature | Airbnb | VRBO | Sun Cabo / Cabo Platinum | Whole-Tel Approach |
-|---------|--------|------|--------------------------|-------------------|
-| Add-on experiences at booking | Post-booking via "Experiences" tab, not integrated | No — manual concierge call post-booking | Post-booking via phone/email with concierge | Integrated at booking time — select add-ons before checkout |
-| Per-person cost display | No — shows total price only | No — shows total price only | No — quotes total only | Show per-person breakdown prominently on booking summary |
-| Payment options | CC only (Stripe + Airbnb wallet) | CC only | Wire transfer or CC via phone | CC (with fee passthrough) + ACH bank transfer via Stripe |
-| Party/group brand positioning | Generic — all trip types | Family-focused | Niche Cabo-specific | Explicitly party villa brand; tropical chill aesthetic |
-| Owner add-on management | Experiences is a separate product, complex to list | No — managed via PMS integrations | Managed offline by concierge team | Owner creates add-ons in their dashboard, per property |
-| Booking flow | 3-step: dates → review → pay | Similar to Airbnb | Inquiry-based, manual | 4-step: dates/guests → add-ons → review → pay (Stripe Checkout) |
-| Total price at listing level | "Total before taxes" shown on hover | Similar | Not shown until inquiry | Show full total (including add-ons + CC fee) when dates selected |
-| Property filtering | Highly granular (50+ filters) | Good filtering | Basic | Destination + bedroom count for v1; expand later |
+### Photo Sections Schema
 
----
+```sql
+-- New table
+CREATE TABLE photo_sections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id UUID REFERENCES properties(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Add nullable FK to existing property_photos
+ALTER TABLE property_photos ADD COLUMN section_id UUID REFERENCES photo_sections(id) ON DELETE SET NULL;
+```
+
+Preset sections seeded on property creation: "Rooms", "Common Areas", "Pool & Outdoor", "Kitchen & Dining". Photos without a section appear in an "Other" group. Guest-facing gallery renders sections as labeled groups with the hero image (display_order = 0) always prominent regardless of section.
+
+## Complexity Budget
+
+| Feature | Schema Changes | New Components | Server Actions | Estimated Effort |
+|---------|---------------|----------------|----------------|-----------------|
+| Rebrand | None | All (copy changes only) | None | 1-2 days |
+| Bed configuration | 1 JSONB column | 1 form section | 1 (in existing property action) | 0.5 day |
+| Batch photo upload | None | 1 (extend PhotoUploader) | None (reuse existing) | 0.5 day |
+| Photo ordering | None | 1 (SortablePhotoGrid) | 1 (reorderPhotos) | 1 day |
+| Photo sections | 1 table + 1 FK column | 2 (SectionManager, SectionGallery) | 2 (assignSection, createSection) | 1.5 days |
+| Tiered property pricing | 2 columns on properties | 1 (extend PricingWidget) | 1 (update booking calc) | 1 day |
+| Tiered experience pricing | 2 columns on add_ons | 1 (extend AddOnForm) | 1 (update booking calc) | 1 day |
+| Experience photos | None (column exists) | 1 (extend AddOnForm) | 1 (experience photo upload) | 0.5 day |
+| Expandable booking detail | None | 1 (BookingDetail accordion) | 1 (fetch booking with add-ons) | 0.5 day |
+| Guest count display/editing | None | 1 (GuestCountEditor) | 1 (updateGuestCount) | 0.5 day |
+| Guest invite system | 1 table (booking_invites) | 3+ (InviteForm, InviteList, AcceptPage) | 3+ (sendInvite, acceptInvite, declineInvite) | 2-3 days |
+
+**Total estimated effort: 10-12 days**
 
 ## Sources
 
-- [Airbnb 2025 Summer Release — Rental Scale-Up](https://www.rentalscaleup.com/airbnb-summer-release-2025/) — MEDIUM confidence (industry analyst coverage)
-- [Sun Cabo Vacations](https://www.suncabo.com/) — HIGH confidence (direct site review)
-- [Cabo Platinum Bachelor Party Villas](https://caboplatinum.com/bachelor-party-villas/) — HIGH confidence (direct site review)
-- [Guesty: Short-term rental upselling](https://www.guesty.com/blog/short-term-rental-upselling-the-untapped-potential-of-your-properties/) — MEDIUM confidence (industry blog)
-- [Hostaway: Short-term rental upsells](https://www.hostaway.com/blog/short-term-rental-upsell/) — MEDIUM confidence (industry blog)
-- [Hostfully: Vacation rental payments guide](https://www.hostfully.com/blog/vacation-rental-payments/) — MEDIUM confidence (vendor blog, verified against Stripe docs)
-- [Booking UX best practices — Ralabs](https://ralabs.org/blog/booking-ux-best-practices/) — LOW confidence (content not fully accessible)
-- [10 best short-term rental platforms 2026 — Touchstay](https://touchstay.com/blog/best-short-term-rental-platforms) — MEDIUM confidence
-- [Stripe surcharge requirements](https://stripe.com/legal/ssa-services-terms) — HIGH confidence (official Stripe terms)
-- [AvantStay: Split vacation rental fairly](https://avantstay.com/blog/split-vacation-rental-fairly/) — MEDIUM confidence (industry practitioner)
+- [Airbnb Photo Categorization Engineering Blog](https://medium.com/airbnb-engineering/categorizing-listing-photos-at-airbnb-f9483f3ab7e3) -- HIGH confidence
+- [Airbnb Photo Tour Setup](https://airbnb.com/resources/hosting-homes/a/how-to-organize-listing-photos-into-a-home-tour-456) -- HIGH confidence
+- [dnd-kit Sortable Documentation](https://docs.dndkit.com/presets/sortable) -- HIGH confidence
+- [dnd-kit Sortable Image Grid Example](https://codesandbox.io/s/dndkit-sortable-image-grid-py6ve) -- HIGH confidence
+- [Booking.com Per-Guest Pricing Models](https://partner.booking.com/en-us/help/channel-manager/availability/understanding-pricing-guest-models) -- HIGH confidence
+- [Cloudbeds Extra Person Fees](https://myfrontdesk.cloudbeds.com/hc/en-us/articles/231646927-Base-Rates-and-Availability-Matrix-How-to-Add-Extra-Person-Fees) -- MEDIUM confidence
+- [Supabase Signed Upload URLs](https://supabase.com/docs/reference/javascript/storage-from-createsigneduploadurl) -- HIGH confidence
+- [Supabase Batch Upload Discussion](https://github.com/orgs/supabase/discussions/6101) -- MEDIUM confidence
+- [Invite Friends UI Pattern](https://ui-patterns.com/patterns/invite-friends) -- MEDIUM confidence
+- [System Design: Inviting Users to a Group](https://medium.com/@itayeylon/system-design-inviting-users-to-a-group-98b1e0967b06) -- MEDIUM confidence
+- [Vacasa Bed Configuration Guide](https://www.vacasa.com/homeowner-guides/best-bed-configuration-for-vacation-rental) -- MEDIUM confidence
+- [Top Drag-and-Drop Libraries for React 2026](https://puckeditor.com/blog/top-5-drag-and-drop-libraries-for-react) -- MEDIUM confidence
+- [react-beautiful-dnd Deprecated (GitHub)](https://github.com/atlassian/react-beautiful-dnd) -- HIGH confidence
 
 ---
 
-*Feature research for: Party villa / luxury vacation rental booking platform (Whole-Tel)*
-*Researched: 2026-03-02*
+*Feature research for: Whole-Tel v1.1 Enhancements*
+*Researched: 2026-03-07*
