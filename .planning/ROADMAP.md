@@ -91,7 +91,10 @@ Plans:
   2. A booking displays the correct guest count, and the guest who made the booking can edit it -- the price recalculates if tiered pricing applies
   3. A guest can invite other users to a booking by entering their email address, and the invited user receives an email with a link to view and accept/decline the invitation
   4. An invited user can accept or decline a booking invitation, and accepted guests appear in the booking's guest list visible to the booking creator
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 11-01-PLAN.md — Foundation + expandable booking details with price breakdown + guest count editing
+- [ ] 11-02-PLAN.md — Invitation system: email template, send/accept/decline actions, invitation page, guest list
 
 ## Progress
 
@@ -112,4 +115,4 @@ Execution: 8 -> (9 || 10) -> 11
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
 | 10. Photo Management | 4/4 | Complete    | 2026-03-08 | - |
-| 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
+| 11. Booking Enhancements | v1.1 | 0/2 | Planning | - |
