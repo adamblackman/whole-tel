@@ -111,5 +111,5 @@ Execution: 8 -> (9 || 10) -> 11
 | 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
-| 10. Photo Management | 4/4 | Complete   | 2026-03-08 | - |
+| 10. Photo Management | 4/4 | Complete    | 2026-03-08 | - |
 | 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
