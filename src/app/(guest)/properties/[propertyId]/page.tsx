@@ -55,7 +55,7 @@ export default async function PropertyListingPage({
     supabase
       .from('properties')
       .select(
-        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
+        `*, property_photos(id, storage_path, display_order, section), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
       )
       .eq('id', propertyId)
       .single(),
@@ -87,6 +87,7 @@ export default async function PropertyListingPage({
     id: p.id,
     url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/property-photos/${p.storage_path}`,
     alt: `${property.name} photo ${idx + 1}`,
+    section: p.section ?? null,
   }))
 
   const amenities = Array.isArray(property.amenities)
