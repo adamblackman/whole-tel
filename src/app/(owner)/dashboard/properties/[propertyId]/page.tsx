@@ -8,7 +8,17 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, Pencil } from 'lucide-react'
+import { ArrowLeft, BedDouble, Pencil } from 'lucide-react'
+import type { BedConfig } from '@/types/database'
+import { DEFAULT_BED_CONFIG } from '@/types/database'
+
+const BED_TYPE_LABELS: Record<keyof BedConfig, string> = {
+  king: 'King',
+  queen: 'Queen',
+  double: 'Double',
+  twin: 'Twin',
+  bunk: 'Bunk',
+}
 
 export default async function PropertyDetailPage({
   params,
@@ -39,6 +49,12 @@ export default async function PropertyDetailPage({
   const amenities = Array.isArray(property.amenities)
     ? (property.amenities as string[])
     : []
+
+  // Bed config with safe default
+  const bedConfig: BedConfig = (property.bed_config as BedConfig) ?? DEFAULT_BED_CONFIG
+  const bedEntries = (Object.entries(bedConfig) as [keyof BedConfig, number][]).filter(
+    ([, count]) => count > 0
+  )
 
   return (
     <div className="max-w-3xl space-y-8">
@@ -103,6 +119,31 @@ export default async function PropertyDetailPage({
             <p className="font-medium">{property.check_out_time}</p>
           </div>
         </div>
+
+        {/* Bed Configuration */}
+        {bedEntries.length > 0 && (
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">Bed Configuration</p>
+            <div className="flex items-center gap-3 flex-wrap text-sm">
+              <BedDouble className="h-4 w-4 text-brand-teal shrink-0" />
+              {bedEntries.map(([type, count]) => (
+                <Badge key={type} variant="secondary">
+                  {count} {BED_TYPE_LABELS[type]}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Per-person surcharge info */}
+        {property.guest_threshold != null && property.per_person_rate != null && (
+          <div className="text-sm">
+            <span className="text-muted-foreground">Per-Person Surcharge</span>
+            <p className="font-medium">
+              ${Number(property.per_person_rate).toLocaleString()}/night/person above {Number(property.guest_threshold)} guests
+            </p>
+          </div>
+        )}
 
         {property.description && (
           <div className="text-sm">

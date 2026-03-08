@@ -9,16 +9,25 @@ interface AddOnCardProps {
     description: string | null
     price: number
     pricing_unit: 'per_person' | 'per_booking'
+    included_guests?: number | null
+    per_person_above?: number | null
   }
 }
 
 export function AddOnCard({ addOn }: AddOnCardProps) {
-  const priceLabel =
-    addOn.pricing_unit === 'per_person'
+  const hasTier = addOn.included_guests != null && addOn.per_person_above != null
+
+  const priceLabel = hasTier
+    ? `$${addOn.price.toLocaleString()}`
+    : addOn.pricing_unit === 'per_person'
       ? `$${addOn.price.toLocaleString()} / person`
       : `$${addOn.price.toLocaleString()} / booking`
 
-  const badgeLabel = addOn.pricing_unit === 'per_person' ? 'Per Person' : 'Per Booking'
+  const badgeLabel = hasTier
+    ? 'Tiered'
+    : addOn.pricing_unit === 'per_person'
+      ? 'Per Person'
+      : 'Per Booking'
 
   return (
     <Card className="flex flex-col h-full">
@@ -38,6 +47,11 @@ export function AddOnCard({ addOn }: AddOnCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-lg font-semibold text-foreground">{priceLabel}</p>
+        {hasTier && (
+          <p className="text-sm text-muted-foreground mt-1">
+            Up to {addOn.included_guests} people included, ${addOn.per_person_above}/person above
+          </p>
+        )}
       </CardContent>
     </Card>
   )

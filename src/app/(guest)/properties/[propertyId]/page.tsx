@@ -6,7 +6,8 @@ import { PhotoGallery } from '@/components/property/PhotoGallery'
 import { AmenityList } from '@/components/property/AmenityList'
 import { AddOnCard } from '@/components/property/AddOnCard'
 import { PricingWidget } from '@/components/property/PricingWidget'
-import type { PricingUnit } from '@/types/database'
+import type { PricingUnit, BedConfig } from '@/types/database'
+import { DEFAULT_BED_CONFIG } from '@/types/database'
 
 interface AddOnRow {
   id: string
@@ -14,6 +15,8 @@ interface AddOnRow {
   description: string | null
   price: number
   pricing_unit: PricingUnit
+  included_guests: number | null
+  per_person_above: number | null
 }
 
 export async function generateMetadata({
@@ -29,7 +32,15 @@ export async function generateMetadata({
     .eq('id', propertyId)
     .single()
   if (!data) return { title: 'Property Not Found' }
-  return { title: `${data.name} in ${data.location} — Whole-Tel` }
+  return { title: `${data.name} in ${data.location} -- Whole-Tel` }
+}
+
+const BED_TYPE_LABELS: Record<keyof BedConfig, string> = {
+  king: 'King',
+  queen: 'Queen',
+  double: 'Double',
+  twin: 'Twin',
+  bunk: 'Bunk',
 }
 
 export default async function PropertyListingPage({
@@ -44,7 +55,7 @@ export default async function PropertyListingPage({
     supabase
       .from('properties')
       .select(
-        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit)`
+        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above)`
       )
       .eq('id', propertyId)
       .single(),
@@ -84,6 +95,12 @@ export default async function PropertyListingPage({
 
   const addOns = (property.add_ons ?? []) as AddOnRow[]
 
+  // Bed config with safe default
+  const bedConfig: BedConfig = (property.bed_config as BedConfig) ?? DEFAULT_BED_CONFIG
+  const bedEntries = (Object.entries(bedConfig) as [keyof BedConfig, number][]).filter(
+    ([, count]) => count > 0
+  )
+
   return (
     <div className="space-y-8">
       {/* Photo Gallery */}
@@ -121,6 +138,21 @@ export default async function PropertyListingPage({
               <span>Up to {property.max_guests} guests</span>
             </div>
           </div>
+
+          {/* Bed configuration */}
+          {bedEntries.length > 0 && (
+            <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
+              <BedDouble className="h-4 w-4 shrink-0" />
+              {bedEntries.map(([type, count], idx) => (
+                <span key={type}>
+                  {count} {BED_TYPE_LABELS[type]}
+                  {idx < bedEntries.length - 1 && (
+                    <span className="ml-3 text-border">|</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
 
           <Separator />
 
@@ -200,8 +232,18 @@ export default async function PropertyListingPage({
             nightlyRate={Number(property.nightly_rate)}
             cleaningFee={Number(property.cleaning_fee)}
             maxGuests={property.max_guests}
+            guestThreshold={property.guest_threshold != null ? Number(property.guest_threshold) : null}
+            perPersonRate={property.per_person_rate != null ? Number(property.per_person_rate) : null}
             disabledDates={disabledDates}
-            addOns={addOns}
+            addOns={addOns.map((a) => ({
+              id: a.id,
+              name: a.name,
+              description: a.description,
+              price: Number(a.price),
+              pricing_unit: a.pricing_unit,
+              includedGuests: a.included_guests != null ? Number(a.included_guests) : null,
+              perPersonAbove: a.per_person_above != null ? Number(a.per_person_above) : null,
+            }))}
             propertyId={propertyId}
           />
         </div>
