@@ -45,7 +45,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Every user-facing page says "Whole-Tel" and "all-inclusive hotels" -- no remaining references to "party villas" in any copy, nav, hero, or footer
   4. The hero section displays the new tagline ("Your next unforgettable group trip starts with a Whole-Tel!")
   5. Browser tab titles, meta descriptions, and Open Graph tags all reflect the Whole-Tel all-inclusive hotel brand
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 08-01-PLAN.md -- Bug fixes: formatCurrency /100 error + auth flow audit and fixes
+- [ ] 08-02-PLAN.md -- Full rebrand: all copy, hero, meta tags, about page, testimonials, seed data
 
 ### Phase 9: Owner Property Tools
 **Goal**: Owners can fully configure their property listing with bed details, street address, and per-person pricing tiers for both properties and experiences
@@ -97,7 +100,7 @@ Execution: 8 -> (9 || 10) -> 11
 | 5. Booking Flow | v1.0 | 3/3 | Complete | 2026-03-05 |
 | 6. Payments | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
-| 8. Fixes and Rebrand | v1.1 | 0/? | Not started | - |
+| 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | v1.1 | 0/? | Not started | - |
 | 10. Photo Management | v1.1 | 0/? | Not started | - |
 | 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
