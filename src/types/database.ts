@@ -10,6 +10,22 @@ export type BookingStatus = 'pending' | 'confirmed' | 'cancelled'
 export type PricingUnit = 'per_person' | 'per_booking'
 export type UserRole = 'guest' | 'owner'
 
+export interface BedConfig {
+  king: number
+  queen: number
+  double: number
+  twin: number
+  bunk: number
+}
+
+export const DEFAULT_BED_CONFIG: BedConfig = {
+  king: 0,
+  queen: 0,
+  double: 0,
+  twin: 0,
+  bunk: 0,
+}
+
 export interface Profile {
   id: string
   email: string
@@ -34,6 +50,9 @@ export interface Property {
   cleaning_fee: number
   amenities: Json
   house_rules: string | null
+  bed_config: BedConfig
+  guest_threshold: number | null
+  per_person_rate: number | null
   check_in_time: string
   check_out_time: string
   created_at: string
@@ -56,6 +75,8 @@ export interface AddOn {
   price: number
   pricing_unit: PricingUnit
   max_quantity: number | null
+  included_guests: number | null
+  per_person_above: number | null
   photo_url: string | null
   created_at: string
   updated_at: string
