@@ -49,17 +49,48 @@ export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabe
   const [uploading, setUploading] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Staged file for upload after creation (when no addOnId yet)
+  const [stagedFile, setStagedFile] = useState<File | null>(null)
+  const [stagedPreview, setStagedPreview] = useState<string | null>(null)
 
   // Close edit mode on successful save, or notify parent of new add-on
   useEffect(() => {
     if (state.message?.includes('successfully')) {
-      if (state.addOnId && onCreated) {
+      if (state.addOnId && propertyId && stagedFile) {
+        // Auto-upload staged photo after creation
+        uploadStagedPhoto(state.addOnId, propertyId, stagedFile).then(() => {
+          onCreated?.(state.addOnId!)
+        })
+      } else if (state.addOnId && onCreated) {
         onCreated(state.addOnId)
       } else if (onCancel) {
         onCancel()
       }
     }
-  }, [state.message, state.addOnId, onCancel, onCreated])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.message, state.addOnId])
+
+  async function uploadStagedPhoto(newAddOnId: string, propId: string, file: File) {
+    setUploading(true)
+    try {
+      const result = await getExperienceUploadUrl(newAddOnId, propId)
+      if ('error' in result) throw new Error(result.error)
+
+      const supabase = createClient()
+      const { error: uploadError } = await supabase.storage
+        .from('property-photos')
+        .uploadToSignedUrl(result.path, result.token, file)
+      if (uploadError) throw uploadError
+
+      await saveExperiencePhoto(newAddOnId, result.path)
+    } catch (err) {
+      setPhotoError(err instanceof Error ? err.message : 'Photo upload failed')
+    } finally {
+      setUploading(false)
+      setStagedFile(null)
+      setStagedPreview(null)
+    }
+  }
 
   const canUploadPhoto = Boolean(addOnId && propertyId)
 
@@ -183,14 +214,63 @@ export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabe
             )}
           </>
         ) : (
-          <button
-            type="button"
-            disabled
-            className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/15 cursor-not-allowed"
-          >
-            <Upload className="h-6 w-6 text-muted-foreground/40 mb-1" />
-            <span className="text-sm text-muted-foreground/40">Upload Photo</span>
-          </button>
+          <>
+            {stagedPreview ? (
+              <div className="relative w-full max-w-xs aspect-video rounded-lg overflow-hidden border">
+                <Image
+                  src={stagedPreview}
+                  alt="Staged photo preview"
+                  fill
+                  className="object-cover"
+                  sizes="320px"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStagedFile(null)
+                    if (stagedPreview) URL.revokeObjectURL(stagedPreview)
+                    setStagedPreview(null)
+                    if (fileInputRef.current) fileInputRef.current.value = ''
+                  }}
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-destructive transition-colors"
+                  aria-label="Remove photo"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer"
+              >
+                <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                <span className="text-sm text-muted-foreground">Upload Photo</span>
+              </button>
+            )}
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                if (file.size > 10 * 1024 * 1024) {
+                  setPhotoError('File must be under 10MB')
+                  return
+                }
+                setStagedFile(file)
+                setStagedPreview(URL.createObjectURL(file))
+                setPhotoError(null)
+              }}
+              className="hidden"
+            />
+
+            {photoError && (
+              <p className="text-sm text-destructive">{photoError}</p>
+            )}
+          </>
         )}
       </div>
 
