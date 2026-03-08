@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 8: Fixes and Rebrand** - Auth bug fixes, formatCurrency fix, and full rebrand from party villas to Whole-Tel all-inclusive hotels
 - [x] **Phase 9: Owner Property Tools** - Bed configuration, location address, tiered per-person pricing for properties and experiences (completed 2026-03-08)
-- [ ] **Phase 10: Photo Management** - Batch upload, drag-to-reorder, photo sections, experience photos, and polished guest gallery
+- [x] **Phase 10: Photo Management** - Batch upload, drag-to-reorder, photo sections, experience photos, and polished guest gallery (completed 2026-03-08)
 - [ ] **Phase 11: Booking Enhancements** - Expandable booking details, guest count editing, and guest invite system
 
 ## Phase Details
@@ -75,7 +75,7 @@ Plans:
   3. An owner can create photo sections (Rooms, Common Area, Pool, or custom names) and assign photos to sections -- sections display as organized groups
   4. An owner can add photos to individual add-on experiences, and those photos display alongside the experience on the property listing
   5. The guest-facing photo gallery displays photos organized by section with a polished, high-quality UI comparable to Airbnb photo tours (use /frontend-design skill for gallery design)
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 Plans:
 - [ ] 10-01-PLAN.md — Migration + server actions + batch upload with progress and section assignment
 - [ ] 10-02-PLAN.md — Experience photo upload in AddOnForm + hero image on AddOnCard
@@ -111,5 +111,5 @@ Execution: 8 -> (9 || 10) -> 11
 | 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
-| 10. Photo Management | 3/4 | In Progress|  | - |
+| 10. Photo Management | 4/4 | Complete   | 2026-03-08 | - |
 | 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
