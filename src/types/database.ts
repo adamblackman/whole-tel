@@ -7,6 +7,7 @@ export type Json =
   | Json[]
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled'
+export type InvitationStatus = 'pending' | 'accepted' | 'declined'
 export type PricingUnit = 'per_person' | 'per_booking'
 export type UserRole = 'guest' | 'owner'
 
@@ -111,6 +112,18 @@ export interface BookingAddOn {
   created_at: string
 }
 
+export interface BookingInvitation {
+  id: string
+  booking_id: string
+  email: string
+  token: string
+  status: InvitationStatus
+  invited_by: string
+  accepted_by: string | null
+  created_at: string
+  updated_at: string
+}
+
 // Joined types for common query patterns
 export interface PropertyWithAddOns extends Property {
   add_ons: AddOn[]
@@ -132,6 +145,7 @@ export interface Database {
       add_ons: { Row: AddOn; Insert: Omit<AddOn, 'id' | 'created_at' | 'updated_at'>; Update: Partial<AddOn> }
       bookings: { Row: Booking; Insert: Omit<Booking, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Booking> }
       booking_add_ons: { Row: BookingAddOn; Insert: Omit<BookingAddOn, 'id' | 'created_at'>; Update: Partial<BookingAddOn> }
+      booking_invitations: { Row: BookingInvitation; Insert: Omit<BookingInvitation, 'id' | 'token' | 'created_at' | 'updated_at'>; Update: Partial<BookingInvitation> }
     }
   }
 }
