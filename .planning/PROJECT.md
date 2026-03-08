@@ -2,28 +2,39 @@
 
 ## What This Is
 
-A vacation villa booking platform — like Airbnb but specifically for large party villas around the world. Property owners list their villas with photos, pricing, and customizable add-on experiences (boat rides, private chefs, alcohol packages). Guests browse properties, book with date selection, customize their trip with add-ons, and pay via Stripe. The brand is tropical chill with a fun party side — relaxed luxury, not Vegas loud.
+A boutique hotel booking platform — Whole-Tel connects groups with hand-picked boutique hotels for unforgettable group getaways. Hotel owners list their properties with detailed room configurations, photos organized by section, pricing with per-person tiers, and customizable add-on experiences. Guests browse properties, book with date selection, invite their group, customize with add-ons, and pay via Stripe.
 
 ## Core Value
 
-Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
+Groups can find, customize, and book a Whole-Tel with unique local add-on experiences and seamless group coordination in a single flow.
 
 ## Requirements
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Property owners can list and manage properties with photos, details, pricing, and add-ons — v1.0
+- ✓ Guests can browse properties by destination — v1.0
+- ✓ Guests can book a property with date selection and add-on customization — v1.0
+- ✓ Guests can pay via Stripe (credit card with fee surcharge) — v1.0
+- ✓ Per-person cost calculator (total ÷ number of guests) — v1.0
+- ✓ Separate auth for guests and property owners — v1.0
+- ✓ Owner dashboard to manage properties and add-ons — v1.0
+- ✓ Full landing page homepage with hero, brand story, featured properties, testimonials — v1.0
 
 ### Active
 
-- [ ] Property owners can list and manage villas with photos, details, pricing, and add-ons
-- [ ] Guests can browse properties by destination
-- [ ] Guests can book a villa with date selection and add-on customization
-- [ ] Guests can pay via Stripe (credit card with fee surcharge, or bank transfer)
-- [ ] Per-person cost calculator (total ÷ number of guests)
-- [ ] Separate auth for guests and property owners
-- [ ] Owner dashboard to manage properties and add-ons
-- [ ] Full landing page homepage with hero, brand story, featured properties, testimonials
+- [ ] Full rebrand from "party villas" to "Whole-Tel" boutique hotels across all copy, UI, and descriptions
+- [ ] Owner: location input with actual address field
+- [ ] Owner: bed configuration (King, Queen, Double, Twin, Bunk with individual counts)
+- [ ] Owner: additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
+- [ ] Owner: multi-photo upload (batch)
+- [ ] Owner: photo ordering/arrangement (drag-to-reorder)
+- [ ] Owner: photo sections (Rooms, Common area, Pool, custom sections)
+- [ ] Owner: tiered experience pricing (up to X people included, $Y per person above X)
+- [ ] Owner: photos on experiences
+- [ ] Bookings: expandable booking detail view
+- [ ] Bookings: guest invite system (add other users to a booking)
+- [ ] Bookings: correct guest count display and editing
 
 ### Out of Scope
 
@@ -33,13 +44,23 @@ Guests can find, customize, and book a party villa with unique local add-on expe
 - Mobile app — web-first, responsive design
 - Reviews / ratings system — defer to v2
 
+## Current Milestone: v1.1 Whole-Tel Rebrand & Owner Enhancements
+
+**Goal:** Rebrand from party villas to Whole-Tel boutique hotels, enhance owner property management (beds, photos, tiered pricing), and add guest invite system for bookings.
+
+**Target features:**
+- Full site rebrand to Whole-Tel identity
+- Enhanced owner dashboard (bed config, photo sections, tiered pricing, address)
+- Experience pricing tiers and photos
+- Booking guest invites and expandable details
+
 ## Context
 
-- **Brand**: Whole-Tel (whole-tel.com) — tropical chill party villas
+- **Brand**: Whole-Tel (whole-tel.com) — hand-picked boutique hotels for unforgettable group getaways
 - **Contact**: adam@whole-tel.com
 - **Launch properties**: Cabo San Lucas, Puerto Vallarta, Miami (placeholder content)
-- **Add-ons are unique per property**: Cabo might have boat rides, Miami might have club packages
-- **Pricing model**: Per villa per night, with per-person split calculator
+- **Add-ons are unique per property**: Cabo might have boat tours, Miami might have club packages
+- **Pricing model**: Per hotel per night, with per-person tiers above a guest threshold
 - **Payment**: Stripe Checkout — credit card (with processing fee passed to customer) or bank transfer. Full payment upfront.
 - **Content**: Placeholder photos and dummy data for launch, owners add real content later
 - **Design inspiration**: Airbnb — clean, elegant, seamless booking experience
@@ -64,5 +85,8 @@ Guests can find, customize, and book a party villa with unique local add-on expe
 | Per-property add-ons (not shared catalog) | Each location has unique local experiences | — Pending |
 | Separate guest/owner auth | Owners need dashboard, guests need booking — different experiences | — Pending |
 
+| Full rebrand to Whole-Tel | Client wants "boutique hotels" not "party villas" — identity shift | — Pending |
+| Guest invite system | Client specifically requested adding users to bookings, not just count update | — Pending |
+
 ---
-*Last updated: 2026-03-02 after initialization*
+*Last updated: 2026-03-07 after milestone v1.1 start*
