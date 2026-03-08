@@ -15,7 +15,13 @@ export default async function DashboardLayout({
       <header className="border-b">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <span className="font-semibold text-sm">Whole-Tel Host Dashboard</span>
+            <Link
+              href="/"
+              className="font-semibold text-sm text-brand-teal hover:text-brand-teal/80 transition-colors"
+            >
+              Whole-Tel
+            </Link>
+            <span className="text-muted-foreground text-sm">Host Dashboard</span>
             <nav className="flex items-center gap-4 text-sm">
               <Link
                 href="/dashboard"
@@ -28,6 +34,12 @@ export default async function DashboardLayout({
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Bookings
+              </Link>
+              <Link
+                href="/"
+                className="text-brand-teal hover:text-brand-teal/80 font-medium transition-colors"
+              >
+                View site
               </Link>
             </nav>
           </div>
