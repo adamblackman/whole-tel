@@ -24,16 +24,18 @@ export async function createAddOn(
   }
 
   const supabase = await createClient()
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('add_ons')
     .insert({ ...parsed.data, property_id: propertyId })
+    .select('id')
+    .single()
 
   if (error) {
     return { message: error.message }
   }
 
   revalidatePath(`/dashboard/properties/${propertyId}`)
-  return { message: 'Add-on created successfully' }
+  return { message: 'Add-on created successfully', addOnId: data.id }
 }
 
 /**

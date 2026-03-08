@@ -16,6 +16,8 @@ interface AddOnListProps {
     price: number
     pricing_unit: 'per_person' | 'per_booking'
     max_quantity: number | null
+    included_guests: number | null
+    per_person_above: number | null
     photo_url: string | null
   }>
 }
@@ -23,6 +25,11 @@ interface AddOnListProps {
 export function AddOnList({ propertyId, addOns }: AddOnListProps) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
+
+  function handleCreated(newAddOnId: string) {
+    setShowCreateForm(false)
+    setEditingId(newAddOnId)
+  }
 
   async function handleDelete(addOnId: string, name: string) {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return
@@ -103,8 +110,10 @@ export function AddOnList({ propertyId, addOns }: AddOnListProps) {
           <h4 className="text-sm font-semibold mb-3">New Experience</h4>
           <AddOnForm
             action={boundCreateAction}
+            propertyId={propertyId}
             submitLabel="Add Experience"
             onCancel={() => setShowCreateForm(false)}
+            onCreated={handleCreated}
           />
         </div>
       )}

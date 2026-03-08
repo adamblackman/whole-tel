@@ -39,21 +39,27 @@ interface AddOnFormProps {
   propertyId?: string
   submitLabel?: string
   onCancel?: () => void
+  /** Called when a new add-on is created, with the new ID (for auto-switching to edit mode) */
+  onCreated?: (addOnId: string) => void
 }
 
-export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabel, onCancel }: AddOnFormProps) {
+export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabel, onCancel, onCreated }: AddOnFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
   const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photo_url ?? null)
   const [uploading, setUploading] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Close edit mode on successful save
+  // Close edit mode on successful save, or notify parent of new add-on
   useEffect(() => {
-    if (state.message?.includes('successfully') && onCancel) {
-      onCancel()
+    if (state.message?.includes('successfully')) {
+      if (state.addOnId && onCreated) {
+        onCreated(state.addOnId)
+      } else if (onCancel) {
+        onCancel()
+      }
     }
-  }, [state.message, onCancel])
+  }, [state.message, state.addOnId, onCancel, onCreated])
 
   const canUploadPhoto = Boolean(addOnId && propertyId)
 

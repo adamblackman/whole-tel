@@ -37,16 +37,18 @@ export async function createProperty(
   const bed_config = { king: bed_king, queen: bed_queen, double: bed_double, twin: bed_twin, bunk: bed_bunk }
 
   const supabase = await createClient()
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('properties')
     .insert({ ...rest, amenities: amenitiesArray, bed_config, owner_id: user.id })
+    .select('id')
+    .single()
 
   if (error) {
     return { message: error.message }
   }
 
   revalidatePath('/dashboard')
-  redirect('/dashboard')
+  redirect(`/dashboard/properties/${data.id}`)
 }
 
 /**
