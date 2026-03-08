@@ -25,22 +25,22 @@ export default function NewPropertyPage() {
     <div className="max-w-2xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold mb-6">Add New Property</h1>
-        <PropertyForm action={wrappedAction} submitLabel="Create Property" />
+        <PropertyForm action={wrappedAction} submitLabel="Create Property">
+          {createdPropertyId && (
+            <>
+              <Separator />
+              <PhotoManager
+                propertyId={createdPropertyId}
+                photos={[]}
+              />
+            </>
+          )}
+        </PropertyForm>
       </div>
 
-      {createdPropertyId ? (
+      {createdPropertyId && (
         <>
           <Separator />
-
-          <section>
-            <PhotoManager
-              propertyId={createdPropertyId}
-              photos={[]}
-            />
-          </section>
-
-          <Separator />
-
           <Button asChild>
             <Link href={`/dashboard/properties/${createdPropertyId}`}>
               Continue to Property
@@ -48,8 +48,6 @@ export default function NewPropertyPage() {
             </Link>
           </Button>
         </>
-      ) : (
-        <Separator />
       )}
     </div>
   )

@@ -54,9 +54,10 @@ interface PropertyFormProps {
     per_person_rate?: number | null
   }
   submitLabel?: string
+  children?: React.ReactNode
 }
 
-export function PropertyForm({ action, initialData, submitLabel }: PropertyFormProps) {
+export function PropertyForm({ action, initialData, submitLabel, children }: PropertyFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
     initialData?.amenities ?? []
@@ -350,6 +351,8 @@ export function PropertyForm({ action, initialData, submitLabel }: PropertyFormP
           <p className="text-sm text-destructive">{state.errors.house_rules[0]}</p>
         )}
       </div>
+
+      {children}
 
       {/* Form actions */}
       <div className="flex items-center gap-3">

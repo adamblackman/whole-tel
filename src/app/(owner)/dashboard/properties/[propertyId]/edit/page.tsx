@@ -55,17 +55,14 @@ export default async function EditPropertyPage({
             amenities,
           }}
           submitLabel="Save Changes"
-        />
+        >
+          <Separator />
+          <PhotoManager
+            propertyId={propertyId}
+            photos={sortedPhotos}
+          />
+        </PropertyForm>
       </div>
-
-      <Separator />
-
-      <section>
-        <PhotoManager
-          propertyId={propertyId}
-          photos={sortedPhotos}
-        />
-      </section>
     </div>
   )
 }
