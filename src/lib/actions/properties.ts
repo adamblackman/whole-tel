@@ -22,7 +22,11 @@ export async function createProperty(
   }
 
   // Parse amenities string into a JSON array
-  const { amenities: amenitiesRaw, ...rest } = parsed.data
+  const {
+    amenities: amenitiesRaw,
+    bed_king, bed_queen, bed_double, bed_twin, bed_bunk,
+    ...rest
+  } = parsed.data
   const amenitiesArray =
     amenitiesRaw && amenitiesRaw.trim().length > 0
       ? amenitiesRaw
@@ -30,11 +34,12 @@ export async function createProperty(
           .map((a) => a.trim())
           .filter(Boolean)
       : []
+  const bed_config = { king: bed_king, queen: bed_queen, double: bed_double, twin: bed_twin, bunk: bed_bunk }
 
   const supabase = await createClient()
   const { error } = await supabase
     .from('properties')
-    .insert({ ...rest, amenities: amenitiesArray, owner_id: user.id })
+    .insert({ ...rest, amenities: amenitiesArray, bed_config, owner_id: user.id })
 
   if (error) {
     return { message: error.message }
@@ -61,7 +66,11 @@ export async function updateProperty(
     return { errors: parsed.error.flatten().fieldErrors }
   }
 
-  const { amenities: amenitiesRaw, ...rest } = parsed.data
+  const {
+    amenities: amenitiesRaw,
+    bed_king, bed_queen, bed_double, bed_twin, bed_bunk,
+    ...rest
+  } = parsed.data
   const amenitiesArray =
     amenitiesRaw && amenitiesRaw.trim().length > 0
       ? amenitiesRaw
@@ -69,11 +78,12 @@ export async function updateProperty(
           .map((a) => a.trim())
           .filter(Boolean)
       : []
+  const bed_config = { king: bed_king, queen: bed_queen, double: bed_double, twin: bed_twin, bunk: bed_bunk }
 
   const supabase = await createClient()
   const { error } = await supabase
     .from('properties')
-    .update({ ...rest, amenities: amenitiesArray })
+    .update({ ...rest, amenities: amenitiesArray, bed_config })
     .eq('id', propertyId)
     .eq('owner_id', user.id)
 

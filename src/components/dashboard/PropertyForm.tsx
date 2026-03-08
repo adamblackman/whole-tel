@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { ActionState } from '@/lib/validations/property'
+import type { BedConfig } from '@/types/database'
 
 const LOCATIONS = ['Cabo San Lucas', 'Puerto Vallarta', 'Miami'] as const
 
@@ -48,6 +49,9 @@ interface PropertyFormProps {
     house_rules?: string
     check_in_time?: string
     check_out_time?: string
+    bed_config?: BedConfig
+    guest_threshold?: number | null
+    per_person_rate?: number | null
   }
   submitLabel?: string
 }
@@ -229,6 +233,66 @@ export function PropertyForm({ action, initialData, submitLabel }: PropertyFormP
           )}
         </div>
 
+      </div>
+
+      {/* Bed Configuration */}
+      <div className="space-y-2">
+        <Label>Bed Configuration</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {([
+            ['bed_king', 'King', initialData?.bed_config?.king ?? 0],
+            ['bed_queen', 'Queen', initialData?.bed_config?.queen ?? 0],
+            ['bed_double', 'Double', initialData?.bed_config?.double ?? 0],
+            ['bed_twin', 'Twin', initialData?.bed_config?.twin ?? 0],
+            ['bed_bunk', 'Bunk', initialData?.bed_config?.bunk ?? 0],
+          ] as const).map(([name, label, defaultVal]) => (
+            <div key={name} className="space-y-1">
+              <Label htmlFor={name} className="text-xs">{label}</Label>
+              <Input
+                id={name}
+                name={name}
+                type="number"
+                min="0"
+                defaultValue={defaultVal}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Per-Person Pricing */}
+      <div className="space-y-2">
+        <Label>Per-Person Pricing</Label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="guest_threshold" className="text-xs">Guest Threshold</Label>
+            <Input
+              id="guest_threshold"
+              name="guest_threshold"
+              type="number"
+              min="1"
+              defaultValue={initialData?.guest_threshold ?? ''}
+            />
+            {state.errors?.guest_threshold && (
+              <p className="text-sm text-destructive">{state.errors.guest_threshold[0]}</p>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="per_person_rate" className="text-xs">Rate Per Person Above Threshold ($)</Label>
+            <Input
+              id="per_person_rate"
+              name="per_person_rate"
+              type="number"
+              min="0"
+              step="0.01"
+              defaultValue={initialData?.per_person_rate ?? ''}
+            />
+            {state.errors?.per_person_rate && (
+              <p className="text-sm text-destructive">{state.errors.per_person_rate[0]}</p>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">Optional. Charge extra per guest per night above this threshold.</p>
       </div>
 
       {/* Description — full width */}

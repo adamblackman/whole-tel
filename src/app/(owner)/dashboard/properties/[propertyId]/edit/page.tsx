@@ -18,7 +18,7 @@ export default async function EditPropertyPage({
 
   const { data: property } = await supabase
     .from('properties')
-    .select('id, name, description, location, address, bedrooms, bathrooms, max_guests, nightly_rate, cleaning_fee, amenities, house_rules, check_in_time, check_out_time')
+    .select('id, name, description, location, address, bedrooms, bathrooms, max_guests, nightly_rate, cleaning_fee, amenities, house_rules, check_in_time, check_out_time, bed_config, guest_threshold, per_person_rate')
     .eq('id', propertyId)
     .eq('owner_id', user.id)
     .single()
