@@ -2,9 +2,10 @@ import { verifySession } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calendar, MapPin, Users } from 'lucide-react'
+import { Calendar, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { BookingCardClient } from '@/components/booking/BookingCardClient'
 
 export const metadata: Metadata = {
   title: 'My Bookings — Whole-Tel',
@@ -31,6 +32,15 @@ function StatusBadge({ status }: { status: string }) {
   }
 }
 
+type BookingAddOnRow = {
+  id: string
+  add_on_id: string
+  quantity: number
+  unit_price: number
+  total_price: number
+  add_ons: { name: string } | { name: string }[] | null
+}
+
 type BookingRow = {
   id: string
   check_in: string
@@ -43,9 +53,25 @@ type BookingRow = {
   status: string
   created_at: string
   properties:
-    | { id: string; name: string; location: string }
-    | { id: string; name: string; location: string }[]
+    | { id: string; name: string; location: string; max_guests: number }
+    | { id: string; name: string; location: string; max_guests: number }[]
     | null
+  booking_add_ons: BookingAddOnRow[]
+}
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+function formatCurrency(dollars: number) {
+  return `$${Number(dollars).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`
 }
 
 function BookingCard({ booking }: { booking: BookingRow }) {
@@ -53,65 +79,70 @@ function BookingCard({ booking }: { booking: BookingRow }) {
     ? booking.properties[0]
     : booking.properties
 
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-
-  const formatCurrency = (dollars: number) =>
-    `$${dollars.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-
   return (
     <Card>
       <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="space-y-2 min-w-0">
-            {property ? (
-              <Link
-                href={`/properties/${property.id}`}
-                className="text-lg font-semibold hover:underline"
-              >
-                {property.name}
-              </Link>
-            ) : (
-              <span className="text-lg font-semibold text-muted-foreground">
-                Property unavailable
-              </span>
-            )}
+        <BookingCardClient
+          bookingId={booking.id}
+          checkIn={booking.check_in}
+          checkOut={booking.check_out}
+          guestCount={booking.guest_count}
+          subtotal={booking.subtotal}
+          addOnsTotal={booking.add_ons_total}
+          processingFee={booking.processing_fee}
+          total={booking.total}
+          status={booking.status}
+          maxGuests={property ? Number(property.max_guests) : 1}
+          bookingAddOns={booking.booking_add_ons ?? []}
+          header={
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-2 min-w-0">
+                {property ? (
+                  <Link
+                    href={`/properties/${property.id}`}
+                    className="text-lg font-semibold hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {property.name}
+                  </Link>
+                ) : (
+                  <span className="text-lg font-semibold text-muted-foreground">
+                    Property unavailable
+                  </span>
+                )}
 
-            {property && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 shrink-0" />
-                <span>{property.location}</span>
+                {property && (
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                    <span>{property.location}</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5 shrink-0" />
+                  <span>
+                    {formatDate(booking.check_in)} &rarr;{' '}
+                    {formatDate(booking.check_out)}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <span>
+                    {booking.guest_count}{' '}
+                    {booking.guest_count === 1 ? 'guest' : 'guests'}
+                  </span>
+                </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                {formatDate(booking.check_in)} &rarr;{' '}
-                {formatDate(booking.check_out)}
-              </span>
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <StatusBadge status={booking.status} />
+                <p className="text-xl font-bold">
+                  {formatCurrency(booking.total)}
+                </p>
+              </div>
             </div>
-
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Users className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                {booking.guest_count}{' '}
-                {booking.guest_count === 1 ? 'guest' : 'guests'}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <StatusBadge status={booking.status} />
-            <p className="text-xl font-bold">
-              {formatCurrency(booking.total)}
-            </p>
-          </div>
-        </div>
+          }
+        />
       </CardContent>
     </Card>
   )
@@ -132,7 +163,8 @@ export default async function BookingsPage({
     .select(`
       id, check_in, check_out, guest_count, subtotal, add_ons_total,
       processing_fee, total, status, created_at,
-      properties(id, name, location)
+      properties(id, name, location, max_guests),
+      booking_add_ons(id, add_on_id, quantity, unit_price, total_price, add_ons(name))
     `)
     .eq('guest_id', user.id)
     .order('check_in', { ascending: false })
