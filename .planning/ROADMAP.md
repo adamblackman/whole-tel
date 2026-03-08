@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### v1.1 Rebrand & Owner Enhancements
 
 - [ ] **Phase 8: Fixes and Rebrand** - Auth bug fixes, formatCurrency fix, and full rebrand from party villas to Whole-Tel all-inclusive hotels
-- [ ] **Phase 9: Owner Property Tools** - Bed configuration, location address, tiered per-person pricing for properties and experiences
+- [x] **Phase 9: Owner Property Tools** - Bed configuration, location address, tiered per-person pricing for properties and experiences (completed 2026-03-08)
 - [ ] **Phase 10: Photo Management** - Batch upload, drag-to-reorder, photo sections, experience photos, and polished guest gallery
 - [ ] **Phase 11: Booking Enhancements** - Expandable booking details, guest count editing, and guest invite system
 
@@ -59,7 +59,7 @@ Plans:
   2. An owner can enter both a location name (e.g., "Cabo San Lucas") and a street address for their property, and the address displays on the listing
   3. An owner can set an additional per-person nightly rate above a guest threshold (e.g., "$100/night/person above 25 guests"), and the booking price calculator reflects this surcharge when guest count exceeds the threshold
   4. An owner can set tiered experience pricing (base price includes up to X people, $Y per additional person), and the booking price calculator reflects the per-person add-on surcharge
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] 09-01-PLAN.md -- Foundation: migration, types, shared pricing module, Zod schemas
 - [ ] 09-02-PLAN.md -- Owner forms: PropertyForm bed config + surcharge, AddOnForm tier fields
@@ -105,6 +105,6 @@ Execution: 8 -> (9 || 10) -> 11
 | 6. Payments | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
-| 9. Owner Property Tools | v1.1 | 0/3 | Planning | - |
+| 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
 | 10. Photo Management | v1.1 | 0/? | Not started | - |
 | 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
