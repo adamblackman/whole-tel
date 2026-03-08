@@ -4,13 +4,13 @@ milestone: v1.1
 milestone_name: Rebrand & Owner Enhancements
 status: executing
 stopped_at: Phase 10 context gathered
-last_updated: "2026-03-08T06:52:37.777Z"
+last_updated: "2026-03-08T07:11:24.303Z"
 last_activity: 2026-03-08 -- Completed 09-03 (guest-facing pricing refactor)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 9
+  completed_plans: 6
   percent: 100
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Groups can find, customize, and book a Whole-Tel with unique local add-on experiences and seamless group coordination in a single flow.
-**Current focus:** Phase 9 - Owner Property Tools
+**Current focus:** Phase 10 - Photo Management
 
 ## Current Position
 
-Phase: 9 of 11 (Owner Property Tools)
-Plan: 3 of 3 in current phase
+Phase: 10 of 11 (Photo Management)
+Plan: 1 of 4 in current phase
 Status: executing
-Last activity: 2026-03-08 -- Completed 09-03 (guest-facing pricing refactor)
+Last activity: 2026-03-08 -- Completed 10-01 (photo sections foundation)
 
-Progress: [██████████] 100% (29/29 plans complete)
+Progress: [█████████░] 91% (30/33 plans complete)
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [██████████] 100% (29/29 plans complete)
 | Phase 09 P01 | 3min | 2 tasks | 6 files |
 | Phase 09 P02 | 3min | 2 tasks | 5 files |
 | Phase 09 P03 | 4min | 2 tasks | 5 files |
+| Phase 10 P01 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,9 @@ Recent decisions affecting current work:
 - [Phase 09]: Bed config inputs rendered via mapped tuple array for DRY form fields
 - [Phase 09]: Store accommodation + surcharge as subtotal in bookings (no dedicated surcharge column)
 - [Phase 09]: Separate Stripe line items for accommodation, surcharge, cleaning, add-ons, processing fee
+- [Phase 10]: Section stored as nullable text column on property_photos (null = General)
+- [Phase 10]: Display order remains global across property, not per-section
+- [Phase 10]: 10MB file size validation client-side before upload begins
 
 ### Pending Todos
 
@@ -88,9 +92,10 @@ None yet.
 - [01-03 PENDING]: Supabase seed data migration must be applied manually via Dashboard SQL Editor
 - [08-02 PENDING]: Rebrand seed data migration must be applied manually via Dashboard SQL Editor
 - [09-01 PENDING]: Owner property tools migration must be applied manually via Dashboard SQL Editor
+- [10-01 PENDING]: Photo sections migration must be applied manually via Dashboard SQL Editor
 
 ## Session Continuity
 
-Last session: 2026-03-08T06:52:37.755Z
-Stopped at: Phase 10 context gathered
-Resume file: .planning/phases/10-photo-management/10-CONTEXT.md
+Last session: 2026-03-08T07:11:00Z
+Stopped at: Completed 10-01-PLAN.md
+Resume file: .planning/phases/10-photo-management/10-01-SUMMARY.md

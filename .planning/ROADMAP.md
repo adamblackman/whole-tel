@@ -75,7 +75,7 @@ Plans:
   3. An owner can create photo sections (Rooms, Common Area, Pool, or custom names) and assign photos to sections -- sections display as organized groups
   4. An owner can add photos to individual add-on experiences, and those photos display alongside the experience on the property listing
   5. The guest-facing photo gallery displays photos organized by section with a polished, high-quality UI comparable to Airbnb photo tours (use /frontend-design skill for gallery design)
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 Plans:
 - [ ] 10-01-PLAN.md — Migration + server actions + batch upload with progress and section assignment
 - [ ] 10-02-PLAN.md — Experience photo upload in AddOnForm + hero image on AddOnCard
@@ -111,5 +111,5 @@ Execution: 8 -> (9 || 10) -> 11
 | 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
-| 10. Photo Management | v1.1 | 0/4 | Planning | - |
+| 10. Photo Management | 1/4 | In Progress|  | - |
 | 11. Booking Enhancements | v1.1 | 0/? | Not started | - |
