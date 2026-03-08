@@ -183,10 +183,14 @@ export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabe
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/15">
+          <button
+            type="button"
+            disabled
+            className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/15 cursor-not-allowed"
+          >
             <Upload className="h-6 w-6 text-muted-foreground/40 mb-1" />
-            <span className="text-sm text-muted-foreground/60">Save to upload a photo</span>
-          </div>
+            <span className="text-sm text-muted-foreground/40">Upload Photo</span>
+          </button>
         )}
       </div>
 
