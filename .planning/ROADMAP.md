@@ -1,8 +1,9 @@
 # Roadmap: Whole-Tel
 
-## Overview
+## Milestones
 
-Seven phases that build from the database foundation outward. Everything depends on the schema and auth being right first (Phase 1-2), then owners populate data (Phase 3), then guests browse it (Phase 4), then they book (Phase 5), then they pay (Phase 6), then the marketing layer is polished (Phase 7). The booking transaction is the architectural spine — every earlier phase exists to make it possible, every later phase makes it more compelling.
+- v1.0 MVP - Phases 1-7 (shipped 2026-03-06)
+- v1.1 Rebrand & Owner Enhancements - Phases 8-11 (in progress)
 
 ## Phases
 
@@ -12,147 +13,91 @@ Seven phases that build from the database foundation outward. Everything depends
 
 Decimal phases appear between their surrounding integers in numeric order.
 
+<details>
+<summary>v1.0 MVP (Phases 1-7) - SHIPPED 2026-03-06</summary>
+
 - [x] **Phase 1: Foundation** - Supabase schema, RLS policies, double-booking constraint, and client infrastructure (completed 2026-03-03)
 - [x] **Phase 2: Auth** - Guest and owner authentication with role-based access and route protection (completed 2026-03-03)
 - [x] **Phase 3: Owner Dashboard** - Owner CRUD for properties, photos, and per-property add-on experiences (completed 2026-03-04)
 - [x] **Phase 4: Guest Browsing** - Property listing pages, destination browsing, add-on display, and brand design (completed 2026-03-05)
 - [x] **Phase 5: Booking Flow** - Date selection through add-on customization, price summary, and Stripe handoff (completed 2026-03-05)
-- [ ] **Phase 6: Payments** - Stripe Checkout (CC + ACH), webhook confirmation, and booking email
+- [x] **Phase 6: Payments** - Stripe Checkout (CC + ACH), webhook confirmation, and booking email
 - [x] **Phase 7: Landing Page and Polish** - Homepage, about/contact pages, and final brand polish (completed 2026-03-06)
+
+</details>
+
+### v1.1 Rebrand & Owner Enhancements
+
+- [ ] **Phase 8: Fixes and Rebrand** - Auth bug fixes, formatCurrency fix, and full rebrand from party villas to Whole-Tel all-inclusive hotels
+- [ ] **Phase 9: Owner Property Tools** - Bed configuration, location address, tiered per-person pricing for properties and experiences
+- [ ] **Phase 10: Photo Management** - Batch upload, drag-to-reorder, photo sections, experience photos, and polished guest gallery
+- [ ] **Phase 11: Booking Enhancements** - Expandable booking details, guest count editing, and guest invite system
 
 ## Phase Details
 
-### Phase 1: Foundation
-**Goal**: A secure, race-condition-proof database foundation that every subsequent phase can build on without rework
-**Depends on**: Nothing (first phase)
-**Requirements**: DATA-01, DATA-02, DATA-03, DATA-04
+### Phase 8: Fixes and Rebrand
+**Goal**: Clear known bugs and establish the Whole-Tel brand identity across the entire site before building new features
+**Depends on**: Phase 7 (v1.0 complete)
+**Requirements**: FIX-01, FIX-02, BRAND-01, BRAND-02, BRAND-03
 **Success Criteria** (what must be TRUE):
-  1. Supabase schema exists with all tables (profiles, properties, add_ons, bookings, booking_add_ons) and no RLS gaps — all queries return correct data for authenticated users and empty/denied for unauthenticated queries
-  2. A PostgreSQL exclusion constraint physically blocks overlapping booking date ranges for the same property — concurrent booking attempts cannot produce a double booking
-  3. Supabase Storage bucket exists and accepts photo uploads via signed URLs
-  4. Placeholder properties for Cabo, Puerto Vallarta, and Miami are seeded with dummy data visible to guests
-  5. Two separate Supabase client files exist (browser vs server) such that the service role key is never accessible in the browser
-**Plans**: 3 plans
+  1. A user can sign up, log in, log out, and re-log-in without encountering auth errors or broken redirects -- the full auth lifecycle works smoothly
+  2. Booking prices display correctly (no divide-by-100 error) -- a $5,000 booking shows as $5,000, not $50
+  3. Every user-facing page says "Whole-Tel" and "all-inclusive hotels" -- no remaining references to "party villas" in any copy, nav, hero, or footer
+  4. The hero section displays the new tagline ("Your next unforgettable group trip starts with a Whole-Tel!")
+  5. Browser tab titles, meta descriptions, and Open Graph tags all reflect the Whole-Tel all-inclusive hotel brand
+**Plans**: TBD
 
-Plans:
-- [ ] 01-01-PLAN.md — Bootstrap Next.js app + apply full schema/RLS/storage migration
-- [ ] 01-02-PLAN.md — Create Supabase client factories (server.ts, browser.ts), DAL, and database types
-- [ ] 01-03-PLAN.md — Seed placeholder properties for Cabo, Puerto Vallarta, and Miami
-
-### Phase 2: Auth
-**Goal**: Guests and owners can securely sign up, log in, and access their respective experiences — with no cross-role access possible
-**Depends on**: Phase 1
-**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
+### Phase 9: Owner Property Tools
+**Goal**: Owners can fully configure their property listing with bed details, street address, and per-person pricing tiers for both properties and experiences
+**Depends on**: Phase 8
+**Requirements**: PROP-09, PROP-10, PROP-11, EXP-01
 **Success Criteria** (what must be TRUE):
-  1. A new guest can create an account with email and password and immediately access guest features
-  2. A logged-in guest stays logged in across browser sessions and can log out from any page
-  3. A new owner can sign up through a distinct owner path and receive the owner role (not guest role)
-  4. An owner can log in and land on the owner dashboard — a guest account cannot access /dashboard routes
-  5. The guest login and owner login flows are visually distinct pages, not a shared form with a role dropdown
-**Plans**: 4 plans
+  1. An owner can specify bed types (King, Queen, Double, Twin, Bunk) with individual counts for each, and guests see the bed configuration on the property listing page
+  2. An owner can enter both a location name (e.g., "Cabo San Lucas") and a street address for their property, and the address displays on the listing
+  3. An owner can set an additional per-person nightly rate above a guest threshold (e.g., "$100/night/person above 25 guests"), and the booking price calculator reflects this surcharge when guest count exceeds the threshold
+  4. An owner can set tiered experience pricing (base price includes up to X people, $Y per additional person), and the booking price calculator reflects the per-person add-on surcharge
+**Plans**: TBD
 
-Plans:
-- [ ] 02-01-PLAN.md — Install dependencies, create proxy.ts session refresh, and auth Server Actions
-- [ ] 02-02-PLAN.md — Guest login page, guest signup page, auth layout, and LogoutButton component
-- [ ] 02-03-PLAN.md — Owner login page, owner signup page, and protected dashboard layout + placeholder
-- [ ] 02-04-PLAN.md — Human verification: end-to-end auth flow testing (checkpoint)
-
-### Phase 3: Owner Dashboard
-**Goal**: An owner can create, manage, and populate villa listings with all details and per-property add-on experiences from their dashboard
-**Depends on**: Phase 2
-**Requirements**: OWNER-01, OWNER-02, OWNER-03, OWNER-04, OWNER-05, OWNER-06, OWNER-07, OWNER-08
+### Phase 10: Photo Management
+**Goal**: Owners have full control over property photo presentation -- bulk upload, custom ordering, organized sections -- and guests see a polished, sectioned photo gallery
+**Depends on**: Phase 8
+**Requirements**: PHOTO-01, PHOTO-02, PHOTO-03, PHOTO-04, PHOTO-05
 **Success Criteria** (what must be TRUE):
-  1. An owner can create a new property listing with all required fields (bedrooms, bathrooms, max guests, nightly rate, description, location) and it appears in guest browsing
-  2. An owner can upload photos to a property listing and they display correctly on the property page
-  3. An owner can create, edit, and delete add-on experiences for their property with pricing set as per-person or per-booking
-  4. An owner can view all bookings made for their properties
-  5. An owner cannot see or modify another owner's properties — data isolation is enforced at both the UI and database layer
-**Plans**: 5 plans
+  1. An owner can select and upload multiple photos at once (batch) with a polished drag-and-drop or file-picker UX -- no need to upload one at a time (use /frontend-design skill for upload UI polish)
+  2. An owner can drag photos to reorder them, and the new order persists and displays correctly on the guest-facing listing
+  3. An owner can create photo sections (Rooms, Common Area, Pool, or custom names) and assign photos to sections -- sections display as organized groups
+  4. An owner can add photos to individual add-on experiences, and those photos display alongside the experience on the property listing
+  5. The guest-facing photo gallery displays photos organized by section with a polished, high-quality UI comparable to Airbnb photo tours (use /frontend-design skill for gallery design)
+**Plans**: TBD
 
-Plans:
-- [ ] 03-01-PLAN.md — Server Actions and Zod schemas for property and add-on CRUD
-- [ ] 03-02-PLAN.md — Photo upload Server Actions (signed URL flow) and PhotoUploader component
-- [ ] 03-03-PLAN.md — Dashboard pages (property list, create, detail, edit) and add-on management UI
-- [ ] 03-04-PLAN.md — Bookings view page and property delete with confirmation dialog
-- [ ] 03-05-PLAN.md — Human verification: end-to-end owner dashboard testing (checkpoint)
-
-### Phase 4: Guest Browsing
-**Goal**: A guest can browse party villas by destination, view full property details with add-ons and pricing, and see the per-person cost before starting a booking
-**Depends on**: Phase 3
-**Requirements**: PROP-01, PROP-02, PROP-03, PROP-04, PROP-05, PROP-06, PROP-07, PROP-08, ADDON-01, ADDON-02, ADDON-03, PAGE-04, PAGE-05
+### Phase 11: Booking Enhancements
+**Goal**: Guests can see full booking details, manage guest count, and invite others to join their booking for seamless group coordination
+**Depends on**: Phase 9
+**Requirements**: BOOK-08, BOOK-09, BOOK-10, BOOK-11
 **Success Criteria** (what must be TRUE):
-  1. A guest can filter properties by destination (Cabo, Puerto Vallarta, Miami) and see the matching listings
-  2. A property listing page shows a photo gallery with full-screen view, all details (bedrooms, bathrooms, max guests), amenities with icons, and location description
-  3. When a guest selects check-in and check-out dates, the nightly rate and total price display on the listing page before entering the booking flow
-  4. A property listing page shows its unique add-on experiences (name, description, price, pricing unit) so guests can evaluate the full trip cost before booking
-  5. All pages render correctly on mobile and match the tropical chill brand aesthetic using shadcn/ui and React Bits components
-**Plans**: 5 plans
-
-Plans:
-- [ ] 04-01-PLAN.md — Install dependencies (lightbox, Calendar), brand color palette, GuestNav + (guest) layout
-- [ ] 04-02-PLAN.md — Browse page with destination filter tabs and PropertyListingCard grid
-- [ ] 04-03-PLAN.md — Property detail page with photo gallery + lightbox, details, amenities, add-ons
-- [ ] 04-04-PLAN.md — PricingWidget with availability calendar and real-time price calculation
-- [ ] 04-05-PLAN.md — Human verification: end-to-end guest browsing testing (checkpoint)
-
-### Phase 5: Booking Flow
-**Goal**: A logged-in guest can select dates, choose add-ons, see a full price breakdown with per-person calculator, and hand off to Stripe Checkout
-**Depends on**: Phase 4
-**Requirements**: BOOK-01, BOOK-02, BOOK-03, BOOK-04, BOOK-05, BOOK-06, BOOK-07, ADDON-04, ADDON-05
-**Success Criteria** (what must be TRUE):
-  1. A guest can select check-in and check-out dates from the availability calendar — already-booked dates are blocked and unselectable
-  2. A guest can set guest count and is prevented from exceeding the property's max occupancy
-  3. A guest can select or deselect add-ons for the property during the booking flow and the price summary updates in real time
-  4. The price summary shows a complete breakdown: nightly rate times nights, each selected add-on cost, credit card processing fee (if applicable), and total — plus the total divided by number of guests
-  5. A guest can reach Stripe Checkout from the price summary, and a guest can view their past and upcoming bookings in their booking history
-**Plans**: 3 plans
-
-Plans:
-- [ ] 05-01-PLAN.md — Install Stripe SDK, create stripe.ts singleton + booking Zod schema, extend PricingWidget with guest count, add-on selection, and full price breakdown
-- [ ] 05-02-PLAN.md — createBookingAndCheckout Server Action, wire Reserve button, GuestNav auth-awareness
-- [ ] 05-03-PLAN.md — Guest booking history page + human verification checkpoint
-
-### Phase 6: Payments
-**Goal**: Guests can complete payment via credit card or ACH bank transfer through Stripe Checkout, with bookings confirmed only after webhook verification
-**Depends on**: Phase 5
-**Requirements**: PAY-01, PAY-02, PAY-03, PAY-04, PAY-05
-**Success Criteria** (what must be TRUE):
-  1. A guest can complete payment with a credit card through Stripe Checkout and the booking is confirmed
-  2. A guest can complete payment via ACH bank transfer through Stripe Checkout and the booking is confirmed
-  3. The credit card processing fee is displayed transparently before the guest commits to payment — labeled as "processing fee" not "credit card surcharge"
-  4. A booking confirmation email arrives in the guest's inbox after successful payment
-  5. If a guest closes the browser after Stripe redirects but before returning to the site, the booking is still confirmed (webhook-driven confirmation, not redirect-driven)
-**Plans**: 2 plans
-
-Plans:
-- [ ] 06-01-PLAN.md — Stripe webhook handler (card + ACH confirmation), admin Supabase client, ACH payment method support
-- [ ] 06-02-PLAN.md — Booking confirmation email via Resend + React Email, wired into webhook fulfillment
-
-### Phase 7: Landing Page and Polish
-**Goal**: Whole-Tel has a compelling public homepage with hero, brand story, featured properties, and supporting pages that convert visitors to bookings
-**Depends on**: Phase 6
-**Requirements**: PAGE-01, PAGE-02, PAGE-03
-**Success Criteria** (what must be TRUE):
-  1. The homepage displays a hero section, brand story, featured properties from the database, and destination browsing — all with the tropical chill party brand aesthetic and React Bits animations
-  2. An About Us page explains the Whole-Tel brand story
-  3. A Contact page has a form that routes inquiries to adam@whole-tel.com
-**Plans**: 2 plans
-
-Plans:
-- [ ] 07-01-PLAN.md — Homepage rewrite with hero, brand story, featured properties, destination cards, and testimonials
-- [ ] 07-02-PLAN.md — About Us page and Contact page with email form via Resend
+  1. A guest can click on a booking in their booking history to expand it and see the full price breakdown (nightly rate, nights, add-ons, processing fee, total) plus dates and selected add-ons
+  2. A booking displays the correct guest count, and the guest who made the booking can edit it -- the price recalculates if tiered pricing applies
+  3. A guest can invite other users to a booking by entering their email address, and the invited user receives an email with a link to view and accept/decline the invitation
+  4. An invited user can accept or decline a booking invitation, and accepted guests appear in the booking's guest list visible to the booking creator
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases 8 first (clears bugs, establishes brand). Then 9 and 10 can proceed (independent). Phase 11 depends on 9 (needs tiered pricing for correct price display in expanded bookings).
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Foundation | 3/3 | Complete    | 2026-03-03 |
-| 2. Auth | 4/4 | Complete    | 2026-03-03 |
-| 3. Owner Dashboard | 5/5 | Complete    | 2026-03-04 |
-| 4. Guest Browsing | 5/5 | Complete    | 2026-03-05 |
-| 5. Booking Flow | 3/3 | Complete    | 2026-03-05 |
-| 6. Payments | 0/2 | Not started | - |
-| 7. Landing Page and Polish | 2/2 | Complete   | 2026-03-06 |
+Execution: 8 -> (9 || 10) -> 11
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation | v1.0 | 3/3 | Complete | 2026-03-03 |
+| 2. Auth | v1.0 | 4/4 | Complete | 2026-03-03 |
+| 3. Owner Dashboard | v1.0 | 5/5 | Complete | 2026-03-04 |
+| 4. Guest Browsing | v1.0 | 5/5 | Complete | 2026-03-05 |
+| 5. Booking Flow | v1.0 | 3/3 | Complete | 2026-03-05 |
+| 6. Payments | v1.0 | 2/2 | Complete | 2026-03-06 |
+| 7. Landing Page and Polish | v1.0 | 2/2 | Complete | 2026-03-06 |
+| 8. Fixes and Rebrand | v1.1 | 0/? | Not started | - |
+| 9. Owner Property Tools | v1.1 | 0/? | Not started | - |
+| 10. Photo Management | v1.1 | 0/? | Not started | - |
+| 11. Booking Enhancements | v1.1 | 0/? | Not started | - |

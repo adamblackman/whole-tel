@@ -7,14 +7,14 @@
 
 All v1.0 requirements shipped. See v1.0 traceability below for full list.
 
-### Authentication — ✓ Complete (6 requirements)
-### Property Listings — ✓ Complete (8 requirements)
-### Add-On Experiences — ✓ Complete (5 requirements)
-### Booking Flow — ✓ Complete (7 requirements)
-### Payments — ✓ Complete (5 requirements)
-### Owner Dashboard — ✓ Complete (8 requirements)
-### Pages & Design — ✓ Complete (5 requirements)
-### Data & Infrastructure — ✓ Complete (4 requirements)
+### Authentication — Complete (6 requirements)
+### Property Listings — Complete (8 requirements)
+### Add-On Experiences — Complete (5 requirements)
+### Booking Flow — Complete (7 requirements)
+### Payments — Complete (5 requirements)
+### Owner Dashboard — Complete (8 requirements)
+### Pages & Design — Complete (5 requirements)
+### Data & Infrastructure — Complete (4 requirements)
 
 ## v1.1 Requirements
 
@@ -28,7 +28,7 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 
 ### Photo Management
 
-- [ ] **PHOTO-01**: Owner can upload multiple photos at once (batch upload) — polished upload UX via frontend-design
+- [ ] **PHOTO-01**: Owner can upload multiple photos at once (batch upload) -- polished upload UX via frontend-design
 - [ ] **PHOTO-02**: Owner can drag-to-reorder photos to control display order
 - [ ] **PHOTO-03**: Owner can organize photos into sections (Rooms, Common Area, Pool, custom)
 - [ ] **PHOTO-04**: Owner can add photos to individual experiences/add-ons
@@ -100,11 +100,11 @@ Explicitly excluded. Documented to prevent scope creep.
 | Feature | Reason |
 |---------|--------|
 | Mobile app (iOS/Android) | Web-first, responsive design sufficient |
-| Individual payment splitting (each guest pays) | Calculator only — one person books, group splits via Venmo/Zelle |
+| Individual payment splitting (each guest pays) | Calculator only -- one person books, group splits via Venmo/Zelle |
 | Channel manager (Airbnb/VRBO sync) | Commoditizes the brand, defeats direct-booking purpose |
-| AI recommendations | Small property count — every guest sees everything |
-| Multi-currency support | USD only — Stripe handles international cards automatically |
-| Automated refunds | Complex policy edge cases — manual via Stripe dashboard |
+| AI recommendations | Small property count -- every guest sees everything |
+| Multi-currency support | USD only -- Stripe handles international cards automatically |
+| Automated refunds | Complex policy edge cases -- manual via Stripe dashboard |
 
 ## Traceability
 
@@ -165,31 +165,31 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BRAND-01 | — | Pending |
-| BRAND-02 | — | Pending |
-| BRAND-03 | — | Pending |
-| PHOTO-01 | — | Pending |
-| PHOTO-02 | — | Pending |
-| PHOTO-03 | — | Pending |
-| PHOTO-04 | — | Pending |
-| PHOTO-05 | — | Pending |
-| PROP-09 | — | Pending |
-| PROP-10 | — | Pending |
-| PROP-11 | — | Pending |
-| EXP-01 | — | Pending |
-| BOOK-08 | — | Pending |
-| BOOK-09 | — | Pending |
-| BOOK-10 | — | Pending |
-| BOOK-11 | — | Pending |
-| FIX-01 | — | Pending |
-| FIX-02 | — | Pending |
+| FIX-01 | Phase 8 | Pending |
+| FIX-02 | Phase 8 | Pending |
+| BRAND-01 | Phase 8 | Pending |
+| BRAND-02 | Phase 8 | Pending |
+| BRAND-03 | Phase 8 | Pending |
+| PROP-09 | Phase 9 | Pending |
+| PROP-10 | Phase 9 | Pending |
+| PROP-11 | Phase 9 | Pending |
+| EXP-01 | Phase 9 | Pending |
+| PHOTO-01 | Phase 10 | Pending |
+| PHOTO-02 | Phase 10 | Pending |
+| PHOTO-03 | Phase 10 | Pending |
+| PHOTO-04 | Phase 10 | Pending |
+| PHOTO-05 | Phase 10 | Pending |
+| BOOK-08 | Phase 11 | Pending |
+| BOOK-09 | Phase 11 | Pending |
+| BOOK-10 | Phase 11 | Pending |
+| BOOK-11 | Phase 11 | Pending |
 
 **Coverage:**
-- v1.0 requirements: 48 total — all complete
+- v1.0 requirements: 48 total -- all complete
 - v1.1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18/18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-08 after v1.1 requirements definition*
+*Last updated: 2026-03-08 after v1.1 roadmap creation*
