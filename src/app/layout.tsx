@@ -13,8 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Whole-Tel — Party Villas",
-  description: "Book curated party villas with local experiences in Cabo, Puerto Vallarta, and Miami.",
+  title: {
+    default: "Whole-Tel | All-Inclusive Group Hotels",
+    template: "%s | Whole-Tel",
+  },
+  description: "Book hand-picked all-inclusive hotels for group travel in Cabo, Puerto Vallarta, and Miami. One booking, one crew, one unforgettable trip.",
+  openGraph: {
+    title: "Whole-Tel | All-Inclusive Group Hotels",
+    description: "Hand-picked all-inclusive hotels with curated experiences for unforgettable group trips.",
+    siteName: "Whole-Tel",
+  },
 };
 
 export default function RootLayout({

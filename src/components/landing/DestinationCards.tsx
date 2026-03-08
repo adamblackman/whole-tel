@@ -8,7 +8,7 @@ const destinations = [
   },
   {
     name: 'Puerto Vallarta',
-    tagline: 'Jungle villas & golden sunsets',
+    tagline: 'Jungle hideaways & golden sunsets',
     gradient: 'from-brand-amber to-orange-400',
   },
   {

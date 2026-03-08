@@ -33,7 +33,7 @@ export default async function HomePage() {
           </div>
           <nav className="flex gap-6 text-sm text-white/80">
             <Link href="/properties" className="hover:text-white transition-colors">
-              Browse Villas
+              Browse Hotels
             </Link>
             <Link href="/about" className="hover:text-white transition-colors">
               About

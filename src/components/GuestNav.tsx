@@ -22,7 +22,7 @@ export async function GuestNav() {
         </Link>
         <nav className="flex items-center gap-2">
           <Button variant="ghost" asChild>
-            <Link href="/properties">Browse Villas</Link>
+            <Link href="/properties">Browse Hotels</Link>
           </Button>
           {user ? (
             <>

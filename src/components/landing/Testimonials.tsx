@@ -3,19 +3,19 @@ import { Card, CardContent } from '@/components/ui/card'
 const testimonials = [
   {
     quote:
-      'The villa was absolutely stunning and the private chef experience blew us away. Everything was arranged through one booking — so easy.',
+      'We booked a Whole-Tel for my best friend\'s bachelorette and it was the easiest group trip we\'ve ever planned. The hotel was gorgeous, the private chef dinner was incredible, and we didn\'t have to coordinate a single thing ourselves.',
     name: 'Sarah M.',
     destination: 'Cabo San Lucas',
   },
   {
     quote:
-      'We booked a boat excursion and VIP nightlife add-on. Our group of 12 had the best bachelor party ever. Whole-Tel made it effortless.',
+      'Twelve of us went to Puerto Vallarta for a guys\' trip. The all-inclusive setup meant we just showed up and everything was handled -- snorkeling, mariachi band, even groceries stocked before we arrived. Already planning next year.',
     name: 'Jake R.',
     destination: 'Puerto Vallarta',
   },
   {
     quote:
-      'Coordinating a group trip is usually a nightmare, but Whole-Tel handled everything. The villa was party-ready and the sunset tour was magical.',
+      'We used Whole-Tel for our company retreat and it was a game-changer. Beautiful waterfront property, yacht day trip for the whole team, and one invoice for everything. Our CFO was as happy as we were.',
     name: 'Priya K.',
     destination: 'Miami',
   },

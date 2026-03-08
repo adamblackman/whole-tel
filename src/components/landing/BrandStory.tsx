@@ -18,7 +18,7 @@ export function BrandStory() {
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-brand-palm/80">
             Whole-Tel isn&apos;t just a place to stay &mdash; it&apos;s the whole trip. We pair
-            stunning party villas with handpicked local experiences: private chefs, boat
+            hand-picked all-inclusive hotels with curated local experiences: private chefs, boat
             excursions, VIP nightlife, and more. One booking, one crew, one unforgettable trip.
           </p>
         </div>

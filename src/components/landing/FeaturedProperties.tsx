@@ -21,10 +21,10 @@ export function FeaturedProperties({ properties }: FeaturedPropertiesProps) {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-            Featured Villas
+            Featured Hotels
           </h2>
           <p className="mt-2 text-lg text-zinc-500">
-            Handpicked party-ready properties
+            Hand-picked all-inclusive properties for your next group trip
           </p>
         </div>
 
