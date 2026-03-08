@@ -18,6 +18,13 @@ interface BookingAddOnRow {
   add_ons: { name: string } | { name: string }[] | null
 }
 
+interface InvitationRow {
+  id: string
+  email: string
+  status: 'pending' | 'accepted' | 'declined'
+  created_at: string
+}
+
 interface BookingCardClientProps {
   bookingId: string
   checkIn: string
@@ -30,6 +37,7 @@ interface BookingCardClientProps {
   status: string
   maxGuests: number
   bookingAddOns: BookingAddOnRow[]
+  invitations: InvitationRow[]
   header: ReactNode
 }
 
@@ -45,6 +53,7 @@ export function BookingCardClient({
   status,
   maxGuests,
   bookingAddOns,
+  invitations,
   header,
 }: BookingCardClientProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -82,6 +91,7 @@ export function BookingCardClient({
           status={status}
           maxGuests={maxGuests}
           bookingAddOns={bookingAddOns}
+          invitations={invitations}
         />
       </CollapsibleContent>
     </Collapsible>

@@ -41,6 +41,13 @@ type BookingAddOnRow = {
   add_ons: { name: string } | { name: string }[] | null
 }
 
+type InvitationRow = {
+  id: string
+  email: string
+  status: 'pending' | 'accepted' | 'declined'
+  created_at: string
+}
+
 type BookingRow = {
   id: string
   check_in: string
@@ -57,6 +64,7 @@ type BookingRow = {
     | { id: string; name: string; location: string; max_guests: number }[]
     | null
   booking_add_ons: BookingAddOnRow[]
+  booking_invitations: InvitationRow[]
 }
 
 function formatDate(dateStr: string) {
@@ -94,6 +102,7 @@ function BookingCard({ booking }: { booking: BookingRow }) {
           status={booking.status}
           maxGuests={property ? Number(property.max_guests) : 1}
           bookingAddOns={booking.booking_add_ons ?? []}
+          invitations={booking.booking_invitations ?? []}
           header={
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="space-y-2 min-w-0">
@@ -164,7 +173,8 @@ export default async function BookingsPage({
       id, check_in, check_out, guest_count, subtotal, add_ons_total,
       processing_fee, total, status, created_at,
       properties(id, name, location, max_guests),
-      booking_add_ons(id, add_on_id, quantity, unit_price, total_price, add_ons(name))
+      booking_add_ons(id, add_on_id, quantity, unit_price, total_price, add_ons(name)),
+      booking_invitations(id, email, status, created_at)
     `)
     .eq('guest_id', user.id)
     .order('check_in', { ascending: false })

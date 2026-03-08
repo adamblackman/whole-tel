@@ -5,6 +5,9 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Pencil, Users } from 'lucide-react'
 import { GuestCountEditor } from './GuestCountEditor'
+import { InviteGuestForm } from './InviteGuestForm'
+import { GuestList } from './GuestList'
+import type { InvitationStatus } from '@/types/database'
 
 interface BookingAddOnRow {
   id: string
@@ -13,6 +16,13 @@ interface BookingAddOnRow {
   unit_price: number
   total_price: number
   add_ons: { name: string } | { name: string }[] | null
+}
+
+interface InvitationRow {
+  id: string
+  email: string
+  status: InvitationStatus
+  created_at: string
 }
 
 interface BookingDetailsProps {
@@ -27,6 +37,7 @@ interface BookingDetailsProps {
   status: string
   maxGuests: number
   bookingAddOns: BookingAddOnRow[]
+  invitations: InvitationRow[]
 }
 
 function formatCurrency(dollars: number) {
@@ -48,6 +59,7 @@ export function BookingDetails({
   status,
   maxGuests,
   bookingAddOns,
+  invitations,
 }: BookingDetailsProps) {
   const [isEditingGuests, setIsEditingGuests] = useState(false)
 
@@ -131,6 +143,15 @@ export function BookingDetails({
           <span>{formatCurrency(Number(total))}</span>
         </div>
       </div>
+
+      {/* Guest invitations -- only for confirmed bookings */}
+      {status === 'confirmed' && (
+        <>
+          <Separator />
+          <GuestList invitations={invitations} />
+          <InviteGuestForm bookingId={bookingId} />
+        </>
+      )}
     </div>
   )
 }

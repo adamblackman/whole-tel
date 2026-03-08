@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 /**
  * Sign up a new guest account.
  * Auto-logs in (email confirmation off in dev) and redirects to /properties.
+ * Supports optional return_to redirect parameter.
  */
 export async function signUpGuest(
   formData: FormData
@@ -16,6 +17,7 @@ export async function signUpGuest(
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const display_name = formData.get('display_name') as string
+  const returnTo = (formData.get('return_to') as string) || '/properties'
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -30,7 +32,7 @@ export async function signUpGuest(
   }
 
   revalidatePath('/', 'layout')
-  redirect('/properties')
+  redirect(returnTo)
 }
 
 /**
