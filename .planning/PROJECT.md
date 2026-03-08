@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A boutique hotel booking platform — Whole-Tel connects groups with hand-picked boutique hotels for unforgettable group getaways. Hotel owners list their properties with detailed room configurations, photos organized by section, pricing with per-person tiers, and customizable add-on experiences. Guests browse properties, book with date selection, invite their group, customize with add-ons, and pay via Stripe.
+An all-inclusive hotel booking platform — Whole-Tel connects groups with hand-picked all-inclusive hotels for unforgettable group getaways. Hotel owners list their properties with detailed room configurations, photos organized by section, pricing with per-person tiers, and customizable add-on experiences. Guests browse properties, book with date selection, invite their group, customize with add-ons, and pay via Stripe.
 
 ## Core Value
 
@@ -23,7 +23,7 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 
 ### Active
 
-- [ ] Full rebrand from "party villas" to "Whole-Tel" boutique hotels across all copy, UI, and descriptions
+- [ ] Full rebrand from "party villas" to "Whole-Tel" all-inclusive hotels across all copy, UI, and descriptions
 - [ ] Owner: location input with actual address field
 - [ ] Owner: bed configuration (King, Queen, Double, Twin, Bunk with individual counts)
 - [ ] Owner: additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
@@ -46,7 +46,7 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 
 ## Current Milestone: v1.1 Whole-Tel Rebrand & Owner Enhancements
 
-**Goal:** Rebrand from party villas to Whole-Tel boutique hotels, enhance owner property management (beds, photos, tiered pricing), and add guest invite system for bookings.
+**Goal:** Rebrand from party villas to Whole-Tel all-inclusive hotels, enhance owner property management (beds, photos, tiered pricing), and add guest invite system for bookings.
 
 **Target features:**
 - Full site rebrand to Whole-Tel identity
@@ -56,7 +56,7 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 
 ## Context
 
-- **Brand**: Whole-Tel (whole-tel.com) — hand-picked boutique hotels for unforgettable group getaways
+- **Brand**: Whole-Tel (whole-tel.com) — hand-picked all-inclusive hotels for unforgettable group getaways
 - **Contact**: adam@whole-tel.com
 - **Launch properties**: Cabo San Lucas, Puerto Vallarta, Miami (placeholder content)
 - **Add-ons are unique per property**: Cabo might have boat tours, Miami might have club packages
@@ -85,7 +85,7 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 | Per-property add-ons (not shared catalog) | Each location has unique local experiences | — Pending |
 | Separate guest/owner auth | Owners need dashboard, guests need booking — different experiences | — Pending |
 
-| Full rebrand to Whole-Tel | Client wants "boutique hotels" not "party villas" — identity shift | — Pending |
+| Full rebrand to Whole-Tel | Client wants "all-inclusive hotels" not "party villas" — identity shift | — Pending |
 | Guest invite system | Client specifically requested adding users to bookings, not just count update | — Pending |
 
 ---

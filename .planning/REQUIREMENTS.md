@@ -1,83 +1,60 @@
 # Requirements: Whole-Tel
 
 **Defined:** 2026-03-02
-**Core Value:** Guests can find, customize, and book a party villa with unique local add-on experiences in a single seamless flow.
+**Core Value:** Groups can find, customize, and book a Whole-Tel with unique local add-on experiences and seamless group coordination in a single flow.
 
-## v1 Requirements
+## v1.0 Requirements (Complete)
 
-Requirements for initial release. Each maps to roadmap phases.
+All v1.0 requirements shipped. See v1.0 traceability below for full list.
 
-### Authentication
+### Authentication — ✓ Complete (6 requirements)
+### Property Listings — ✓ Complete (8 requirements)
+### Add-On Experiences — ✓ Complete (5 requirements)
+### Booking Flow — ✓ Complete (7 requirements)
+### Payments — ✓ Complete (5 requirements)
+### Owner Dashboard — ✓ Complete (8 requirements)
+### Pages & Design — ✓ Complete (5 requirements)
+### Data & Infrastructure — ✓ Complete (4 requirements)
 
-- [x] **AUTH-01**: Guest can sign up with email and password
-- [x] **AUTH-02**: Guest can log in and stay logged in across browser sessions
-- [x] **AUTH-03**: Guest can log out from any page
-- [x] **AUTH-04**: Owner can sign up with separate owner role
-- [x] **AUTH-05**: Owner can log in and access owner dashboard
-- [x] **AUTH-06**: Guest and owner auth flows are visually distinct (separate login paths)
+## v1.1 Requirements
 
-### Property Listings
+Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each maps to roadmap phases.
 
-- [x] **PROP-01**: Property listing page displays photo gallery with full-screen view
-- [x] **PROP-02**: Property listing page shows details (bedrooms, bathrooms, max guests)
-- [x] **PROP-03**: Property listing page displays amenities list with icons (pool, hot tub, BBQ, etc.)
-- [x] **PROP-04**: Property listing page shows availability calendar with booked/available dates
-- [x] **PROP-05**: Property listing page displays location info (area description, neighborhood context)
-- [x] **PROP-06**: Property listing page shows per-property add-on experiences with pricing
-- [x] **PROP-07**: Property listing page displays nightly rate and total price when dates are selected
-- [x] **PROP-08**: Properties can be browsed/filtered by destination (Cabo, PV, Miami)
+### Rebrand
 
-### Add-On Experiences
+- [ ] **BRAND-01**: All user-facing copy updated from "party villas" to "Whole-Tel all-inclusive hotels"
+- [ ] **BRAND-02**: Hero section updated with new tagline ("Your next unforgettable group trip starts with a Whole-Tel!")
+- [ ] **BRAND-03**: Meta tags, SEO, and page titles reflect Whole-Tel all-inclusive hotel branding
 
-- [x] **ADDON-01**: Each property has unique add-on experiences (boat rides, chefs, alcohol, etc.)
-- [x] **ADDON-02**: Add-ons have name, description, price, and pricing unit (per person or per booking)
-- [x] **ADDON-03**: Add-ons are displayed on property listing page with pricing
-- [x] **ADDON-04**: Guest can select add-ons during booking flow before checkout
-- [x] **ADDON-05**: Add-on costs are included in total price breakdown and per-person calculator
+### Photo Management
 
-### Booking Flow
+- [ ] **PHOTO-01**: Owner can upload multiple photos at once (batch upload) — polished upload UX via frontend-design
+- [ ] **PHOTO-02**: Owner can drag-to-reorder photos to control display order
+- [ ] **PHOTO-03**: Owner can organize photos into sections (Rooms, Common Area, Pool, custom)
+- [ ] **PHOTO-04**: Owner can add photos to individual experiences/add-ons
+- [ ] **PHOTO-05**: Guest-facing photo gallery displays sections with polished, high-quality UI via frontend-design
 
-- [x] **BOOK-01**: Guest can select check-in and check-out dates via date range picker
-- [x] **BOOK-02**: Guest can select number of guests with occupancy limit enforcement
-- [x] **BOOK-03**: Guest sees add-on selection step with per-property add-ons
-- [x] **BOOK-04**: Guest sees full price summary (nightly rate x nights + add-ons + CC fee if applicable)
-- [x] **BOOK-05**: Guest sees per-person cost calculator (total ÷ number of guests)
-- [x] **BOOK-06**: Guest can proceed to Stripe Checkout from price summary
-- [x] **BOOK-07**: Guest can view their booking history (past and upcoming stays)
+### Property Configuration
 
-### Payments
+- [ ] **PROP-09**: Owner can specify bed configuration (King, Queen, Double, Twin, Bunk with counts)
+- [ ] **PROP-10**: Owner can enter location name and actual street address
+- [ ] **PROP-11**: Owner can set additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
 
-- [x] **PAY-01**: Guest can pay via credit card through Stripe Checkout
-- [x] **PAY-02**: Guest can pay via ACH bank transfer through Stripe Checkout
-- [x] **PAY-03**: Credit card processing fee is passed to customer and displayed transparently
-- [x] **PAY-04**: Guest receives booking confirmation email after successful payment
-- [x] **PAY-05**: Booking is confirmed only after Stripe webhook verifies payment (not on redirect)
+### Experience Enhancements
 
-### Owner Dashboard
+- [ ] **EXP-01**: Owner can set tiered experience pricing (base price up to X people, $Y per person above X)
 
-- [x] **OWNER-01**: Owner can create a new property listing with all details
-- [x] **OWNER-02**: Owner can edit existing property listings
-- [x] **OWNER-03**: Owner can delete their property listings
-- [x] **OWNER-04**: Owner can upload and manage property photos
-- [x] **OWNER-05**: Owner can create, edit, and delete add-on experiences per property
-- [x] **OWNER-06**: Owner can set add-on pricing (per person or per booking)
-- [x] **OWNER-07**: Owner can view bookings for their properties
-- [x] **OWNER-08**: Owner can only see and manage their own properties (not other owners')
+### Booking Enhancements
 
-### Pages & Design
+- [ ] **BOOK-08**: Guest can click a booking to expand and see full details (price breakdown, add-ons, dates)
+- [ ] **BOOK-09**: Booking displays correct guest count and guest can edit it
+- [ ] **BOOK-10**: Guest can invite other users to a booking via email
+- [ ] **BOOK-11**: Invited users can accept or decline a booking invitation
 
-- [x] **PAGE-01**: Homepage with hero section, brand story, featured properties, and testimonials
-- [x] **PAGE-02**: About Us page with brand story
-- [x] **PAGE-03**: Contact page with form routing to adam@whole-tel.com
-- [x] **PAGE-04**: Mobile-responsive design across all pages (Airbnb-level polish)
-- [x] **PAGE-05**: Tropical chill party brand aesthetic throughout (shadcn/ui + React Bits animations)
+### Auth & Bug Fixes
 
-### Data & Infrastructure
-
-- [x] **DATA-01**: Supabase database schema with RLS policies for all tables
-- [x] **DATA-02**: PostgreSQL exclusion constraint preventing double-booking (overlapping dates)
-- [x] **DATA-03**: Placeholder properties seeded for Cabo, Puerto Vallarta, and Miami
-- [x] **DATA-04**: Supabase Storage bucket for property photos with signed URL uploads
+- [ ] **FIX-01**: Auth flow audited and all bugs fixed for smooth login/signup/logout experience
+- [ ] **FIX-02**: Existing formatCurrency bug fixed (divides by 100 when values are in dollars)
 
 ## v2 Requirements
 
@@ -105,22 +82,33 @@ Deferred to future release. Tracked but not in current roadmap.
 - **TRUST-01**: Guest reviews and ratings system
 - **TRUST-02**: FAQ / cancellation policy page
 
+### Payments (v2)
+
+- **PAY-06**: Individual payment splitting (each guest pays their share)
+- **PAY-07**: Guest count changes post-payment with price adjustment
+
+### Advanced
+
+- **ADV-01**: AI photo categorization for automatic section assignment
+- **ADV-02**: Real-time collaborative booking editing
+- **ADV-03**: Per-invitee add-on customization
+
 ## Out of Scope
 
 Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Mobile app (iOS/Android) | Web-first, responsive design sufficient for v1 |
+| Mobile app (iOS/Android) | Web-first, responsive design sufficient |
 | Individual payment splitting (each guest pays) | Calculator only — one person books, group splits via Venmo/Zelle |
 | Channel manager (Airbnb/VRBO sync) | Commoditizes the brand, defeats direct-booking purpose |
-| AI recommendations | 3 properties at launch — every guest sees everything |
+| AI recommendations | Small property count — every guest sees everything |
 | Multi-currency support | USD only — Stripe handles international cards automatically |
 | Automated refunds | Complex policy edge cases — manual via Stripe dashboard |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+### v1.0 (Complete)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -173,13 +161,35 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAGE-02 | Phase 7 | Complete |
 | PAGE-03 | Phase 7 | Complete |
 
-**Coverage:**
-- v1 requirements: 48 total
-- Mapped to phases: 48
-- Unmapped: 0
+### v1.1 (Current)
 
-Note: The initial requirements file stated 35 requirements. The actual count is 48 (6 AUTH + 8 PROP + 5 ADDON + 7 BOOK + 5 PAY + 8 OWNER + 5 PAGE + 4 DATA). All 48 are mapped.
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| BRAND-01 | — | Pending |
+| BRAND-02 | — | Pending |
+| BRAND-03 | — | Pending |
+| PHOTO-01 | — | Pending |
+| PHOTO-02 | — | Pending |
+| PHOTO-03 | — | Pending |
+| PHOTO-04 | — | Pending |
+| PHOTO-05 | — | Pending |
+| PROP-09 | — | Pending |
+| PROP-10 | — | Pending |
+| PROP-11 | — | Pending |
+| EXP-01 | — | Pending |
+| BOOK-08 | — | Pending |
+| BOOK-09 | — | Pending |
+| BOOK-10 | — | Pending |
+| BOOK-11 | — | Pending |
+| FIX-01 | — | Pending |
+| FIX-02 | — | Pending |
+
+**Coverage:**
+- v1.0 requirements: 48 total — all complete
+- v1.1 requirements: 18 total
+- Mapped to phases: 0
+- Unmapped: 18 ⚠️
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-02 after roadmap creation — traceability complete*
+*Last updated: 2026-03-08 after v1.1 requirements definition*
