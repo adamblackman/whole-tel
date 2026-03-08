@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
+import { Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -54,9 +55,11 @@ interface PropertyFormProps {
     per_person_rate?: number | null
   }
   submitLabel?: string
+  /** When true, photos are managed on the detail page — hide placeholder */
+  hidePhotos?: boolean
 }
 
-export function PropertyForm({ action, initialData, submitLabel }: PropertyFormProps) {
+export function PropertyForm({ action, initialData, submitLabel, hidePhotos }: PropertyFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
     initialData?.amenities ?? []
@@ -350,6 +353,17 @@ export function PropertyForm({ action, initialData, submitLabel }: PropertyFormP
           <p className="text-sm text-destructive">{state.errors.house_rules[0]}</p>
         )}
       </div>
+
+      {/* Photos placeholder (create mode only — edit mode manages photos on detail page) */}
+      {!hidePhotos && (
+        <div className="space-y-2">
+          <Label>Photos</Label>
+          <div className="flex flex-col items-center justify-center w-full aspect-video max-w-sm rounded-lg border-2 border-dashed border-muted-foreground/15">
+            <Upload className="h-8 w-8 text-muted-foreground/40 mb-2" />
+            <span className="text-sm text-muted-foreground/60">Save to upload photos</span>
+          </div>
+        </div>
+      )}
 
       {/* Form actions */}
       <div className="flex items-center gap-3">

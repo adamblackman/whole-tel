@@ -48,6 +48,7 @@ export default async function EditPropertyPage({
           amenities,
         }}
         submitLabel="Save Changes"
+        hidePhotos
       />
     </div>
   )
