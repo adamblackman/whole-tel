@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 
 /**
  * Sign up a new guest account.
- * Redirects to / on success.
+ * Auto-logs in (email confirmation off in dev) and redirects to /properties.
  */
 export async function signUpGuest(
   formData: FormData
@@ -30,12 +30,12 @@ export async function signUpGuest(
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/properties')
 }
 
 /**
  * Sign up a new owner account.
- * Redirects to owner login page with confirmation message on success.
+ * Auto-logs in (email confirmation off in dev) and redirects to /dashboard.
  */
 export async function signUpOwner(
   formData: FormData
@@ -57,7 +57,8 @@ export async function signUpOwner(
     return { error: error.message }
   }
 
-  redirect('/owner/login?message=Account+created.+Sign+in+to+access+your+dashboard.')
+  revalidatePath('/', 'layout')
+  redirect('/dashboard')
 }
 
 /**

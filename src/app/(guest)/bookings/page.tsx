@@ -60,8 +60,8 @@ function BookingCard({ booking }: { booking: BookingRow }) {
       year: 'numeric',
     })
 
-  const formatCurrency = (cents: number) =>
-    `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const formatCurrency = (dollars: number) =>
+    `$${dollars.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
   return (
     <Card>
