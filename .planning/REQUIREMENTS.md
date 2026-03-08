@@ -36,13 +36,13 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 
 ### Property Configuration
 
-- [ ] **PROP-09**: Owner can specify bed configuration (King, Queen, Double, Twin, Bunk with counts)
-- [ ] **PROP-10**: Owner can enter location name and actual street address
-- [ ] **PROP-11**: Owner can set additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
+- [x] **PROP-09**: Owner can specify bed configuration (King, Queen, Double, Twin, Bunk with counts)
+- [x] **PROP-10**: Owner can enter location name and actual street address
+- [x] **PROP-11**: Owner can set additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
 
 ### Experience Enhancements
 
-- [ ] **EXP-01**: Owner can set tiered experience pricing (base price up to X people, $Y per person above X)
+- [x] **EXP-01**: Owner can set tiered experience pricing (base price up to X people, $Y per person above X)
 
 ### Booking Enhancements
 
@@ -170,10 +170,10 @@ Explicitly excluded. Documented to prevent scope creep.
 | BRAND-01 | Phase 8 | Complete |
 | BRAND-02 | Phase 8 | Complete |
 | BRAND-03 | Phase 8 | Complete |
-| PROP-09 | Phase 9 | Pending |
-| PROP-10 | Phase 9 | Pending |
-| PROP-11 | Phase 9 | Pending |
-| EXP-01 | Phase 9 | Pending |
+| PROP-09 | Phase 9 | Complete |
+| PROP-10 | Phase 9 | Complete |
+| PROP-11 | Phase 9 | Complete |
+| EXP-01 | Phase 9 | Complete |
 | PHOTO-01 | Phase 10 | Pending |
 | PHOTO-02 | Phase 10 | Pending |
 | PHOTO-03 | Phase 10 | Pending |
