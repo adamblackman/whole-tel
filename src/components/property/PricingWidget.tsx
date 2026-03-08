@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { createBookingAndCheckout } from '@/lib/actions/bookings'
+import { calculatePricing } from '@/lib/pricing'
 import type { DateRange } from 'react-day-picker'
 import { Minus, Plus } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
@@ -14,12 +15,16 @@ interface AddOnItem {
   description: string | null
   price: number
   pricing_unit: 'per_person' | 'per_booking'
+  includedGuests: number | null
+  perPersonAbove: number | null
 }
 
 interface PricingWidgetProps {
   nightlyRate: number
   cleaningFee: number
   maxGuests: number
+  guestThreshold: number | null
+  perPersonRate: number | null
   disabledDates: { from: Date; to: Date }[]
   addOns: AddOnItem[]
   propertyId: string
@@ -29,6 +34,8 @@ export function PricingWidget({
   nightlyRate,
   cleaningFee,
   maxGuests,
+  guestThreshold,
+  perPersonRate,
   disabledDates,
   addOns,
   propertyId,
@@ -47,21 +54,29 @@ export function PricingWidget({
         )
       : 0
 
-  const subtotal = nights * nightlyRate
-
-  const addOnsTotal = addOns
+  // Use shared pricing module for all calculations
+  const selectedAddOns = addOns
     .filter((a) => selectedAddOnIds.has(a.id))
-    .reduce((sum, a) => {
-      const cost = a.pricing_unit === 'per_person' ? a.price * guestCount : a.price
-      return sum + cost
-    }, 0)
+    .map((a) => ({
+      id: a.id,
+      name: a.name,
+      price: a.price,
+      pricingUnit: a.pricing_unit,
+      includedGuests: a.includedGuests,
+      perPersonAbove: a.perPersonAbove,
+    }))
 
-  const baseAmount = subtotal + (nights > 0 ? cleaningFee : 0) + addOnsTotal
-  const processingFee =
-    nights > 0 ? parseFloat((baseAmount * 0.029 + 0.3).toFixed(2)) : 0
+  const breakdown = calculatePricing({
+    nightlyRate,
+    cleaningFee,
+    nights,
+    guestCount,
+    guestThreshold,
+    perPersonRate,
+    selectedAddOns,
+  })
 
-  const total = subtotal + (nights > 0 ? cleaningFee : 0) + addOnsTotal + processingFee
-  const perPerson = guestCount > 1 && nights > 0 ? total / guestCount : null
+  const perPerson = guestCount > 1 && nights > 0 ? breakdown.total / guestCount : null
 
   const handleReserve = () => {
     if (!dateRange?.from || !dateRange?.to) return
@@ -145,7 +160,7 @@ export function PricingWidget({
           <div className="space-y-2">
             {addOns.map((addOn) => {
               const isSelected = selectedAddOnIds.has(addOn.id)
-              const unitLabel = addOn.pricing_unit === 'per_person' ? '/person' : '/booking'
+              const hasTier = addOn.includedGuests != null && addOn.perPersonAbove != null
               return (
                 <button
                   key={addOn.id}
@@ -161,9 +176,15 @@ export function PricingWidget({
                     <span className="text-sm font-medium">{addOn.name}</span>
                     <span className="text-sm font-medium shrink-0 ml-2">
                       ${addOn.price.toLocaleString()}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        {unitLabel}
-                      </span>
+                      {hasTier ? (
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {' '}(up to {addOn.includedGuests} people, ${addOn.perPersonAbove}/person above)
+                        </span>
+                      ) : (
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {addOn.pricing_unit === 'per_person' ? '/person' : '/booking'}
+                        </span>
+                      )}
                     </span>
                   </div>
                   {addOn.description && (
@@ -186,39 +207,44 @@ export function PricingWidget({
             <span>
               ${nightlyRate.toLocaleString()} &times; {nights} night{nights !== 1 ? 's' : ''}
             </span>
-            <span>${subtotal.toLocaleString()}</span>
+            <span>${breakdown.accommodationSubtotal.toLocaleString()}</span>
           </div>
+          {breakdown.perPersonSurcharge > 0 && breakdown.surchargeDetail && (
+            <div className="flex justify-between text-sm">
+              <span>
+                Per-person surcharge ({breakdown.surchargeDetail.extraGuests} guest{breakdown.surchargeDetail.extraGuests !== 1 ? 's' : ''} above {guestThreshold})
+                <span className="text-muted-foreground"> &mdash; ${breakdown.surchargeDetail.ratePerNight}/night</span>
+              </span>
+              <span>${breakdown.perPersonSurcharge.toLocaleString()}</span>
+            </div>
+          )}
           <div className="flex justify-between text-sm">
             <span>Cleaning fee</span>
             <span>${cleaningFee.toLocaleString()}</span>
           </div>
-          {addOns
-            .filter((a) => selectedAddOnIds.has(a.id))
-            .map((a) => {
-              const cost =
-                a.pricing_unit === 'per_person' ? a.price * guestCount : a.price
-              const unitNote =
-                a.pricing_unit === 'per_person' ? ` x ${guestCount}` : ''
-              return (
-                <div key={a.id} className="flex justify-between text-sm">
-                  <span>
-                    {a.name}
-                    {unitNote && (
-                      <span className="text-muted-foreground">{unitNote}</span>
-                    )}
-                  </span>
-                  <span>${cost.toLocaleString()}</span>
-                </div>
-              )
-            })}
+          {breakdown.addOnItems.map((item) => (
+            <div key={item.id} className="flex justify-between text-sm">
+              <span>
+                {item.name}
+                {item.tierDetail ? (
+                  <span className="text-muted-foreground"> ({item.tierDetail.extraGuests} extra guest{item.tierDetail.extraGuests !== 1 ? 's' : ''})</span>
+                ) : (
+                  addOns.find((a) => a.id === item.id)?.pricing_unit === 'per_person' && (
+                    <span className="text-muted-foreground"> x {guestCount}</span>
+                  )
+                )}
+              </span>
+              <span>${item.totalCost.toLocaleString()}</span>
+            </div>
+          ))}
           <div className="flex justify-between text-sm">
             <span>Processing fee (card payments)</span>
-            <span>${processingFee.toLocaleString()}</span>
+            <span>${breakdown.processingFee.toLocaleString()}</span>
           </div>
           <Separator />
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${total.toLocaleString()}</span>
+            <span>${breakdown.total.toLocaleString()}</span>
           </div>
           {perPerson !== null && (
             <div className="flex justify-between text-sm text-muted-foreground">
@@ -231,7 +257,7 @@ export function PricingWidget({
         <p className="mt-3 text-sm text-muted-foreground">Select dates for pricing</p>
       )}
 
-      {/* Reserve button — wired to createBookingAndCheckout Server Action */}
+      {/* Reserve button -- wired to createBookingAndCheckout Server Action */}
       {error && (
         <p className="text-sm text-destructive mt-2">{error}</p>
       )}
@@ -240,7 +266,7 @@ export function PricingWidget({
         disabled={isPending || nights < 1}
         className="w-full mt-4"
       >
-        {isPending ? 'Redirecting to checkout…' : 'Reserve'}
+        {isPending ? 'Redirecting to checkout...' : 'Reserve'}
       </Button>
     </div>
   )

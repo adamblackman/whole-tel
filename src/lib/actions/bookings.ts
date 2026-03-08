@@ -6,15 +6,17 @@ import { verifySession } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
 import { bookingInputSchema } from '@/lib/validations/booking'
+import { calculatePricing } from '@/lib/pricing'
 
 /**
  * Creates a pending booking and redirects to Stripe Checkout.
  *
  * Security model:
  * - verifySession() validates JWT against Supabase auth server (redirects if no session)
- * - All prices fetched server-side — client-submitted prices are never trusted
+ * - All prices fetched server-side -- client-submitted prices are never trusted
  * - Add-ons scoped to the given property_id to prevent cross-property injection
- * - redirect() called OUTSIDE try/catch — Next.js redirect throws internally
+ * - redirect() called OUTSIDE try/catch -- Next.js redirect throws internally
+ * - Uses shared calculatePricing() for exact price parity with PricingWidget
  */
 export async function createBookingAndCheckout(input: {
   propertyId: string
@@ -23,7 +25,7 @@ export async function createBookingAndCheckout(input: {
   guestCount: number
   selectedAddOnIds: string[]
 }): Promise<void> {
-  // Step 1: Validate auth — redirects to /login if no valid session
+  // Step 1: Validate auth -- redirects to /login if no valid session
   const user = await verifySession()
 
   // Step 2: Parse and validate input with Zod schema
@@ -37,7 +39,7 @@ export async function createBookingAndCheckout(input: {
   // Step 3: Fetch property server-side for authoritative pricing
   const { data: property, error: propError } = await supabase
     .from('properties')
-    .select('id, name, nightly_rate, cleaning_fee, max_guests')
+    .select('id, name, nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate')
     .eq('id', input.propertyId)
     .single()
 
@@ -62,7 +64,7 @@ export async function createBookingAndCheckout(input: {
     input.selectedAddOnIds.length > 0
       ? await supabase
           .from('add_ons')
-          .select('id, name, price, pricing_unit')
+          .select('id, name, price, pricing_unit, included_guests, per_person_above')
           .in('id', input.selectedAddOnIds)
           .eq('property_id', input.propertyId)
       : {
@@ -71,26 +73,37 @@ export async function createBookingAndCheckout(input: {
             name: string
             price: number
             pricing_unit: string
+            included_guests: number | null
+            per_person_above: number | null
           }[],
         }
 
-  // Step 7: Calculate totals server-side (NEVER trust client prices)
-  const subtotal =
-    Number(property.nightly_rate) * nights + Number(property.cleaning_fee)
-  const addOnsTotal = (addOns ?? []).reduce((sum, a) => {
-    const cost =
-      a.pricing_unit === 'per_person'
-        ? Number(a.price) * input.guestCount
-        : Number(a.price)
-    return sum + cost
-  }, 0)
-  const processingFee = parseFloat(
-    ((subtotal + addOnsTotal) * 0.029 + 0.3).toFixed(2)
-  )
-  const total = subtotal + addOnsTotal + processingFee
+  // Step 7: Calculate totals using shared pricing module (NEVER trust client prices)
+  const breakdown = calculatePricing({
+    nightlyRate: Number(property.nightly_rate),
+    cleaningFee: Number(property.cleaning_fee),
+    nights,
+    guestCount: input.guestCount,
+    guestThreshold: property.guest_threshold != null ? Number(property.guest_threshold) : null,
+    perPersonRate: property.per_person_rate != null ? Number(property.per_person_rate) : null,
+    selectedAddOns: (addOns ?? []).map((a) => ({
+      id: a.id,
+      name: a.name,
+      price: Number(a.price),
+      pricingUnit: a.pricing_unit as 'per_person' | 'per_booking',
+      includedGuests: a.included_guests != null ? Number(a.included_guests) : null,
+      perPersonAbove: a.per_person_above != null ? Number(a.per_person_above) : null,
+    })),
+  })
+
+  // Subtotal = accommodation + surcharge (no dedicated surcharge column on bookings table)
+  const subtotal = breakdown.accommodationSubtotal + breakdown.perPersonSurcharge
+  const addOnsTotal = breakdown.addOnsTotal
+  const processingFee = breakdown.processingFee
+  const total = breakdown.total
 
   // Step 8: Insert booking + booking_add_ons, create Stripe session
-  // redirect() MUST be outside try/catch — it throws internally in Next.js
+  // redirect() MUST be outside try/catch -- it throws internally in Next.js
   let stripeUrl: string
 
   try {
@@ -114,45 +127,68 @@ export async function createBookingAndCheckout(input: {
 
     if (bookingError || !booking) throw new Error('Failed to create booking')
 
-    // Insert booking_add_ons rows
-    if ((addOns ?? []).length > 0) {
-      const bookingAddOns = addOns!.map((a) => ({
-        booking_id: booking.id,
-        add_on_id: a.id,
-        quantity: a.pricing_unit === 'per_person' ? input.guestCount : 1,
-        unit_price: Number(a.price),
-        total_price:
-          a.pricing_unit === 'per_person'
-            ? Number(a.price) * input.guestCount
-            : Number(a.price),
-      }))
+    // Insert booking_add_ons rows using breakdown for correct total_price (includes tier cost)
+    if (breakdown.addOnItems.length > 0) {
+      const bookingAddOns = breakdown.addOnItems.map((item) => {
+        const dbAddOn = (addOns ?? []).find((a) => a.id === item.id)
+        return {
+          booking_id: booking.id,
+          add_on_id: item.id,
+          quantity: dbAddOn?.pricing_unit === 'per_person' ? input.guestCount : 1,
+          unit_price: Number(dbAddOn?.price ?? 0),
+          total_price: item.totalCost,
+        }
+      })
       await supabase.from('booking_add_ons').insert(bookingAddOns)
     }
 
-    // Build Stripe line items
+    // Build Stripe line items with separate lines for each pricing component
     const lineItems = [
+      // Accommodation (nightly rate * nights)
       {
         price_data: {
           currency: 'usd',
-          unit_amount: Math.round(subtotal * 100), // Stripe uses cents
+          unit_amount: Math.round(breakdown.accommodationSubtotal * 100),
           product_data: {
-            name: `${property.name} — ${nights} night${nights !== 1 ? 's' : ''}`,
+            name: `${property.name} -- ${nights} night${nights !== 1 ? 's' : ''}`,
           },
         },
         quantity: 1,
       },
-      ...(addOns ?? []).map((a) => ({
+      // Per-person surcharge (if applicable)
+      ...(breakdown.perPersonSurcharge > 0
+        ? [
+            {
+              price_data: {
+                currency: 'usd',
+                unit_amount: Math.round(breakdown.perPersonSurcharge * 100),
+                product_data: {
+                  name: `Per-person surcharge (${breakdown.surchargeDetail!.extraGuests} extra guest${breakdown.surchargeDetail!.extraGuests !== 1 ? 's' : ''})`,
+                },
+              },
+              quantity: 1,
+            },
+          ]
+        : []),
+      // Cleaning fee
+      {
         price_data: {
           currency: 'usd',
-          unit_amount: Math.round(
-            (a.pricing_unit === 'per_person'
-              ? Number(a.price) * input.guestCount
-              : Number(a.price)) * 100
-          ),
-          product_data: { name: a.name },
+          unit_amount: Math.round(breakdown.cleaningFee * 100),
+          product_data: { name: 'Cleaning fee' },
+        },
+        quantity: 1,
+      },
+      // Add-ons (each with correct tier-inclusive total)
+      ...breakdown.addOnItems.map((item) => ({
+        price_data: {
+          currency: 'usd',
+          unit_amount: Math.round(item.totalCost * 100),
+          product_data: { name: item.name },
         },
         quantity: 1,
       })),
+      // Processing fee
       {
         price_data: {
           currency: 'usd',
@@ -188,6 +224,6 @@ export async function createBookingAndCheckout(input: {
     throw new Error('Failed to create booking. Please try again.')
   }
 
-  // redirect() MUST be outside try/catch — it throws internally
+  // redirect() MUST be outside try/catch -- it throws internally
   redirect(stripeUrl)
 }
