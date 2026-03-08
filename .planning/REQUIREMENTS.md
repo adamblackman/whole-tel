@@ -48,8 +48,8 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 
 - [x] **BOOK-08**: Guest can click a booking to expand and see full details (price breakdown, add-ons, dates)
 - [x] **BOOK-09**: Booking displays correct guest count and guest can edit it
-- [ ] **BOOK-10**: Guest can invite other users to a booking via email
-- [ ] **BOOK-11**: Invited users can accept or decline a booking invitation
+- [x] **BOOK-10**: Guest can invite other users to a booking via email
+- [x] **BOOK-11**: Invited users can accept or decline a booking invitation
 
 ### Auth & Bug Fixes
 
@@ -181,8 +181,8 @@ Explicitly excluded. Documented to prevent scope creep.
 | PHOTO-05 | Phase 10 | Complete |
 | BOOK-08 | Phase 11 | Complete |
 | BOOK-09 | Phase 11 | Complete |
-| BOOK-10 | Phase 11 | Pending |
-| BOOK-11 | Phase 11 | Pending |
+| BOOK-10 | Phase 11 | Complete |
+| BOOK-11 | Phase 11 | Complete |
 
 **Coverage:**
 - v1.0 requirements: 48 total -- all complete

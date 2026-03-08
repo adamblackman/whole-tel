@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8: Fixes and Rebrand** - Auth bug fixes, formatCurrency fix, and full rebrand from party villas to Whole-Tel all-inclusive hotels
 - [x] **Phase 9: Owner Property Tools** - Bed configuration, location address, tiered per-person pricing for properties and experiences (completed 2026-03-08)
 - [x] **Phase 10: Photo Management** - Batch upload, drag-to-reorder, photo sections, experience photos, and polished guest gallery (completed 2026-03-08)
-- [ ] **Phase 11: Booking Enhancements** - Expandable booking details, guest count editing, and guest invite system
+- [x] **Phase 11: Booking Enhancements** - Expandable booking details, guest count editing, and guest invite system (completed 2026-03-08)
 
 ## Phase Details
 
@@ -91,7 +91,7 @@ Plans:
   2. A booking displays the correct guest count, and the guest who made the booking can edit it -- the price recalculates if tiered pricing applies
   3. A guest can invite other users to a booking by entering their email address, and the invited user receives an email with a link to view and accept/decline the invitation
   4. An invited user can accept or decline a booking invitation, and accepted guests appear in the booking's guest list visible to the booking creator
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 11-01-PLAN.md — Foundation + expandable booking details with price breakdown + guest count editing
 - [ ] 11-02-PLAN.md — Invitation system: email template, send/accept/decline actions, invitation page, guest list
@@ -115,4 +115,4 @@ Execution: 8 -> (9 || 10) -> 11
 | 8. Fixes and Rebrand | v1.1 | 0/2 | Planning | - |
 | 9. Owner Property Tools | 3/3 | Complete   | 2026-03-08 | - |
 | 10. Photo Management | 4/4 | Complete    | 2026-03-08 | - |
-| 11. Booking Enhancements | 1/2 | In Progress|  | - |
+| 11. Booking Enhancements | 2/2 | Complete   | 2026-03-08 | - |
