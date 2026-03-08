@@ -47,7 +47,8 @@ export async function getSignedUploadUrl(
  */
 export async function savePhotoRecord(
   propertyId: string,
-  storagePath: string
+  storagePath: string,
+  section?: string | null
 ): Promise<{ error?: string }> {
   await requireOwner()
   const supabase = await createClient()
@@ -62,12 +63,13 @@ export async function savePhotoRecord(
     property_id: propertyId,
     storage_path: storagePath,
     display_order: count ?? 0,
+    section: section || null,
   })
 
   if (error) return { error: error.message }
 
   revalidatePath(`/dashboard/properties/${propertyId}`)
-  revalidatePath('/dashboard')
+  revalidatePath(`/properties/${propertyId}`)
   return {}
 }
 
@@ -102,6 +104,81 @@ export async function deletePhoto(
   if (dbError) return { error: dbError.message }
 
   revalidatePath(`/dashboard/properties/${propertyId}`)
-  revalidatePath('/dashboard')
+  revalidatePath(`/properties/${propertyId}`)
+  return {}
+}
+
+/**
+ * Updates the section assignment for a single photo.
+ * Setting section to null moves it to "General".
+ */
+export async function updatePhotoSection(
+  photoId: string,
+  propertyId: string,
+  section: string | null
+): Promise<{ error?: string }> {
+  await requireOwner()
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('property_photos')
+    .update({ section: section || null })
+    .eq('id', photoId)
+    .eq('property_id', propertyId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/dashboard/properties/${propertyId}`)
+  revalidatePath(`/properties/${propertyId}`)
+  return {}
+}
+
+/**
+ * Reorders photos by updating display_order to match the given array index.
+ * photoIds should be the complete ordered list of photo IDs.
+ */
+export async function reorderPhotos(
+  propertyId: string,
+  photoIds: string[]
+): Promise<{ error?: string }> {
+  await requireOwner()
+  const supabase = await createClient()
+
+  for (let i = 0; i < photoIds.length; i++) {
+    const { error } = await supabase
+      .from('property_photos')
+      .update({ display_order: i })
+      .eq('id', photoIds[i])
+      .eq('property_id', propertyId)
+
+    if (error) return { error: error.message }
+  }
+
+  revalidatePath(`/dashboard/properties/${propertyId}`)
+  revalidatePath(`/properties/${propertyId}`)
+  return {}
+}
+
+/**
+ * Deletes a section by moving all its photos to General (section = null).
+ * Photos are never lost — only the section label is removed.
+ */
+export async function deleteSection(
+  propertyId: string,
+  sectionName: string
+): Promise<{ error?: string }> {
+  await requireOwner()
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('property_photos')
+    .update({ section: null })
+    .eq('property_id', propertyId)
+    .eq('section', sectionName)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/dashboard/properties/${propertyId}`)
+  revalidatePath(`/properties/${propertyId}`)
   return {}
 }

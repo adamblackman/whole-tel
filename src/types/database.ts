@@ -64,6 +64,7 @@ export interface PropertyPhoto {
   property_id: string
   storage_path: string
   display_order: number
+  section: string | null
   created_at: string
 }
 
