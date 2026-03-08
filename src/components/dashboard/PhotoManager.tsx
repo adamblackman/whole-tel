@@ -39,13 +39,14 @@ export function PhotoManager({ propertyId, photos: initialPhotos }: PhotoManager
   const photoSections = [...new Set(photosWithSections.map((p) => p.section as string))]
   const allSections = [...new Set([...photoSections, ...addedSections])]
 
-  // Sync when server data changes (photos prop changes on revalidation)
-  // Using a simple key comparison to detect server updates
-  const serverPhotoIds = initialPhotos.map((p) => p.id).join(',')
-  const [lastServerIds, setLastServerIds] = useState(serverPhotoIds)
-  if (serverPhotoIds !== lastServerIds) {
+  // Sync when server data changes (photos prop changes on revalidation or router.refresh)
+  const serverDataHash = initialPhotos
+    .map((p) => `${p.id}:${p.section ?? ''}`)
+    .join('|')
+  const [lastServerHash, setLastServerHash] = useState(serverDataHash)
+  if (serverDataHash !== lastServerHash) {
     setLocalPhotos(initialPhotos)
-    setLastServerIds(serverPhotoIds)
+    setLastServerHash(serverDataHash)
     // Recalculate added sections: keep only those not in new photo sections
     const newPhotoSections = [...new Set(initialPhotos.filter((p) => p.section != null).map((p) => p.section as string))]
     setAddedSections((prev) => prev.filter((s) => !newPhotoSections.includes(s)))

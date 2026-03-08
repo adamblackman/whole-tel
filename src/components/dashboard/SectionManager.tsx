@@ -63,6 +63,8 @@ export function SectionManager({
     if (result.error) {
       console.error('Failed to delete section:', result.error)
       router.refresh() // Revert optimistic update by re-fetching server state
+    } else {
+      router.refresh() // Sync UI with server after successful delete
     }
   }
 

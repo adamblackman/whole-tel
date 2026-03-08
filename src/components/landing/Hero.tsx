@@ -9,6 +9,16 @@ export async function Hero() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  let isOwner = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isOwner = profile?.role === 'owner'
+  }
+
   return (
     <section className="relative min-h-[70vh] flex flex-col bg-gradient-to-br from-brand-teal via-cyan-500 to-emerald-400">
       {/* Transparent nav overlay */}
@@ -26,6 +36,15 @@ export async function Hero() {
           </Button>
           {user ? (
             <div className="flex items-center gap-3">
+              {isOwner && (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white text-sm md:text-base"
+                >
+                  <Link href="/dashboard">Host Dashboard</Link>
+                </Button>
+              )}
               <span className="text-sm md:text-base text-white/90 truncate max-w-[180px] md:max-w-[240px]" title={user.email ?? undefined}>
                 {user.email}
               </span>

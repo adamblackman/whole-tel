@@ -14,6 +14,16 @@ export async function GuestNav() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  let isOwner = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isOwner = profile?.role === 'owner'
+  }
+
   return (
     <header className="border-b border-border bg-background">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -26,6 +36,11 @@ export async function GuestNav() {
           </Button>
           {user ? (
             <>
+              {isOwner && (
+                <Button variant="ghost" asChild>
+                  <Link href="/dashboard">Host Dashboard</Link>
+                </Button>
+              )}
               <Button variant="ghost" asChild>
                 <Link href="/bookings">My Bookings</Link>
               </Button>
