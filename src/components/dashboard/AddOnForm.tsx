@@ -1,6 +1,8 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
+import { Upload, X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { createClient } from '@/lib/supabase/browser'
+import {
+  getExperienceUploadUrl,
+  saveExperiencePhoto,
+  removeExperiencePhoto,
+} from '@/lib/actions/photos'
 import type { ActionState } from '@/lib/validations/property'
 
 interface AddOnFormProps {
@@ -24,13 +32,21 @@ interface AddOnFormProps {
     max_quantity?: number | null
     included_guests?: number | null
     per_person_above?: number | null
+    photo_url?: string | null
   }
+  /** Required for photo upload (only available when editing an existing add-on) */
+  addOnId?: string
+  propertyId?: string
   submitLabel?: string
   onCancel?: () => void
 }
 
-export function AddOnForm({ action, initialData, submitLabel, onCancel }: AddOnFormProps) {
+export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabel, onCancel }: AddOnFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
+  const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photo_url ?? null)
+  const [uploading, setUploading] = useState(false)
+  const [photoError, setPhotoError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Close edit mode on successful save
   useEffect(() => {
@@ -39,10 +55,126 @@ export function AddOnForm({ action, initialData, submitLabel, onCancel }: AddOnF
     }
   }, [state.message, onCancel])
 
+  const canUploadPhoto = Boolean(addOnId && propertyId)
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !addOnId || !propertyId) return
+
+    // Validate 10MB limit
+    if (file.size > 10 * 1024 * 1024) {
+      setPhotoError('File must be under 10MB')
+      return
+    }
+
+    setUploading(true)
+    setPhotoError(null)
+
+    try {
+      // Step 1: Get signed URL
+      const result = await getExperienceUploadUrl(addOnId, propertyId)
+      if ('error' in result) throw new Error(result.error)
+
+      // Step 2: Upload directly to Supabase Storage
+      const supabase = createClient()
+      const { error: uploadError } = await supabase.storage
+        .from('property-photos')
+        .uploadToSignedUrl(result.path, result.token, file)
+      if (uploadError) throw uploadError
+
+      // Step 3: Save the photo URL to the add-on record
+      const saveResult = await saveExperiencePhoto(addOnId, result.path)
+      if (saveResult.error) throw new Error(saveResult.error)
+
+      // Show the uploaded photo
+      const { data } = supabase.storage
+        .from('property-photos')
+        .getPublicUrl(result.path)
+      setPhotoUrl(data.publicUrl)
+    } catch (err) {
+      setPhotoError(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  async function handlePhotoRemove() {
+    if (!addOnId || !propertyId || !photoUrl) return
+
+    setPhotoError(null)
+    try {
+      // Extract storage path from public URL
+      const pathMatch = photoUrl.match(/property-photos\/(.+)$/)
+      const storagePath = pathMatch ? pathMatch[1] : ''
+
+      const result = await removeExperiencePhoto(addOnId, propertyId, storagePath)
+      if (result.error) throw new Error(result.error)
+      setPhotoUrl(null)
+    } catch (err) {
+      setPhotoError(err instanceof Error ? err.message : 'Remove failed')
+    }
+  }
+
   return (
     <form action={formAction} className="space-y-4">
       {state.message && !state.message.includes('successfully') && (
         <p className="text-sm text-destructive">{state.message}</p>
+      )}
+
+      {/* Photo Upload (only when editing an existing add-on) */}
+      {canUploadPhoto && (
+        <div className="space-y-2">
+          <Label>Photo</Label>
+          {photoUrl ? (
+            <div className="relative w-full max-w-xs aspect-video rounded-lg overflow-hidden border">
+              <Image
+                src={photoUrl}
+                alt="Experience photo"
+                fill
+                className="object-cover"
+                sizes="320px"
+              />
+              <button
+                type="button"
+                onClick={handlePhotoRemove}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-destructive transition-colors"
+                aria-label="Remove photo"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="flex flex-col items-center justify-center w-full max-w-xs aspect-video rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer"
+            >
+              {uploading ? (
+                <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
+              ) : (
+                <>
+                  <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                  <span className="text-sm text-muted-foreground">Upload Photo</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Hidden file input */}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handlePhotoUpload}
+            className="hidden"
+          />
+
+          {photoError && (
+            <p className="text-sm text-destructive">{photoError}</p>
+          )}
+        </div>
       )}
 
       {/* Name */}

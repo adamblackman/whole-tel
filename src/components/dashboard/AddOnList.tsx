@@ -16,6 +16,7 @@ interface AddOnListProps {
     price: number
     pricing_unit: 'per_person' | 'per_booking'
     max_quantity: number | null
+    photo_url: string | null
   }>
 }
 
@@ -45,6 +46,8 @@ export function AddOnList({ propertyId, addOns }: AddOnListProps) {
             <AddOnForm
               action={updateAddOn.bind(null, addOn.id, propertyId)}
               initialData={addOn}
+              addOnId={addOn.id}
+              propertyId={propertyId}
               submitLabel="Save Changes"
               onCancel={() => setEditingId(null)}
             />

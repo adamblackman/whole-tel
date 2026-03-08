@@ -55,7 +55,7 @@ export default async function PropertyListingPage({
     supabase
       .from('properties')
       .select(
-        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above)`
+        `*, property_photos(id, storage_path, display_order), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
       )
       .eq('id', propertyId)
       .single(),
