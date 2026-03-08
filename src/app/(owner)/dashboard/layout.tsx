@@ -35,12 +35,6 @@ export default async function DashboardLayout({
               >
                 Bookings
               </Link>
-              <Link
-                href="/"
-                className="text-brand-teal hover:text-brand-teal/80 font-medium transition-colors"
-              >
-                View site
-              </Link>
             </nav>
           </div>
           <LogoutButton />
