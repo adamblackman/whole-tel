@@ -53,8 +53,8 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 
 ### Auth & Bug Fixes
 
-- [ ] **FIX-01**: Auth flow audited and all bugs fixed for smooth login/signup/logout experience
-- [ ] **FIX-02**: Existing formatCurrency bug fixed (divides by 100 when values are in dollars)
+- [x] **FIX-01**: Auth flow audited and all bugs fixed for smooth login/signup/logout experience
+- [x] **FIX-02**: Existing formatCurrency bug fixed (divides by 100 when values are in dollars)
 
 ## v2 Requirements
 
@@ -165,8 +165,8 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | Phase 8 | Pending |
-| FIX-02 | Phase 8 | Pending |
+| FIX-01 | Phase 8 | Complete |
+| FIX-02 | Phase 8 | Complete |
 | BRAND-01 | Phase 8 | Pending |
 | BRAND-02 | Phase 8 | Pending |
 | BRAND-03 | Phase 8 | Pending |
