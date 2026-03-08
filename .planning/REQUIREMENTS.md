@@ -31,7 +31,7 @@ Requirements for milestone v1.1: Whole-Tel Rebrand & Owner Enhancements. Each ma
 - [x] **PHOTO-01**: Owner can upload multiple photos at once (batch upload) -- polished upload UX via frontend-design
 - [ ] **PHOTO-02**: Owner can drag-to-reorder photos to control display order
 - [x] **PHOTO-03**: Owner can organize photos into sections (Rooms, Common Area, Pool, custom)
-- [ ] **PHOTO-04**: Owner can add photos to individual experiences/add-ons
+- [x] **PHOTO-04**: Owner can add photos to individual experiences/add-ons
 - [ ] **PHOTO-05**: Guest-facing photo gallery displays sections with polished, high-quality UI via frontend-design
 
 ### Property Configuration
@@ -177,7 +177,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | PHOTO-01 | Phase 10 | Complete |
 | PHOTO-02 | Phase 10 | Pending |
 | PHOTO-03 | Phase 10 | Complete |
-| PHOTO-04 | Phase 10 | Pending |
+| PHOTO-04 | Phase 10 | Complete |
 | PHOTO-05 | Phase 10 | Pending |
 | BOOK-08 | Phase 11 | Pending |
 | BOOK-09 | Phase 11 | Pending |
