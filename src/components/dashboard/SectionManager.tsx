@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,8 @@ interface SectionManagerProps {
   onSectionChange: (section: string | null) => void
   /** Callback when a new section is added (so parent can track it) */
   onSectionAdd: (section: string) => void
+  /** Called optimistically when section is deleted; used for immediate UI update */
+  onSectionDeleted?: (section: string) => void
 }
 
 /**
@@ -30,7 +33,9 @@ export function SectionManager({
   activeSection,
   onSectionChange,
   onSectionAdd,
+  onSectionDeleted,
 }: SectionManagerProps) {
+  const router = useRouter()
   const [customName, setCustomName] = useState('')
   const [isAdding, setIsAdding] = useState(false)
 
@@ -48,14 +53,16 @@ export function SectionManager({
   ]
 
   async function handleDeleteSection(sectionName: string) {
+    // Optimistic update: remove from UI immediately
+    onSectionDeleted?.(sectionName)
+    if (activeSection === sectionName) {
+      onSectionChange(null)
+    }
+
     const result = await deleteSection(propertyId, sectionName)
     if (result.error) {
       console.error('Failed to delete section:', result.error)
-      return
-    }
-    // If the deleted section was active, switch to "All"
-    if (activeSection === sectionName) {
-      onSectionChange(null)
+      router.refresh() // Revert optimistic update by re-fetching server state
     }
   }
 

@@ -29,15 +29,15 @@ export function PhotoManager({ propertyId, photos: initialPhotos }: PhotoManager
   const [activeSection, setActiveSection] = useState<string | null>(null)
 
   // Track sections that have been added via SectionManager (even if no photos assigned yet)
-  const photosWithSections = initialPhotos.filter((p) => p.section != null)
-  const photoSections = [...new Set(photosWithSections.map((p) => p.section as string))]
   const [addedSections, setAddedSections] = useState<string[]>([])
-
-  // Combine photo-derived sections with manually added ones
-  const allSections = [...new Set([...photoSections, ...addedSections])]
 
   // Local photo order for optimistic drag feedback
   const [localPhotos, setLocalPhotos] = useState<Photo[]>(initialPhotos)
+
+  // Derive sections from localPhotos (so optimistic deletes update the pill bar immediately)
+  const photosWithSections = localPhotos.filter((p) => p.section != null)
+  const photoSections = [...new Set(photosWithSections.map((p) => p.section as string))]
+  const allSections = [...new Set([...photoSections, ...addedSections])]
 
   // Sync when server data changes (photos prop changes on revalidation)
   // Using a simple key comparison to detect server updates
@@ -115,6 +115,15 @@ export function PhotoManager({ propertyId, photos: initialPhotos }: PhotoManager
     )
   }
 
+  function handleSectionDeleted(section: string) {
+    setAddedSections((prev) => prev.filter((s) => s !== section))
+    setLocalPhotos((prev) =>
+      prev.map((p) =>
+        p.section === section ? { ...p, section: null } : p
+      )
+    )
+  }
+
   return (
     <div className="space-y-4">
       <SectionManager
@@ -123,6 +132,7 @@ export function PhotoManager({ propertyId, photos: initialPhotos }: PhotoManager
         activeSection={activeSection}
         onSectionChange={setActiveSection}
         onSectionAdd={handleSectionAdd}
+        onSectionDeleted={handleSectionDeleted}
       />
 
       <PhotoUploader
