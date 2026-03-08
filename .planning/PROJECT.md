@@ -16,25 +16,25 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 - ✓ Guests can browse properties by destination — v1.0
 - ✓ Guests can book a property with date selection and add-on customization — v1.0
 - ✓ Guests can pay via Stripe (credit card with fee surcharge) — v1.0
-- ✓ Per-person cost calculator (total ÷ number of guests) — v1.0
+- ✓ Per-person cost calculator (total / number of guests) — v1.0
 - ✓ Separate auth for guests and property owners — v1.0
 - ✓ Owner dashboard to manage properties and add-ons — v1.0
 - ✓ Full landing page homepage with hero, brand story, featured properties, testimonials — v1.0
+- ✓ Full rebrand from "party villas" to "Whole-Tel" all-inclusive hotels — v1.1
+- ✓ Owner: bed configuration (King, Queen, Double, Twin, Bunk with individual counts) — v1.1
+- ✓ Owner: location input with actual address field — v1.1
+- ✓ Owner: additional per-person rate above a guest threshold — v1.1
+- ✓ Owner: tiered experience pricing (up to X people included, $Y per person above X) — v1.1
+- ✓ Owner: multi-photo upload (batch), drag-to-reorder, photo sections — v1.1
+- ✓ Owner: photos on experiences — v1.1
+- ✓ Guest-facing sectioned photo gallery with Airbnb-quality tour — v1.1
+- ✓ Bookings: expandable detail view with full price breakdown — v1.1
+- ✓ Bookings: guest count display and editing with price recalculation — v1.1
+- ✓ Bookings: guest invite system (email invitations, accept/decline) — v1.1
 
 ### Active
 
-- [ ] Full rebrand from "party villas" to "Whole-Tel" all-inclusive hotels across all copy, UI, and descriptions
-- [ ] Owner: location input with actual address field
-- [ ] Owner: bed configuration (King, Queen, Double, Twin, Bunk with individual counts)
-- [ ] Owner: additional per-person rate above a guest threshold (e.g., $100/night/person above 25 guests)
-- [ ] Owner: multi-photo upload (batch)
-- [ ] Owner: photo ordering/arrangement (drag-to-reorder)
-- [ ] Owner: photo sections (Rooms, Common area, Pool, custom sections)
-- [ ] Owner: tiered experience pricing (up to X people included, $Y per person above X)
-- [ ] Owner: photos on experiences
-- [ ] Bookings: expandable booking detail view
-- [ ] Bookings: guest invite system (add other users to a booking)
-- [ ] Bookings: correct guest count display and editing
+(No active requirements — define with `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -43,16 +43,6 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 - Individual payment splitting (each guest pays separately) — calculator only for now
 - Mobile app — web-first, responsive design
 - Reviews / ratings system — defer to v2
-
-## Current Milestone: v1.1 Whole-Tel Rebrand & Owner Enhancements
-
-**Goal:** Rebrand from party villas to Whole-Tel all-inclusive hotels, enhance owner property management (beds, photos, tiered pricing), and add guest invite system for bookings.
-
-**Target features:**
-- Full site rebrand to Whole-Tel identity
-- Enhanced owner dashboard (bed config, photo sections, tiered pricing, address)
-- Experience pricing tiers and photos
-- Booking guest invites and expandable details
 
 ## Context
 
@@ -65,6 +55,8 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 - **Content**: Placeholder photos and dummy data for launch, owners add real content later
 - **Design inspiration**: Airbnb — clean, elegant, seamless booking experience
 - **UI libraries**: shadcn/ui, React Bits for polished components and animations
+- **Codebase**: 9,259 LOC TypeScript, Next.js 16 + Supabase + Stripe
+- **Shipped**: v1.0 MVP (2026-03-06), v1.1 Rebrand & Owner Enhancements (2026-03-08)
 
 ## Constraints
 
@@ -78,15 +70,18 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Next.js framework | SSR for SEO, API routes for Stripe, best React ecosystem | — Pending |
-| Supabase for backend | Already set up, auth + database + storage in one | — Pending |
-| Stripe Checkout (not Elements) | Simplest secure integration, Stripe handles payment UI | — Pending |
-| All payments to owner account | Simpler than Stripe Connect for v1, manual owner payouts | — Pending |
-| Per-property add-ons (not shared catalog) | Each location has unique local experiences | — Pending |
-| Separate guest/owner auth | Owners need dashboard, guests need booking — different experiences | — Pending |
-
-| Full rebrand to Whole-Tel | Client wants "all-inclusive hotels" not "party villas" — identity shift | — Pending |
-| Guest invite system | Client specifically requested adding users to bookings, not just count update | — Pending |
+| Next.js framework | SSR for SEO, API routes for Stripe, best React ecosystem | ✓ Good |
+| Supabase for backend | Already set up, auth + database + storage in one | ✓ Good |
+| Stripe Checkout (not Elements) | Simplest secure integration, Stripe handles payment UI | ✓ Good |
+| All payments to owner account | Simpler than Stripe Connect for v1, manual owner payouts | ✓ Good |
+| Per-property add-ons (not shared catalog) | Each location has unique local experiences | ✓ Good |
+| Separate guest/owner auth | Owners need dashboard, guests need booking — different experiences | ✓ Good |
+| Full rebrand to Whole-Tel | Client wants "all-inclusive hotels" not "party villas" — identity shift | ✓ Good |
+| Guest invite system | Client specifically requested adding users to bookings | ✓ Good |
+| Shared calculatePricing() module | Single source of truth eliminates price drift between widget and server | ✓ Good |
+| @dnd-kit/react for photo reorder | Only React 19 compatible DnD library available | ✓ Good |
+| YARL lightbox with custom plugins | Section tabs via addChild + createModule pattern for gallery | ✓ Good |
+| Bed config as JSONB column | Flexible schema, simple queries, no joins needed | ✓ Good |
 
 ---
-*Last updated: 2026-03-07 after milestone v1.1 start*
+*Last updated: 2026-03-08 after v1.1 milestone*
