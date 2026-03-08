@@ -1,7 +1,7 @@
 import { requireOwner } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import PhotoUploader from '@/components/dashboard/PhotoUploader'
+import { PhotoManager } from '@/components/dashboard/PhotoManager'
 import { AddOnList } from '@/components/dashboard/AddOnList'
 import { DeletePropertyButton } from '@/components/dashboard/DeletePropertyButton'
 import { Separator } from '@/components/ui/separator'
@@ -175,9 +175,9 @@ export default async function PropertyDetailPage({
 
       <Separator />
 
-      {/* Photos */}
+      {/* Photos with DnD reorder and section management */}
       <section>
-        <PhotoUploader
+        <PhotoManager
           propertyId={propertyId}
           photos={sortedPhotos}
         />

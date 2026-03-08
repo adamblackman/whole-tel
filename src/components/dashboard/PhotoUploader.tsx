@@ -31,6 +31,8 @@ interface PhotoUploaderProps {
     section: string | null
   }>
   activeSection?: string | null
+  /** When false, only renders the upload button and progress -- no photo grid (used when PhotoManager provides its own DnD grid) */
+  showGrid?: boolean
 }
 
 /**
@@ -41,7 +43,7 @@ interface PhotoUploaderProps {
  * 2. Files upload sequentially: signed URL -> browser upload -> save record
  * 3. Inline progress list shows per-file status during batch upload
  */
-export default function PhotoUploader({ propertyId, photos, activeSection }: PhotoUploaderProps) {
+export default function PhotoUploader({ propertyId, photos, activeSection, showGrid = true }: PhotoUploaderProps) {
   const [uploadQueue, setUploadQueue] = useState<UploadItem[]>([])
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -220,32 +222,34 @@ export default function PhotoUploader({ propertyId, photos, activeSection }: Pho
         </div>
       )}
 
-      {/* Photo grid */}
-      {photos.length === 0 ? (
-        <p className="text-sm text-muted-foreground mt-4">
-          No photos yet. Upload your first photo.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {photos.map((photo) => (
-            <div key={photo.id} className="relative aspect-video rounded-lg overflow-hidden">
-              <Image
-                src={getPublicUrl(photo.storage_path)}
-                alt="Property photo"
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 50vw, 33vw"
-              />
-              <button
-                onClick={() => handleDelete(photo.id, photo.storage_path)}
-                className="absolute top-2 right-2 p-1.5 rounded-md bg-black/50 text-white hover:bg-destructive transition-colors"
-                aria-label="Delete photo"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+      {/* Photo grid (hidden when PhotoManager provides its own DnD grid) */}
+      {showGrid && (
+        photos.length === 0 ? (
+          <p className="text-sm text-muted-foreground mt-4">
+            No photos yet. Upload your first photo.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            {photos.map((photo) => (
+              <div key={photo.id} className="relative aspect-video rounded-lg overflow-hidden">
+                <Image
+                  src={getPublicUrl(photo.storage_path)}
+                  alt="Property photo"
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+                <button
+                  onClick={() => handleDelete(photo.id, photo.storage_path)}
+                  className="absolute top-2 right-2 p-1.5 rounded-md bg-black/50 text-white hover:bg-destructive transition-colors"
+                  aria-label="Delete photo"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )
       )}
     </div>
   )
