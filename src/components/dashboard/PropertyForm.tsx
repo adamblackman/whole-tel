@@ -6,17 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import type { ActionState } from '@/lib/validations/property'
 import type { BedConfig } from '@/types/database'
-
-const LOCATIONS = ['Cabo San Lucas', 'Puerto Vallarta', 'Miami'] as const
 
 const AMENITY_OPTIONS = [
   'Pool',
@@ -96,18 +87,13 @@ export function PropertyForm({ action, initialData, submitLabel, children }: Pro
         {/* Location */}
         <div className="space-y-1.5">
           <Label htmlFor="location">Location</Label>
-          <Select name="location" defaultValue={initialData?.location}>
-            <SelectTrigger id="location">
-              <SelectValue placeholder="Select a destination" />
-            </SelectTrigger>
-            <SelectContent>
-              {LOCATIONS.map((loc) => (
-                <SelectItem key={loc} value={loc}>
-                  {loc}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            id="location"
+            name="location"
+            defaultValue={initialData?.location}
+            placeholder="e.g. Cabo San Lucas, Miami, Tulum"
+            required
+          />
           {state.errors?.location && (
             <p className="text-sm text-destructive">{state.errors.location[0]}</p>
           )}
