@@ -108,7 +108,11 @@ Plans:
   1. Owner dashboard shows a checkbox grid of ~30-35 amenities grouped into 5 categories (Water, Social, Work/Event, Culinary, Wellness); selections save and reload correctly
   2. Property detail page shows top amenities inline and a "See all" modal displays the full categorized amenity list
   3. Property cards on the browse page display key amenity highlights (pool, hot tub, etc.) sourced from structured amenity IDs
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
+- [ ] 15-02-PLAN.md — Guest amenity display (rewritten AmenityList, See-all modal, property card badges)
 
 ### Phase 16: Itinerary Builder
 **Goal**: Guests can build a day-by-day activity calendar within their booked dates, scheduling both property activities and custom events; itinerary auto-saves per booking
@@ -120,7 +124,11 @@ Plans:
   3. Guest can add custom events (e.g., "Pool day 11am–5pm") to any day in the booking range
   4. Activity time slot availability respects windows set by the hotel; slots outside those windows are not selectable
   5. Itinerary auto-saves on every change and persists when the guest navigates away and returns
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
+- [ ] 15-02-PLAN.md — Guest amenity display (rewritten AmenityList, See-all modal, property card badges)
 
 ### Phase 17: Split Payments
 **Goal**: Group lead can divide the booking total among attendees and each guest receives an individual Stripe payment link for their share; split amounts validate against the canonical pricing total
@@ -130,7 +138,11 @@ Plans:
   1. Group lead can view all attendees and assign a payment amount to each person, with the UI showing remaining unallocated balance
   2. Each attendee receives a Stripe payment link scoped to their assigned share
   3. Split amounts server-side validate that the sum equals the canonical booking total from calculatePricing() before any link is generated
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
+- [ ] 15-02-PLAN.md — Guest amenity display (rewritten AmenityList, See-all modal, property card badges)
 
 ## Progress
 
@@ -150,6 +162,6 @@ Plans:
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
-| 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
+| 15. Amenities Owner UI & Guest Display | v1.2 | 0/2 | Planning complete | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |
