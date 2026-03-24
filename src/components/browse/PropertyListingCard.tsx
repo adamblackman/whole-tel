@@ -4,6 +4,21 @@ import { BedDouble, Bath, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
+const BED_LABELS: Record<string, string> = {
+  king: 'King',
+  queen: 'Queen',
+  double: 'Double',
+  twin: 'Twin',
+  bunk: 'Bunk',
+}
+
+function formatBedConfig(bedConfig: Record<string, number>): string {
+  return Object.entries(bedConfig)
+    .filter(([, count]) => count > 0)
+    .map(([type, count]) => `${BED_LABELS[type] ?? type} x${count}`)
+    .join(', ')
+}
+
 interface PropertyListingCardProps {
   property: {
     id: string
@@ -13,6 +28,7 @@ interface PropertyListingCardProps {
     bathrooms: number
     max_guests: number
     nightly_rate: number
+    bed_config: Record<string, number>
     property_photos: Array<{ id: string; storage_path: string; display_order: number }>
   }
 }
@@ -29,6 +45,8 @@ export function PropertyListingCard({ property }: PropertyListingCardProps) {
   const publicUrl = coverPhoto
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/property-photos/${coverPhoto.storage_path}`
     : null
+
+  const bedDisplay = formatBedConfig(property.bed_config) || `${property.bedrooms} bed`
 
   return (
     <Link href={`/properties/${property.id}`} className="group">
@@ -61,7 +79,7 @@ export function PropertyListingCard({ property }: PropertyListingCardProps) {
           <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
             <span className="flex items-center gap-1">
               <BedDouble className="h-4 w-4" />
-              {property.bedrooms} bed
+              {bedDisplay}
             </span>
             <span className="flex items-center gap-1">
               <Bath className="h-4 w-4" />
