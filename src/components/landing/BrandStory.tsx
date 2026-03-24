@@ -14,12 +14,13 @@ export function BrandStory() {
         {/* Text */}
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-brand-palm sm:text-4xl">
-            The Whole Experience
+            The Whole-Tel&trade; Experience
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-brand-palm/80">
-            Whole-Tel isn&apos;t just a place to stay &mdash; it&apos;s the whole trip. We pair
-            hand-picked all-inclusive hotels with curated local experiences: private chefs, boat
-            excursions, VIP nightlife, and more. One booking, one crew, one unforgettable trip.
+            Whole-Tel&trade; isn&apos;t an all-inclusive package &mdash; it&apos;s a Custom-Inclusive
+            model. You take over the whole property with your crew, then build your trip exactly how
+            you want it. Add a private chef, book a boat excursion, or keep it simple. You choose,
+            you pay only for what you want, and we handle everything else.
           </p>
         </div>
 
