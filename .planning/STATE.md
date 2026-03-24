@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-03-24T14:07:27.283Z"
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-03-24T14:10:00.750Z"
 last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 98
 ---
 
@@ -66,6 +66,8 @@ Progress: [██████████] 98%
 - [Phase 14-partner-application-workflow]: saveApplicationNotes Server Action added for notes-only saves without requiring a status transition
 - [Phase 15]: Shared amenity-icons.ts module solves Server/Client boundary: ICON_MAP and AmenityRow in plain TS file importable by both component types
 - [Phase 15]: Supabase nested join type mismatch in browse page resolved with (property as any) cast — consistent with existing bed_config cast pattern
+- [Phase 15-amenities-owner-ui-guest-display]: AmenitiesEditor saves independently from PropertyForm via dedicated Server Action
+- [Phase 15-amenities-owner-ui-guest-display]: [Phase 15-01]: Property edit page runs 3 parallel queries (property + catalog + selectedIds) for amenity editor
 
 ### Blockers/Concerns
 
@@ -80,6 +82,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T14:07:27.260Z
-Stopped at: Completed 15-02-PLAN.md
+Last session: 2026-03-24T14:10:00.729Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
