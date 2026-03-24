@@ -46,7 +46,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 ### Payment & Booking
 
 - [x] **PAY-01**: Guest registration requires full name, email, and phone for all attendees 18+
-- [ ] **PAY-02**: Group lead can add attendees via email/username or enter details manually
+- [x] **PAY-02**: Group lead can add attendees via email/username or enter details manually
 - [ ] **PAY-03**: Group lead can divide payment and adjust split amounts per person
 - [ ] **PAY-04**: Each guest receives individual Stripe payment link for their share
 - [x] **PAY-05**: First property payment due within 36 hours of booking
@@ -101,7 +101,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | PAY-07 | Phase 12 | Complete |
 | PAY-09 | Phase 12 | Complete |
 | PAY-01 | Phase 13 | Complete |
-| PAY-02 | Phase 13 | Pending |
+| PAY-02 | Phase 13 | Complete |
 | PAY-05 | Phase 13 | Complete |
 | PAY-06 | Phase 13 | Complete |
 | PAY-08 | Phase 13 | Complete |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-03-24T04:13:17Z"
-last_activity: "2026-03-24 — 13-01 complete: guest registration deadlines schema migration, expired status, atomic RPC"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-03-24T04:18:31.938Z"
+last_activity: "2026-03-24 — 13-02 complete: acceptInvitation registration gating, atomic RPC, addAttendeeManually, deadline column storage"
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 7
+  completed_plans: 6
   percent: 95
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-23)
 ## Current Position
 
 Phase: 13 of 17 (Guest Registration & Payment Deadlines)
-Plan: 01 complete (of 4 planned)
+Plan: 02 complete (of 4 planned)
 Status: In progress
-Last activity: 2026-03-24 — 13-01 complete: guest registration deadlines schema migration, expired status, atomic RPC
+Last activity: 2026-03-24 — 13-02 complete: acceptInvitation registration gating, atomic RPC, addAttendeeManually, deadline column storage
 
-Progress: [██████████] 95%
+Progress: [██████████] 98%
 
 ## Accumulated Context
 
@@ -53,6 +53,8 @@ Progress: [██████████] 95%
 - [Phase 12-branding-copy-amenities-schema]: Miami removed from VALID_DESTINATIONS and DestinationFilter simultaneously to prevent stranded filter state
 - [Phase 12-branding-copy-amenities-schema]: bed_config required (not optional) in PropertyListingCardProps — TypeScript enforces query completeness at compile time
 - [Phase 12-branding-copy-amenities-schema]: Hotel tax applies to (accommodationSubtotal + perPersonSurcharge) only, not cleaning fee or add-ons — processingFee base includes hotelTax so Stripe total matches breakdown.total
+- [Phase 13]: acceptInvitation signature requires registration — InvitationActions.tsx updated with minimal inline form; Plan 13-03 will replace with polished UI
+- [Phase 13]: booking.created_at used for deadline computation instead of new Date() — avoids clock drift between insert and Stripe session creation
 
 ### Blockers/Concerns
 
@@ -67,6 +69,6 @@ Progress: [██████████] 95%
 
 ## Session Continuity
 
-Last session: 2026-03-24T04:13:17Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-03-24T04:18:31.916Z
+Stopped at: Completed 13-02-PLAN.md
 Resume file: None
