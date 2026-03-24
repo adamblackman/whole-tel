@@ -11,6 +11,7 @@ export interface PricingInput {
   guestCount: number
   guestThreshold: number | null
   perPersonRate: number | null
+  taxRate: number | null
   selectedAddOns: {
     id: string
     name: string
@@ -41,6 +42,8 @@ export interface PricingBreakdown {
   addOnItems: AddOnLineItem[]
   addOnsTotal: number
   cleaningFee: number
+  hotelTax: number
+  taxRate: number | null
   processingFee: number
   total: number
 }
@@ -57,6 +60,7 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
     guestCount,
     guestThreshold,
     perPersonRate,
+    taxRate,
     selectedAddOns,
   } = input
 
@@ -119,9 +123,15 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
 
   const addOnsTotal = addOnItems.reduce((sum, item) => sum + item.totalCost, 0)
 
-  // Processing fee (Stripe): includes surcharge in base
+  // Hotel tax: applied to accommodation subtotal + per-person surcharge
+  const hotelTax =
+    taxRate != null
+      ? round2((accommodationSubtotal + perPersonSurcharge) * taxRate)
+      : 0
+
+  // Processing fee (Stripe): includes hotelTax in base
   const processingFee = round2(
-    (accommodationSubtotal + perPersonSurcharge + cleaningFee + addOnsTotal) *
+    (accommodationSubtotal + perPersonSurcharge + cleaningFee + addOnsTotal + hotelTax) *
       0.029 +
       0.3
   )
@@ -131,6 +141,7 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
       perPersonSurcharge +
       cleaningFee +
       addOnsTotal +
+      hotelTax +
       processingFee
   )
 
@@ -141,6 +152,8 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
     addOnItems,
     addOnsTotal,
     cleaningFee,
+    hotelTax,
+    taxRate,
     processingFee,
     total,
   }

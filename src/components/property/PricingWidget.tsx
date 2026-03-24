@@ -25,6 +25,7 @@ interface PricingWidgetProps {
   maxGuests: number
   guestThreshold: number | null
   perPersonRate: number | null
+  taxRate: number | null
   disabledDates: { from: Date; to: Date }[]
   addOns: AddOnItem[]
   propertyId: string
@@ -36,6 +37,7 @@ export function PricingWidget({
   maxGuests,
   guestThreshold,
   perPersonRate,
+  taxRate,
   disabledDates,
   addOns,
   propertyId,
@@ -73,6 +75,7 @@ export function PricingWidget({
     guestCount,
     guestThreshold,
     perPersonRate,
+    taxRate,
     selectedAddOns,
   })
 
@@ -222,6 +225,12 @@ export function PricingWidget({
             <span>Cleaning fee</span>
             <span>${cleaningFee.toLocaleString()}</span>
           </div>
+          {breakdown.hotelTax > 0 && breakdown.taxRate != null && (
+            <div className="flex justify-between text-sm">
+              <span>Hotel Tax ({(breakdown.taxRate * 100).toFixed(0)}%)</span>
+              <span>${breakdown.hotelTax.toLocaleString()}</span>
+            </div>
+          )}
           {breakdown.addOnItems.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
               <span>

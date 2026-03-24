@@ -9,6 +9,7 @@ function makeInput(overrides: Partial<PricingInput> = {}): PricingInput {
     guestCount: 8,
     guestThreshold: null,
     perPersonRate: null,
+    taxRate: null,
     selectedAddOns: [],
     ...overrides,
   }
