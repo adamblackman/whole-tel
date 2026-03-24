@@ -19,6 +19,8 @@ function formatBedConfig(bedConfig: Record<string, number>): string {
     .join(', ')
 }
 
+const HIGHLIGHT_NAMES = ['Private Pool', 'Infinity Pool', 'Hot Tub', 'Rooftop Terrace', 'Private Beach', 'Jacuzzi']
+
 interface PropertyListingCardProps {
   property: {
     id: string
@@ -30,6 +32,7 @@ interface PropertyListingCardProps {
     nightly_rate: number
     bed_config: Record<string, number>
     property_photos: Array<{ id: string; storage_path: string; display_order: number }>
+    property_amenities?: Array<{ amenity_id: string; amenities: { name: string; icon_name: string } }> | null
   }
 }
 
@@ -90,6 +93,20 @@ export function PropertyListingCard({ property }: PropertyListingCardProps) {
               {property.max_guests} guests
             </span>
           </div>
+          {(() => {
+            const highlights = (property.property_amenities ?? [])
+              .filter((pa) => HIGHLIGHT_NAMES.includes(pa.amenities.name))
+              .slice(0, 3)
+            return highlights.length > 0 ? (
+              <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+                {highlights.map((h) => (
+                  <Badge key={h.amenity_id} variant="outline" className="text-xs font-normal">
+                    {h.amenities.name}
+                  </Badge>
+                ))}
+              </div>
+            ) : null
+          })()}
           <Badge variant="secondary">
             ${property.nightly_rate.toLocaleString()}/night
           </Badge>

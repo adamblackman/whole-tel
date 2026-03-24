@@ -27,7 +27,7 @@ export default async function PropertiesPage({
   let query = supabase
     .from('properties')
     .select(
-      'id, name, location, bedrooms, bathrooms, max_guests, nightly_rate, bed_config, property_photos(id, storage_path, display_order)'
+      'id, name, location, bedrooms, bathrooms, max_guests, nightly_rate, bed_config, property_photos(id, storage_path, display_order), property_amenities(amenity_id, amenities(name, icon_name))'
     )
     .order('created_at', { ascending: false })
 
@@ -76,6 +76,11 @@ export default async function PropertiesPage({
                 bed_config: (property.bed_config as Record<string, number>) ?? { king: 0, queen: 0, double: 0, twin: 0, bunk: 0 },
                 property_photos: Array.isArray(property.property_photos)
                   ? property.property_photos
+                  : [],
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                property_amenities: Array.isArray((property as any).property_amenities)
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ? (property as any).property_amenities
                   : [],
               }}
             />

@@ -55,7 +55,7 @@ export default async function PropertyListingPage({
     supabase
       .from('properties')
       .select(
-        `*, tax_rate, property_photos(id, storage_path, display_order, section), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
+        `*, tax_rate, property_photos(id, storage_path, display_order, section), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url), property_amenities(amenity_id, amenities(id, name, category, icon_name, display_order))`
       )
       .eq('id', propertyId)
       .single(),
@@ -90,9 +90,7 @@ export default async function PropertyListingPage({
     section: p.section ?? null,
   }))
 
-  const amenities = Array.isArray(property.amenities)
-    ? (property.amenities as string[])
-    : []
+  const amenityRows = property.property_amenities ?? []
 
   const addOns = (property.add_ons ?? []) as AddOnRow[]
 
@@ -171,11 +169,11 @@ export default async function PropertyListingPage({
           )}
 
           {/* Amenities */}
-          {amenities.length > 0 && (
+          {amenityRows.length > 0 && (
             <>
               <div>
                 <h2 className="text-xl font-semibold mb-4">What this place offers</h2>
-                <AmenityList amenities={amenities} />
+                <AmenityList amenityRows={amenityRows} />
               </div>
               <Separator />
             </>
