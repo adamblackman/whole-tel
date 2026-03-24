@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
-status: ready_to_plan
-stopped_at: Roadmap created — ready to plan Phase 12
-last_updated: "2026-03-23T21:00:00Z"
-last_activity: 2026-03-23 -- v1.2 roadmap created (6 phases, 33 requirements)
+status: planning
+stopped_at: Phase 12 context gathered
+last_updated: "2026-03-24T02:44:06.091Z"
+last_activity: 2026-03-23 — v1.2 roadmap created, 6 phases mapped to 33 requirements
 progress:
   total_phases: 6
   completed_phases: 0
@@ -54,6 +54,6 @@ Progress: [░░░░░░░░░░] 0%
 
 ## Session Continuity
 
-Last session: 2026-03-23T21:00:00Z
-Stopped at: Roadmap created — 6 phases (12-17), 33/33 requirements mapped
-Resume file: None
+Last session: 2026-03-24T02:44:06.061Z
+Stopped at: Phase 12 context gathered
+Resume file: .planning/phases/12-branding-copy-amenities-schema/12-CONTEXT.md
