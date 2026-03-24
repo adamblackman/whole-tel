@@ -9,12 +9,12 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 ### Frontend & Branding
 
-- [ ] **BRAND-01**: Hero section displays "Your Own Private Resort. No Strangers. No Compromises. Custom-Inclusive, Only Pay For What You Want" with "Browse Whole-Tels™" CTA
+- [x] **BRAND-01**: Hero section displays "Your Own Private Resort. No Strangers. No Compromises. Custom-Inclusive, Only Pay For What You Want" with "Browse Whole-Tels™" CTA
 - [ ] **BRAND-02**: All instances of "Whole-Tel" display with ™ symbol
-- [ ] **BRAND-03**: "The Whole Experience" section renamed to "The Whole-Tel™ Experience" with updated copy about Custom-Inclusive model (icons remain)
-- [ ] **BRAND-04**: "How a Whole-Tel Takeover Works" 3-step about section with icons (magnifying glass, checklist, gold key)
-- [ ] **BRAND-05**: "Featured Whole-Tels™" section with subtitle "Hand-picked 'custom-inclusive' properties for your next group trip"
-- [ ] **BRAND-06**: Coming Soon city cards for Miami, Palm Springs, Los Angeles, Las Vegas
+- [x] **BRAND-03**: "The Whole Experience" section renamed to "The Whole-Tel™ Experience" with updated copy about Custom-Inclusive model (icons remain)
+- [x] **BRAND-04**: "How a Whole-Tel Takeover Works" 3-step about section with icons (magnifying glass, checklist, gold key)
+- [x] **BRAND-05**: "Featured Whole-Tels™" section with subtitle "Hand-picked 'custom-inclusive' properties for your next group trip"
+- [x] **BRAND-06**: Coming Soon city cards for Miami, Palm Springs, Los Angeles, Las Vegas
 - [ ] **BRAND-07**: All copy removes word "hotel" except when describing turning hotels into Whole-Tels™
 - [ ] **BRAND-08**: Property cards display bed count by type (King, Queen, Double, Twin, Bunk)
 
@@ -89,12 +89,12 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BRAND-01 | Phase 12 | Pending |
+| BRAND-01 | Phase 12 | Complete |
 | BRAND-02 | Phase 12 | Pending |
-| BRAND-03 | Phase 12 | Pending |
-| BRAND-04 | Phase 12 | Pending |
-| BRAND-05 | Phase 12 | Pending |
-| BRAND-06 | Phase 12 | Pending |
+| BRAND-03 | Phase 12 | Complete |
+| BRAND-04 | Phase 12 | Complete |
+| BRAND-05 | Phase 12 | Complete |
+| BRAND-06 | Phase 12 | Complete |
 | BRAND-07 | Phase 12 | Pending |
 | BRAND-08 | Phase 12 | Pending |
 | AMEN-01 | Phase 12 | Complete |
