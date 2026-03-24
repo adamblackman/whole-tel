@@ -32,6 +32,14 @@ function formatDuration(minutes: number): string {
   return `${h}hr ${m}min`
 }
 
+function formatTime12h(time: string): string {
+  if (!time) return ''
+  const [h, m] = time.split(':').map(Number)
+  const period = h >= 12 ? 'PM' : 'AM'
+  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+  return `${hour12}:${String(m).padStart(2, '0')} ${period}`
+}
+
 const EMPTY_SLOT: TimeSlot = { start: '', end: '' }
 
 const DEFAULT_FORM = {
@@ -206,22 +214,30 @@ export function ActivityEditor({ propertyId, initialActivities }: ActivityEditor
                 <Label>Available Time Slots *</Label>
                 {form.available_slots.map((slot, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 flex-1">
-                      <Input
-                        type="time"
-                        value={slot.start}
-                        onChange={(e) => handleSlotChange(i, 'start', e.target.value)}
-                        className="flex-1"
-                        aria-label={`Slot ${i + 1} start time`}
-                      />
+                    <div className="flex items-center gap-1.5 flex-1">
+                      <div className="flex-1 space-y-0.5">
+                        <Input
+                          type="time"
+                          value={slot.start}
+                          onChange={(e) => handleSlotChange(i, 'start', e.target.value)}
+                          aria-label={`Slot ${i + 1} start time`}
+                        />
+                        {slot.start && (
+                          <p className="text-xs text-muted-foreground pl-1">{formatTime12h(slot.start)}</p>
+                        )}
+                      </div>
                       <span className="text-muted-foreground text-sm">to</span>
-                      <Input
-                        type="time"
-                        value={slot.end}
-                        onChange={(e) => handleSlotChange(i, 'end', e.target.value)}
-                        className="flex-1"
-                        aria-label={`Slot ${i + 1} end time`}
-                      />
+                      <div className="flex-1 space-y-0.5">
+                        <Input
+                          type="time"
+                          value={slot.end}
+                          onChange={(e) => handleSlotChange(i, 'end', e.target.value)}
+                          aria-label={`Slot ${i + 1} end time`}
+                        />
+                        {slot.end && (
+                          <p className="text-xs text-muted-foreground pl-1">{formatTime12h(slot.end)}</p>
+                        )}
+                      </div>
                     </div>
                     {form.available_slots.length > 1 && (
                       <Button
@@ -274,7 +290,7 @@ export function ActivityEditor({ propertyId, initialActivities }: ActivityEditor
               <div className="space-y-0.5">
                 <p className="font-medium text-sm">{activity.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatDuration(activity.duration_min)} &middot; {activity.available_slots.length} slot{activity.available_slots.length !== 1 ? 's' : ''}
+                  {formatDuration(activity.duration_min)} &middot; {activity.available_slots.map((s) => `${formatTime12h(s.start)}–${formatTime12h(s.end)}`).join(', ')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
