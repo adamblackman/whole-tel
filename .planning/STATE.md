@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: planning
-stopped_at: Phase 12 context gathered
-last_updated: "2026-03-24T02:44:06.091Z"
+stopped_at: Completed 12-03-PLAN.md
+last_updated: "2026-03-24T03:29:46.977Z"
 last_activity: 2026-03-23 — v1.2 roadmap created, 6 phases mapped to 33 requirements
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 2
   percent: 0
 ---
 
@@ -46,6 +46,8 @@ Progress: [░░░░░░░░░░] 0%
 - Partner application status uses PostgreSQL ENUM state machine — single updateApplicationStatus Server Action
 - FullCalendar v6.1.20 confirmed for itinerary builder (React 19 peer dep verified)
 - non-atomic guest_count increment in acceptInvitation must be fixed in Phase 13
+- [Phase 12]: tax_rate stored as numeric(5,4) decimal in DB, displayed as percentage in PropertyForm — server action converts on write
+- [Phase 12]: property_amenities RLS uses FOR ALL with EXISTS subquery on properties.owner_id for owner-scoped write
 
 ### Blockers/Concerns
 
@@ -54,6 +56,6 @@ Progress: [░░░░░░░░░░] 0%
 
 ## Session Continuity
 
-Last session: 2026-03-24T02:44:06.061Z
-Stopped at: Phase 12 context gathered
-Resume file: .planning/phases/12-branding-copy-amenities-schema/12-CONTEXT.md
+Last session: 2026-03-24T03:29:38.334Z
+Stopped at: Completed 12-03-PLAN.md
+Resume file: None

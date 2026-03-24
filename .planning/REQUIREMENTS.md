@@ -20,7 +20,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 ### Amenities
 
-- [ ] **AMEN-01**: DB schema for amenities with 5 categories (Water, Social, Work/Event, Culinary, Wellness) with ~30-35 amenity options
+- [x] **AMEN-01**: DB schema for amenities with 5 categories (Water, Social, Work/Event, Culinary, Wellness) with ~30-35 amenity options
 - [ ] **AMEN-02**: Owner can select/deselect amenities for their property via checkbox grid grouped by category
 - [ ] **AMEN-03**: Guest-facing amenity display on property detail page with top amenities inline and "See all" modal
 - [ ] **AMEN-04**: Property cards show key amenities (pool, hot tub, etc.)
@@ -97,7 +97,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | BRAND-06 | Phase 12 | Pending |
 | BRAND-07 | Phase 12 | Pending |
 | BRAND-08 | Phase 12 | Pending |
-| AMEN-01 | Phase 12 | Pending |
+| AMEN-01 | Phase 12 | Complete |
 | PAY-07 | Phase 12 | Pending |
 | PAY-09 | Phase 12 | Pending |
 | PAY-01 | Phase 13 | Pending |
