@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled'
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'expired'
 export type InvitationStatus = 'pending' | 'accepted' | 'declined'
 export type PricingUnit = 'per_person' | 'per_booking'
 export type UserRole = 'guest' | 'owner'
@@ -98,6 +98,9 @@ export interface Booking {
   status: BookingStatus
   stripe_session_id: string | null
   stripe_payment_intent_id: string | null
+  payment_deadline: string | null
+  activity_deadline: string | null
+  stripe_checkout_url: string | null
   created_at: string
   updated_at: string
 }
@@ -120,6 +123,8 @@ export interface BookingInvitation {
   status: InvitationStatus
   invited_by: string
   accepted_by: string | null
+  full_name: string | null
+  phone: string | null
   created_at: string
   updated_at: string
 }
