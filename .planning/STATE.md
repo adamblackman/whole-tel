@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
-status: planning
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-24T03:29:52.864Z"
-last_activity: 2026-03-23 — v1.2 roadmap created, 6 phases mapped to 33 requirements
+status: executing
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-24T03:30:46.183Z"
+last_activity: "2026-03-23 — 12-01 complete: homepage branding copy overhauled, TakeoverSteps created, DestinationCards split"
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 95
 ---
 
 # Project State
@@ -50,6 +50,8 @@ Progress: [██████████] 95%
 - [Phase 12]: property_amenities RLS uses FOR ALL with EXISTS subquery on properties.owner_id for owner-scoped write
 - [Phase 12-01]: Miami moved to Coming Soon — only Cabo San Lucas and Puerto Vallarta remain active destinations
 - [Phase 12-01]: bed_config added proactively to FeaturedProperties local prop type to unblock Plan 02
+- [Phase 12-branding-copy-amenities-schema]: Miami removed from VALID_DESTINATIONS and DestinationFilter simultaneously to prevent stranded filter state
+- [Phase 12-branding-copy-amenities-schema]: bed_config required (not optional) in PropertyListingCardProps — TypeScript enforces query completeness at compile time
 
 ### Blockers/Concerns
 
@@ -58,6 +60,6 @@ Progress: [██████████] 95%
 
 ## Session Continuity
 
-Last session: 2026-03-24T03:29:52.844Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-03-24T03:30:46.163Z
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None

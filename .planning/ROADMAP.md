@@ -60,7 +60,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Coming Soon cards for Miami, Palm Springs, Los Angeles, and Las Vegas appear on the browse/landing page
   4. Property cards display bed count by type (King x2, Queen x1, etc.)
   5. Hotel tax amount appears as a line item in the price breakdown, calculated through calculatePricing() — not added externally
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [ ] 12-01-PLAN.md — Landing page copy overhaul (Hero, BrandStory, TakeoverSteps, FeaturedProperties, DestinationCards, Testimonials)
@@ -137,7 +137,7 @@ Plans:
 | 9. Owner Property Tools | v1.1 | 3/3 | Complete | 2026-03-08 |
 | 10. Photo Management | v1.1 | 4/4 | Complete | 2026-03-08 |
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
-| 12. Branding, Copy & Amenities Schema | 2/4 | In Progress|  | - |
+| 12. Branding, Copy & Amenities Schema | 3/4 | In Progress|  | - |
 | 13. Guest Registration & Payment Deadlines | v1.2 | 0/TBD | Not started | - |
 | 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |

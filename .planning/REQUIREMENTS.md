@@ -10,13 +10,13 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 ### Frontend & Branding
 
 - [x] **BRAND-01**: Hero section displays "Your Own Private Resort. No Strangers. No Compromises. Custom-Inclusive, Only Pay For What You Want" with "Browse Whole-Tels™" CTA
-- [ ] **BRAND-02**: All instances of "Whole-Tel" display with ™ symbol
+- [x] **BRAND-02**: All instances of "Whole-Tel" display with ™ symbol
 - [x] **BRAND-03**: "The Whole Experience" section renamed to "The Whole-Tel™ Experience" with updated copy about Custom-Inclusive model (icons remain)
 - [x] **BRAND-04**: "How a Whole-Tel Takeover Works" 3-step about section with icons (magnifying glass, checklist, gold key)
 - [x] **BRAND-05**: "Featured Whole-Tels™" section with subtitle "Hand-picked 'custom-inclusive' properties for your next group trip"
 - [x] **BRAND-06**: Coming Soon city cards for Miami, Palm Springs, Los Angeles, Las Vegas
-- [ ] **BRAND-07**: All copy removes word "hotel" except when describing turning hotels into Whole-Tels™
-- [ ] **BRAND-08**: Property cards display bed count by type (King, Queen, Double, Twin, Bunk)
+- [x] **BRAND-07**: All copy removes word "hotel" except when describing turning hotels into Whole-Tels™
+- [x] **BRAND-08**: Property cards display bed count by type (King, Queen, Double, Twin, Bunk)
 
 ### Amenities
 
@@ -90,13 +90,13 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BRAND-01 | Phase 12 | Complete |
-| BRAND-02 | Phase 12 | Pending |
+| BRAND-02 | Phase 12 | Complete |
 | BRAND-03 | Phase 12 | Complete |
 | BRAND-04 | Phase 12 | Complete |
 | BRAND-05 | Phase 12 | Complete |
 | BRAND-06 | Phase 12 | Complete |
-| BRAND-07 | Phase 12 | Pending |
-| BRAND-08 | Phase 12 | Pending |
+| BRAND-07 | Phase 12 | Complete |
+| BRAND-08 | Phase 12 | Complete |
 | AMEN-01 | Phase 12 | Complete |
 | PAY-07 | Phase 12 | Pending |
 | PAY-09 | Phase 12 | Pending |
