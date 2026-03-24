@@ -35,6 +35,12 @@ export default async function DashboardLayout({
               >
                 Bookings
               </Link>
+              <Link
+                href="/dashboard/applications"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Applications
+              </Link>
             </nav>
           </div>
           <LogoutButton />
