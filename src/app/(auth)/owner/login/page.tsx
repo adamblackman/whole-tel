@@ -86,9 +86,9 @@ export default function OwnerLoginPage({
           </a>
         </p>
         <p className="text-sm text-center text-muted-foreground mt-1">
-          New owner?{' '}
-          <a href="/owner/signup" className="underline">
-            Create owner account
+          Want to list your property?{' '}
+          <a href="/apply" className="underline">
+            Apply to be a featured partner on Whole-Tel&trade;
           </a>
         </p>
       </CardContent>
