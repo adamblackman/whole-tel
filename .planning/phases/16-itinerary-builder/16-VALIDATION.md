@@ -2,8 +2,8 @@
 phase: 16
 slug: itinerary-builder
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-24
 ---
 
@@ -17,19 +17,19 @@ created: 2026-03-24
 
 | Property | Value |
 |----------|-------|
-| **Framework** | None (TypeScript strict mode + Next.js build) |
-| **Config file** | tsconfig.json |
-| **Quick run command** | `npx tsc --noEmit` |
-| **Full suite command** | `npx next build` |
-| **Estimated runtime** | ~30 seconds (tsc), ~90 seconds (build) |
+| **Framework** | Vitest 4.0.18 + TypeScript strict mode + Next.js build |
+| **Config file** | vitest.config.ts (created in Plan 01 Task 0) |
+| **Quick run command** | `npx vitest run` |
+| **Full suite command** | `npx vitest run && npx next build` |
+| **Estimated runtime** | ~10 seconds (vitest), ~30 seconds (tsc), ~90 seconds (build) |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `npx tsc --noEmit`
+- **After every task commit:** Run `npx tsc --noEmit && npx vitest run`
 - **After every plan wave:** Run `npx next build`
-- **Before `/gsd:verify-work`:** Full build must be green + manual browser check
+- **Before `/gsd:verify-work`:** Full build must be green + manual browser check + all vitest tests green
 - **Max feedback latency:** 30 seconds
 
 ---
@@ -38,10 +38,13 @@ created: 2026-03-24
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 16-01-01 | 01 | 1 | ITIN-01 | TypeScript build + manual | `npx tsc --noEmit` | N/A | pending |
-| 16-02-01 | 02 | 1 | ITIN-02, ITIN-03 | TypeScript build + manual | `npx tsc --noEmit` | N/A | pending |
-| 16-02-02 | 02 | 1 | ITIN-04, ITIN-05 | TypeScript build + manual | `npx tsc --noEmit` | N/A | pending |
-| 16-02-03 | 02 | 2 | ITIN-06, ITIN-07 | TypeScript build + manual | `npx tsc --noEmit` | N/A | pending |
+| 16-01-00 | 01 | 0 | N/A | Vitest scaffold | `npx vitest run` | Created in task | pending |
+| 16-01-01 | 01 | 1 | ITIN-01, ITIN-06 | Unit (Zod validation) | `npx vitest run src/lib/validations/activity.test.ts` | Created in 01-00, assertions in 01-01 | pending |
+| 16-01-02 | 01 | 1 | ITIN-01 | TypeScript build | `npx tsc --noEmit` | N/A | pending |
+| 16-01-03 | 01 | 1 | ITIN-01 | TypeScript build | `npx tsc --noEmit` | N/A | pending |
+| 16-02-01 | 02 | 2 | ITIN-07 | Unit (validation helpers) | `npx vitest run src/lib/actions/itinerary.test.ts` | Created in 01-00, assertions in 02-01 | pending |
+| 16-02-02 | 02 | 2 | ITIN-02, ITIN-03, ITIN-04, ITIN-05, ITIN-06 | TypeScript build + manual | `npx tsc --noEmit && npx vitest run` | N/A | pending |
+| 16-02-03 | 02 | 2 | ITIN-02 | TypeScript build + Next.js build | `npx tsc --noEmit && npx next build` | N/A | pending |
 
 *Status: pending / green / red / flaky*
 
@@ -49,7 +52,19 @@ created: 2026-03-24
 
 ## Wave 0 Requirements
 
-Existing infrastructure covers phase requirements. No test framework install needed — TypeScript strict mode and `next build` serve as primary correctness checks. FullCalendar v6.1.20 install is part of Plan 01/02, not Wave 0.
+Wave 0 is handled by Plan 01 Task 0:
+- [x] `vitest.config.ts` — Vitest configuration with path aliases
+- [x] `src/lib/validations/activity.test.ts` — stub file, real assertions added in Plan 01 Task 1
+- [x] `src/lib/actions/itinerary.test.ts` — stub file, real assertions added in Plan 02 Task 1
+
+---
+
+## Unit Test Coverage
+
+| Test File | Covers | Key Assertions |
+|-----------|--------|----------------|
+| `src/lib/validations/activity.test.ts` | ITIN-01, ITIN-06 | TimeSlotSchema rejects end < start; ActivitySchema rejects empty name, duration < 15, empty slots |
+| `src/lib/actions/itinerary.test.ts` | ITIN-07 | isEventDateInRange rejects outside booking dates (checkout exclusive); isDeadlinePassed enforces activity deadline |
 
 ---
 
@@ -69,11 +84,11 @@ Existing infrastructure covers phase requirements. No test framework install nee
 
 ## Validation Sign-Off
 
-- [ ] All tasks have automated verify or manual verification steps
-- [ ] Sampling continuity: TypeScript check after every task
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have automated verify or manual verification steps
+- [x] Sampling continuity: TypeScript check + vitest after every task
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
