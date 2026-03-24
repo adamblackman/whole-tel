@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { isEventDateInRange, isDeadlinePassed } from './itinerary'
+import { isEventDateInRange, isDeadlinePassed } from '../validations/itinerary-event'
 
 // These test the pure validation logic extracted from Server Actions.
 // Server Actions themselves cannot be unit-tested (need Supabase),
-// but the date range and deadline checks are pure functions.
+// but the date range and deadline checks are pure functions in the validations file.
 
 describe('isEventDateInRange', () => {
   const checkIn = '2025-07-10'

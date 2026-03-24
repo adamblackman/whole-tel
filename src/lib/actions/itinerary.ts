@@ -3,40 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { verifySession } from '@/lib/dal'
-import { ItineraryEventSchema, type ItineraryEventInput } from '@/lib/validations/itinerary-event'
-
-// ---------------------------------------------------------------------------
-// Pure validation helpers — exported for unit testing
-// ---------------------------------------------------------------------------
-
-/**
- * Returns true if eventDate falls within the booking date range.
- * Checkout day is exclusive — guests depart that day.
- */
-export function isEventDateInRange(
-  eventDate: string,
-  checkIn: string,
-  checkOut: string
-): boolean {
-  return eventDate >= checkIn && eventDate < checkOut
-}
-
-/**
- * Returns true if the activity deadline has already passed.
- * Returns false when no deadline is set (null).
- * Accepts an optional `now` parameter for deterministic testing.
- */
-export function isDeadlinePassed(
-  activityDeadline: string | null,
-  now?: Date
-): boolean {
-  if (!activityDeadline) return false
-  return (now ?? new Date()) > new Date(activityDeadline)
-}
-
-// ---------------------------------------------------------------------------
-// Server Actions
-// ---------------------------------------------------------------------------
+import {
+  ItineraryEventSchema,
+  isDeadlinePassed,
+  isEventDateInRange,
+  type ItineraryEventInput,
+} from '@/lib/validations/itinerary-event'
 
 export async function upsertItineraryEvent(
   bookingId: string,

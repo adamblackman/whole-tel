@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
+import Link from 'next/link'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { ChevronDown, ChevronUp, CalendarPlus } from 'lucide-react'
 import { BookingDetails } from './BookingDetails'
 
 interface BookingAddOnRow {
@@ -104,6 +106,18 @@ export function BookingCardClient({
           activityDeadline={activityDeadline}
           stripeCheckoutUrl={stripeCheckoutUrl}
         />
+        {status === 'confirmed' && (
+          <div className="pt-3">
+            <Button variant="outline" size="sm" className="text-xs h-8 gap-1.5" asChild>
+              <Link href={`/bookings/${bookingId}/itinerary`}>
+                <CalendarPlus className="h-3.5 w-3.5" />
+                {activityDeadline && new Date() > new Date(activityDeadline)
+                  ? 'View Itinerary'
+                  : 'Plan Itinerary'}
+              </Link>
+            </Button>
+          </div>
+        )}
       </CollapsibleContent>
     </Collapsible>
   )

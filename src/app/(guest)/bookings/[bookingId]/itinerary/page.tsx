@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 import { verifySession } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
-import { isDeadlinePassed } from '@/lib/actions/itinerary'
+import { isDeadlinePassed } from '@/lib/validations/itinerary-event'
 import { ItineraryCalendar } from '@/components/booking/ItineraryCalendar'
 import type { PropertyActivity, ItineraryEvent } from '@/types/database'
 
