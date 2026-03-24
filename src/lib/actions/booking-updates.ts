@@ -34,7 +34,7 @@ export async function updateGuestCount(input: {
     .from('bookings')
     .select(`
       *,
-      properties(nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate),
+      properties(nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate, tax_rate),
       booking_add_ons(*, add_ons(id, name, price, pricing_unit, included_guests, per_person_above))
     `)
     .eq('id', parsed.data.bookingId)
@@ -88,6 +88,7 @@ export async function updateGuestCount(input: {
     guestCount: parsed.data.guestCount,
     guestThreshold: property.guest_threshold != null ? Number(property.guest_threshold) : null,
     perPersonRate: property.per_person_rate != null ? Number(property.per_person_rate) : null,
+    taxRate: property.tax_rate != null ? Number(property.tax_rate) : null,
     selectedAddOns,
   })
 

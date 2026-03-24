@@ -148,6 +148,11 @@ function BookingCard({ booking }: { booking: BookingRow }) {
                 <p className="text-xl font-bold">
                   {formatCurrency(booking.total)}
                 </p>
+                {booking.guest_count > 1 && (
+                  <p className="text-xs text-muted-foreground">
+                    Per person: {formatCurrency(booking.total / booking.guest_count)}
+                  </p>
+                )}
               </div>
             </div>
           }

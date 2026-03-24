@@ -39,7 +39,7 @@ export async function createBookingAndCheckout(input: {
   // Step 3: Fetch property server-side for authoritative pricing
   const { data: property, error: propError } = await supabase
     .from('properties')
-    .select('id, name, nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate')
+    .select('id, name, nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate, tax_rate')
     .eq('id', input.propertyId)
     .single()
 
@@ -86,6 +86,7 @@ export async function createBookingAndCheckout(input: {
     guestCount: input.guestCount,
     guestThreshold: property.guest_threshold != null ? Number(property.guest_threshold) : null,
     perPersonRate: property.per_person_rate != null ? Number(property.per_person_rate) : null,
+    taxRate: property.tax_rate != null ? Number(property.tax_rate) : null,
     selectedAddOns: (addOns ?? []).map((a) => ({
       id: a.id,
       name: a.name,
@@ -188,6 +189,21 @@ export async function createBookingAndCheckout(input: {
         },
         quantity: 1,
       })),
+      // Hotel tax (if applicable)
+      ...(breakdown.hotelTax > 0
+        ? [
+            {
+              price_data: {
+                currency: 'usd',
+                unit_amount: Math.round(breakdown.hotelTax * 100),
+                product_data: {
+                  name: `Hotel Tax (${((breakdown.taxRate ?? 0) * 100).toFixed(0)}%)`,
+                },
+              },
+              quantity: 1,
+            },
+          ]
+        : []),
       // Processing fee
       {
         price_data: {

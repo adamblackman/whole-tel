@@ -55,7 +55,7 @@ export default async function PropertyListingPage({
     supabase
       .from('properties')
       .select(
-        `*, property_photos(id, storage_path, display_order, section), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
+        `*, tax_rate, property_photos(id, storage_path, display_order, section), add_ons(id, name, description, price, pricing_unit, included_guests, per_person_above, photo_url)`
       )
       .eq('id', propertyId)
       .single(),
@@ -235,6 +235,7 @@ export default async function PropertyListingPage({
             maxGuests={property.max_guests}
             guestThreshold={property.guest_threshold != null ? Number(property.guest_threshold) : null}
             perPersonRate={property.per_person_rate != null ? Number(property.per_person_rate) : null}
+            taxRate={property.tax_rate != null ? Number(property.tax_rate) : null}
             disabledDates={disabledDates}
             addOns={addOns.map((a) => ({
               id: a.id,
