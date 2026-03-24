@@ -46,7 +46,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 14: Partner Application Workflow** - Multi-step application form, ENUM state machine, admin review UI, and approval-triggered owner account creation (completed 2026-03-24)
 - [x] **Phase 15: Amenities Owner UI & Guest Display** - Owner checkbox grid by category, guest amenity display with "See all" modal, and amenity highlights on property cards (completed 2026-03-24)
 - [x] **Phase 16: Itinerary Builder** - Calendar-based day-by-day activity scheduler, owner time slot configuration, auto-save to bookings, and timezone-safe storage (completed 2026-03-24)
-- [ ] **Phase 17: Split Payments** - Group lead payment division UI, per-person Stripe payment links, and split amount validation against canonical pricing
+- [x] **Phase 17: Split Payments** - Group lead payment division UI, per-person Stripe payment links, and split amount validation against canonical pricing (completed 2026-03-24)
 
 ## Phase Details
 
@@ -139,7 +139,7 @@ Plans:
   1. Group lead can view all attendees and assign a payment amount to each person, with the UI showing remaining unallocated balance
   2. Each attendee receives a Stripe payment link scoped to their assigned share
   3. Split amounts server-side validate that the sum equals the canonical booking total from calculatePricing() before any link is generated
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 17-01-PLAN.md — Database migration, types, Zod schemas, Server Actions (saveSplits + generatePaymentLink), webhook extension, unit tests
@@ -165,4 +165,4 @@ Plans:
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
 | 16. Itinerary Builder | 3/3 | Complete    | 2026-03-24 | - |
-| 17. Split Payments | 1/2 | In Progress|  | - |
+| 17. Split Payments | 2/2 | Complete   | 2026-03-24 | - |
