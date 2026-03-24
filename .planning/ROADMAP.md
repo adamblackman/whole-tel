@@ -108,7 +108,7 @@ Plans:
   1. Owner dashboard shows a checkbox grid of ~30-35 amenities grouped into 5 categories (Water, Social, Work/Event, Culinary, Wellness); selections save and reload correctly
   2. Property detail page shows top amenities inline and a "See all" modal displays the full categorized amenity list
   3. Property cards on the browse page display key amenity highlights (pool, hot tub, etc.) sourced from structured amenity IDs
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
@@ -162,6 +162,6 @@ Plans:
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
-| 15. Amenities Owner UI & Guest Display | v1.2 | 0/2 | Planning complete | - |
+| 15. Amenities Owner UI & Guest Display | 1/2 | In Progress|  | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |
