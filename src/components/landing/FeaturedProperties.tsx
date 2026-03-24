@@ -9,6 +9,7 @@ interface FeaturedPropertiesProps {
     bathrooms: number
     max_guests: number
     nightly_rate: number
+    bed_config: Record<string, number>
     property_photos: Array<{ id: string; storage_path: string; display_order: number }>
   }>
 }
@@ -21,10 +22,10 @@ export function FeaturedProperties({ properties }: FeaturedPropertiesProps) {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-            Featured Hotels
+            Featured Whole-Tels&trade;
           </h2>
           <p className="mt-2 text-lg text-zinc-500">
-            Hand-picked all-inclusive properties for your next group trip
+            Hand-picked &lsquo;custom-inclusive&rsquo; properties for your next group trip
           </p>
         </div>
 

@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 const testimonials = [
   {
     quote:
-      'We booked a Whole-Tel for my best friend\'s bachelorette and it was the easiest group trip we\'ve ever planned. The hotel was gorgeous, the private chef dinner was incredible, and we didn\'t have to coordinate a single thing ourselves.',
+      'We booked a Whole-Tel\u2122 for my best friend\'s bachelorette and it was the easiest group trip we\'ve ever planned. The property was gorgeous, the private chef dinner was incredible, and we didn\'t have to coordinate a single thing ourselves.',
     name: 'Sarah M.',
     destination: 'Cabo San Lucas',
   },
@@ -15,7 +15,7 @@ const testimonials = [
   },
   {
     quote:
-      'We used Whole-Tel for our company retreat and it was a game-changer. Beautiful waterfront property, yacht day trip for the whole team, and one invoice for everything. Our CFO was as happy as we were.',
+      'We used Whole-Tel\u2122 for our company retreat and it was a game-changer. Beautiful waterfront property, yacht day trip for the whole team, and one invoice for everything. Our CFO was as happy as we were.',
     name: 'Priya K.',
     destination: 'Miami',
   },
