@@ -34,7 +34,19 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 
 ### Active
 
-(No active requirements — define with `/gsd:new-milestone`)
+**Current Milestone: v1.2 — Amenities, Calendar & Client Refinements**
+
+**Goal:** Implement interactive itinerary builder, partner application system, split payments, guest registration, and comprehensive frontend copy/branding updates per client feedback.
+
+**Target features:**
+- Frontend copy & branding overhaul (hero, about section, ™ branding, "Custom-Inclusive" messaging)
+- Partner property application system (replace owner signup)
+- Amenities system for properties (categorized: Water, Social, Work/Event, Culinary, Wellness)
+- Interactive calendar-based itinerary builder (full UX, time slots, activity scheduling)
+- Split payment system with guest registration (all attendees: name, email, phone)
+- Payment deadline rules (36hr first payment, activity booking deadlines)
+- Hotel tax declaration handling (gross amount, hotel responsible for tax submission)
+- Coming Soon cities (Miami, Palm Springs, Los Angeles, Las Vegas)
 
 ### Out of Scope
 
@@ -84,4 +96,4 @@ Groups can find, customize, and book a Whole-Tel with unique local add-on experi
 | Bed config as JSONB column | Flexible schema, simple queries, no joins needed | ✓ Good |
 
 ---
-*Last updated: 2026-03-08 after v1.1 milestone*
+*Last updated: 2026-03-23 after v1.2 milestone start*
