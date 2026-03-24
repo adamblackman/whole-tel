@@ -8,6 +8,7 @@ export type Json =
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'expired'
 export type InvitationStatus = 'pending' | 'accepted' | 'declined'
+export type SplitPaymentStatus = 'unpaid' | 'paid'
 export type PricingUnit = 'per_person' | 'per_booking'
 export type UserRole = 'guest' | 'owner'
 export type ApplicationStatus = 'submitted' | 'under_review' | 'approved' | 'rejected' | 'onboarded'
@@ -166,6 +167,18 @@ export interface PropertyActivity {
   updated_at: string
 }
 
+export interface BookingSplit {
+  id: string
+  booking_id: string
+  invitation_id: string
+  amount: number
+  stripe_payment_link_id: string | null
+  stripe_payment_link_url: string | null
+  payment_status: SplitPaymentStatus
+  created_at: string
+  updated_at: string
+}
+
 export interface ItineraryEvent {
   id: string
   booking_id: string
@@ -201,6 +214,7 @@ export interface Database {
       bookings: { Row: Booking; Insert: Omit<Booking, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Booking> }
       booking_add_ons: { Row: BookingAddOn; Insert: Omit<BookingAddOn, 'id' | 'created_at'>; Update: Partial<BookingAddOn> }
       booking_invitations: { Row: BookingInvitation; Insert: Omit<BookingInvitation, 'id' | 'token' | 'created_at' | 'updated_at'>; Update: Partial<BookingInvitation> }
+      booking_splits: { Row: BookingSplit; Insert: Omit<BookingSplit, 'id' | 'created_at' | 'updated_at'>; Update: Partial<BookingSplit> }
       partner_applications: { Row: PartnerApplication; Insert: Omit<PartnerApplication, 'id' | 'created_at' | 'updated_at'>; Update: Partial<PartnerApplication> }
     }
   }
