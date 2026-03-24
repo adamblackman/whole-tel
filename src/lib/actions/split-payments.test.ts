@@ -43,19 +43,17 @@ const INVITATION_ID = '123e4567-e89b-12d3-a456-426614174000'
 const INVITATION_ID_2 = '223e4567-e89b-12d3-a456-426614174001'
 const USER_ID = 'aaaabbbb-cccc-dddd-eeee-ffffffffffff'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyClient = any
+
 /** Builds a fluent Supabase chain that resolves to `response` at `.single()`. */
-function buildChain(response: unknown) {
+function buildChain(response: unknown): AnyClient {
   const chain: Record<string, unknown> = {}
   const self = () => chain
   chain.select = self
   chain.eq = self
   chain.single = () => Promise.resolve(response)
   return chain
-}
-
-/** Builds a minimal admin client where `.from()` returns `table`. */
-function buildAdminClient(table: unknown) {
-  return { from: () => table }
 }
 
 describe('saveSplits', () => {
@@ -70,7 +68,7 @@ describe('saveSplits', () => {
       data: { id: BOOKING_ID, total: 1000.00, status: 'confirmed' },
       error: null,
     })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     const result = await saveSplits({
       bookingId: BOOKING_ID,
@@ -86,7 +84,7 @@ describe('saveSplits', () => {
 
   it('returns error when booking is not found (non-owner or not confirmed)', async () => {
     const bookingChain = buildChain({ data: null, error: { message: 'Not found' } })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     const result = await saveSplits({
       bookingId: BOOKING_ID,
@@ -103,12 +101,12 @@ describe('saveSplits', () => {
       data: { id: BOOKING_ID, total: 1000.00, status: 'confirmed' },
       error: null,
     })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     const upsertMock = vi.fn().mockReturnValue({ error: null })
     vi.mocked(createAdminClient).mockReturnValue({
       from: () => ({ upsert: upsertMock }),
-    } as ReturnType<typeof createAdminClient>)
+    } as AnyClient)
 
     const result = await saveSplits({
       bookingId: BOOKING_ID,
@@ -128,12 +126,12 @@ describe('saveSplits', () => {
       data: { id: BOOKING_ID, total: 0.30, status: 'confirmed' },
       error: null,
     })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     const upsertMock = vi.fn().mockReturnValue({ error: null })
     vi.mocked(createAdminClient).mockReturnValue({
       from: () => ({ upsert: upsertMock }),
-    } as ReturnType<typeof createAdminClient>)
+    } as AnyClient)
 
     const result = await saveSplits({
       bookingId: BOOKING_ID,
@@ -164,7 +162,7 @@ describe('generatePaymentLink', () => {
       },
       error: null,
     })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     // Admin client for split lookup
     const splitChain = buildChain({
@@ -178,7 +176,7 @@ describe('generatePaymentLink', () => {
     })
     vi.mocked(createAdminClient).mockReturnValue({
       from: () => splitChain,
-    } as ReturnType<typeof createAdminClient>)
+    } as AnyClient)
 
     const result = await generatePaymentLink({
       bookingId: BOOKING_ID,
@@ -200,7 +198,7 @@ describe('generatePaymentLink', () => {
       },
       error: null,
     })
-    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as ReturnType<typeof createClient> extends Promise<infer T> ? T : never)
+    vi.mocked(createClient).mockResolvedValue({ from: () => bookingChain } as AnyClient)
 
     // Admin client returns split on first call, handles update chain on second
     let adminFromCallCount = 0
@@ -225,7 +223,7 @@ describe('generatePaymentLink', () => {
         updateChain.eq = selfFn
         return updateChain
       },
-    } as ReturnType<typeof createAdminClient>)
+    } as AnyClient)
 
     const mockCreate = vi.fn().mockResolvedValue({
       id: 'plink_test_123',
@@ -233,7 +231,7 @@ describe('generatePaymentLink', () => {
     })
     vi.mocked(getStripe).mockReturnValue({
       paymentLinks: { create: mockCreate, update: vi.fn() },
-    } as ReturnType<typeof getStripe>)
+    } as AnyClient)
 
     const result = await generatePaymentLink({
       bookingId: BOOKING_ID,

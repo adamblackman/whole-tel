@@ -29,6 +29,27 @@ async function fulfillCheckout(session: Stripe.Checkout.Session) {
     return
   }
 
+  // Split payment from Stripe Payment Link — mark the individual split as paid
+  // and return early. Do NOT update bookings.status (booking is already confirmed).
+  const invitationId = session.metadata?.invitation_id
+  if (invitationId) {
+    const supabase = createAdminClient()
+    const { error } = await supabase
+      .from('booking_splits')
+      .update({ payment_status: 'paid', updated_at: new Date().toISOString() })
+      .eq('invitation_id', invitationId)
+      .eq('booking_id', bookingId)
+      .eq('payment_status', 'unpaid') // idempotent guard
+    if (error) {
+      console.error('Webhook: failed to update split payment', {
+        bookingId,
+        invitationId,
+        error: error.message,
+      })
+    }
+    return
+  }
+
   const supabase = createAdminClient()
 
   const { data, error } = await supabase
