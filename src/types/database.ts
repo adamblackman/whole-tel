@@ -57,6 +57,7 @@ export interface Property {
   per_person_rate: number | null
   check_in_time: string
   check_out_time: string
+  timezone: string
   created_at: string
   updated_at: string
 }
@@ -146,6 +147,36 @@ export interface PartnerApplication {
   admin_notes: string | null
   reviewed_by: string | null
   reviewed_at: string | null
+}
+
+export interface TimeSlot {
+  start: string
+  end: string
+}
+
+export interface PropertyActivity {
+  id: string
+  property_id: string
+  name: string
+  description: string | null
+  duration_min: number
+  available_slots: TimeSlot[]
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ItineraryEvent {
+  id: string
+  booking_id: string
+  activity_id: string | null
+  title: string
+  event_date: string
+  start_time: string
+  end_time: string
+  notes: string | null
+  created_at: string
+  updated_at: string
 }
 
 // Joined types for common query patterns
