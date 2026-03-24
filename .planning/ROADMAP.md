@@ -137,7 +137,7 @@ Plans:
 | 9. Owner Property Tools | v1.1 | 3/3 | Complete | 2026-03-08 |
 | 10. Photo Management | v1.1 | 4/4 | Complete | 2026-03-08 |
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
-| 12. Branding, Copy & Amenities Schema | 4/4 | Complete   | 2026-03-24 | - |
+| 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | v1.2 | 0/TBD | Not started | - |
 | 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |

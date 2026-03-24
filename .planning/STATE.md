@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
 stopped_at: Completed 12-04-PLAN.md
-last_updated: "2026-03-24T03:36:23.125Z"
+last_updated: "2026-03-24T03:40:14.259Z"
 last_activity: "2026-03-23 — 12-01 complete: homepage branding copy overhauled, TakeoverSteps created, DestinationCards split"
 progress:
   total_phases: 6
