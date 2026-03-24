@@ -89,45 +89,45 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BRAND-01 | — | Pending |
-| BRAND-02 | — | Pending |
-| BRAND-03 | — | Pending |
-| BRAND-04 | — | Pending |
-| BRAND-05 | — | Pending |
-| BRAND-06 | — | Pending |
-| BRAND-07 | — | Pending |
-| BRAND-08 | — | Pending |
-| AMEN-01 | — | Pending |
-| AMEN-02 | — | Pending |
-| AMEN-03 | — | Pending |
-| AMEN-04 | — | Pending |
-| PART-01 | — | Pending |
-| PART-02 | — | Pending |
-| PART-03 | — | Pending |
-| PART-04 | — | Pending |
-| PART-05 | — | Pending |
-| ITIN-01 | — | Pending |
-| ITIN-02 | — | Pending |
-| ITIN-03 | — | Pending |
-| ITIN-04 | — | Pending |
-| ITIN-05 | — | Pending |
-| ITIN-06 | — | Pending |
-| ITIN-07 | — | Pending |
-| PAY-01 | — | Pending |
-| PAY-02 | — | Pending |
-| PAY-03 | — | Pending |
-| PAY-04 | — | Pending |
-| PAY-05 | — | Pending |
-| PAY-06 | — | Pending |
-| PAY-07 | — | Pending |
-| PAY-08 | — | Pending |
-| PAY-09 | — | Pending |
+| BRAND-01 | Phase 12 | Pending |
+| BRAND-02 | Phase 12 | Pending |
+| BRAND-03 | Phase 12 | Pending |
+| BRAND-04 | Phase 12 | Pending |
+| BRAND-05 | Phase 12 | Pending |
+| BRAND-06 | Phase 12 | Pending |
+| BRAND-07 | Phase 12 | Pending |
+| BRAND-08 | Phase 12 | Pending |
+| AMEN-01 | Phase 12 | Pending |
+| PAY-07 | Phase 12 | Pending |
+| PAY-09 | Phase 12 | Pending |
+| PAY-01 | Phase 13 | Pending |
+| PAY-02 | Phase 13 | Pending |
+| PAY-05 | Phase 13 | Pending |
+| PAY-06 | Phase 13 | Pending |
+| PAY-08 | Phase 13 | Pending |
+| PART-01 | Phase 14 | Pending |
+| PART-02 | Phase 14 | Pending |
+| PART-03 | Phase 14 | Pending |
+| PART-04 | Phase 14 | Pending |
+| PART-05 | Phase 14 | Pending |
+| AMEN-02 | Phase 15 | Pending |
+| AMEN-03 | Phase 15 | Pending |
+| AMEN-04 | Phase 15 | Pending |
+| ITIN-01 | Phase 16 | Pending |
+| ITIN-02 | Phase 16 | Pending |
+| ITIN-03 | Phase 16 | Pending |
+| ITIN-04 | Phase 16 | Pending |
+| ITIN-05 | Phase 16 | Pending |
+| ITIN-06 | Phase 16 | Pending |
+| ITIN-07 | Phase 16 | Pending |
+| PAY-03 | Phase 17 | Pending |
+| PAY-04 | Phase 17 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 after initial definition*
+*Last updated: 2026-03-23 after roadmap creation*
