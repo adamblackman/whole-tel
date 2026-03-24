@@ -124,7 +124,7 @@ Plans:
   3. Guest can add custom events (e.g., "Pool day 11am-5pm") to any day in the booking range
   4. Activity time slot availability respects windows set by the hotel; slots outside those windows are not selectable
   5. Itinerary auto-saves on every change and persists when the guest navigates away and returns
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 16-01-PLAN.md — Database schema (property_activities, itinerary_events, timezone column), types, Zod validations, owner activity CRUD and ActivityEditor UI
@@ -160,5 +160,5 @@ Plans:
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
-| 16. Itinerary Builder | 1/3 | In Progress|  | - |
+| 16. Itinerary Builder | 2/3 | In Progress|  | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |

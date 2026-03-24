@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-24T14:56:39.157Z"
-last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-03-24T15:06:13.610Z"
+last_activity: "2026-03-24 — 16-02 complete: FullCalendar, itinerary Server Actions, ItineraryCalendar/AddEventDialog/ActivityPicker, booking page link"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 15
-  completed_plans: 13
-  percent: 98
+  completed_plans: 14
+  percent: 96
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-23)
 ## Current Position
 
 Phase: 16 of 17 (Itinerary Builder)
-Plan: 01 complete (of 3 planned)
+Plan: 02 complete (of 3 planned)
 Status: In progress
-Last activity: 2026-03-24 — 16-01 complete: Vitest config, itinerary schema, Zod validations, ActivityEditor, activities page
+Last activity: 2026-03-24 — 16-02 complete: FullCalendar integration, itinerary Server Actions, ItineraryCalendar/AddEventDialog/ActivityPicker, booking page link
 
-Progress: [██████████] 96%
+Progress: [██████████] 98%
 
 ## Accumulated Context
 
@@ -70,6 +70,8 @@ Progress: [██████████] 96%
 - [Phase 15-amenities-owner-ui-guest-display]: [Phase 15-01]: Property edit page runs 3 parallel queries (property + catalog + selectedIds) for amenity editor
 - [Phase 16-01]: Zod v4 uses error.issues not error.errors — fixed in activities.ts Server Actions
 - [Phase 16-01]: property_activities RLS uses EXISTS subquery on properties.owner_id — no extra verification query in Server Actions
+- [Phase 16]: Pure helpers (isEventDateInRange, isDeadlinePassed) moved to itinerary-event.ts — Next.js 'use server' requires all exports to be async functions
+- [Phase 16]: 400ms debounced auto-save via useTransition — optimistic UI without blocking re-renders
 
 ### Blockers/Concerns
 
@@ -84,6 +86,6 @@ Progress: [██████████] 96%
 
 ## Session Continuity
 
-Last session: 2026-03-24T14:56:39.135Z
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-03-24T15:06:05.652Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None

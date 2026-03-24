@@ -36,12 +36,12 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 ### Itinerary Builder
 
 - [x] **ITIN-01**: Owner can add activities/experiences with time/length and available time slots (e.g., boat ride 9:30-12, 1-4, 5-7; dinner 2hrs, any time 5pm or later)
-- [ ] **ITIN-02**: Interactive calendar-based itinerary builder within booked dates for guests
-- [ ] **ITIN-03**: Guest can add property activities to specific days/time slots
-- [ ] **ITIN-04**: Guest can add custom events (e.g., "pool day 11am-5pm")
-- [ ] **ITIN-05**: Calendar view displays full itinerary with all scheduled activities
-- [ ] **ITIN-06**: Activity time slots respect availability windows set by hotel
-- [ ] **ITIN-07**: Itinerary auto-saves and persists per booking
+- [x] **ITIN-02**: Interactive calendar-based itinerary builder within booked dates for guests
+- [x] **ITIN-03**: Guest can add property activities to specific days/time slots
+- [x] **ITIN-04**: Guest can add custom events (e.g., "pool day 11am-5pm")
+- [x] **ITIN-05**: Calendar view displays full itinerary with all scheduled activities
+- [x] **ITIN-06**: Activity time slots respect availability windows set by hotel
+- [x] **ITIN-07**: Itinerary auto-saves and persists per booking
 
 ### Payment & Booking
 
@@ -114,12 +114,12 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | AMEN-03 | Phase 15 | Complete |
 | AMEN-04 | Phase 15 | Complete |
 | ITIN-01 | Phase 16 | Complete |
-| ITIN-02 | Phase 16 | Pending |
-| ITIN-03 | Phase 16 | Pending |
-| ITIN-04 | Phase 16 | Pending |
-| ITIN-05 | Phase 16 | Pending |
-| ITIN-06 | Phase 16 | Pending |
-| ITIN-07 | Phase 16 | Pending |
+| ITIN-02 | Phase 16 | Complete |
+| ITIN-03 | Phase 16 | Complete |
+| ITIN-04 | Phase 16 | Complete |
+| ITIN-05 | Phase 16 | Complete |
+| ITIN-06 | Phase 16 | Complete |
+| ITIN-07 | Phase 16 | Complete |
 | PAY-03 | Phase 17 | Pending |
 | PAY-04 | Phase 17 | Pending |
 
