@@ -119,16 +119,17 @@ Plans:
 **Depends on**: Phase 13 (attendee model), Phase 15 (amenities context)
 **Requirements**: ITIN-01, ITIN-02, ITIN-03, ITIN-04, ITIN-05, ITIN-06, ITIN-07
 **Success Criteria** (what must be TRUE):
-  1. Owner can configure activities with available time slots and duration windows (e.g., boat ride: 9:30–12, 1–4, 5–7)
+  1. Owner can configure activities with available time slots and duration windows (e.g., boat ride: 9:30-12, 1-4, 5-7)
   2. Guest sees an interactive calendar scoped to their booking dates and can add property activities to specific day/time slots
-  3. Guest can add custom events (e.g., "Pool day 11am–5pm") to any day in the booking range
+  3. Guest can add custom events (e.g., "Pool day 11am-5pm") to any day in the booking range
   4. Activity time slot availability respects windows set by the hotel; slots outside those windows are not selectable
   5. Itinerary auto-saves on every change and persists when the guest navigates away and returns
-**Plans:** 2 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
-- [ ] 15-02-PLAN.md — Guest amenity display (rewritten AmenityList, See-all modal, property card badges)
+- [ ] 16-01-PLAN.md — Database schema (property_activities, itinerary_events, timezone column), types, Zod validations, owner activity CRUD and ActivityEditor UI
+- [ ] 16-02-PLAN.md — FullCalendar install, guest itinerary page, calendar component, event dialogs, activity picker, auto-save, bookings page link
+- [ ] 16-03-PLAN.md — Human verification of owner activity management and guest itinerary builder flows
 
 ### Phase 17: Split Payments
 **Goal**: Group lead can divide the booking total among attendees and each guest receives an individual Stripe payment link for their share; split amounts validate against the canonical pricing total
@@ -138,11 +139,7 @@ Plans:
   1. Group lead can view all attendees and assign a payment amount to each person, with the UI showing remaining unallocated balance
   2. Each attendee receives a Stripe payment link scoped to their assigned share
   3. Split amounts server-side validate that the sum equals the canonical booking total from calculatePricing() before any link is generated
-**Plans:** 2 plans
-
-Plans:
-- [ ] 15-01-PLAN.md — Owner amenity management (AmenitiesEditor, Server Action, edit page integration)
-- [ ] 15-02-PLAN.md — Guest amenity display (rewritten AmenityList, See-all modal, property card badges)
+**Plans:** TBD
 
 ## Progress
 
@@ -163,5 +160,5 @@ Plans:
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
-| 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
+| 16. Itinerary Builder | v1.2 | 0/3 | Not started | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |
