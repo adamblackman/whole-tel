@@ -56,6 +56,14 @@ type InvitationRow = {
   phone: string | null
 }
 
+type SplitRow = {
+  id: string
+  invitation_id: string
+  amount: number
+  payment_status: 'unpaid' | 'paid'
+  stripe_payment_link_url: string | null
+}
+
 type BookingRow = {
   id: string
   check_in: string
@@ -76,6 +84,7 @@ type BookingRow = {
     | null
   booking_add_ons: BookingAddOnRow[]
   booking_invitations: InvitationRow[]
+  booking_splits: SplitRow[]
 }
 
 function formatDate(dateStr: string) {
@@ -98,6 +107,13 @@ function BookingCard({ booking }: { booking: BookingRow }) {
     ? booking.properties[0]
     : booking.properties
 
+  const splitsForCard = (booking.booking_splits ?? []).map((s) => ({
+    invitationId: s.invitation_id,
+    amount: s.amount,
+    paymentStatus: s.payment_status,
+    stripePaymentLinkUrl: s.stripe_payment_link_url,
+  }))
+
   return (
     <Card>
       <CardContent className="p-5">
@@ -117,6 +133,7 @@ function BookingCard({ booking }: { booking: BookingRow }) {
           paymentDeadline={booking.payment_deadline}
           activityDeadline={booking.activity_deadline}
           stripeCheckoutUrl={booking.stripe_checkout_url}
+          splits={splitsForCard}
           header={
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="space-y-2 min-w-0">
@@ -179,10 +196,10 @@ function BookingCard({ booking }: { booking: BookingRow }) {
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string }>
+  searchParams: Promise<{ success?: string; split_paid?: string }>
 }) {
   const user = await verifySession()
-  const { success } = await searchParams
+  const { success, split_paid } = await searchParams
 
   const supabase = await createClient()
 
@@ -194,7 +211,8 @@ export default async function BookingsPage({
       payment_deadline, activity_deadline, stripe_checkout_url,
       properties(id, name, location, max_guests),
       booking_add_ons(id, add_on_id, quantity, unit_price, total_price, add_ons(name)),
-      booking_invitations(id, email, status, created_at, full_name, phone)
+      booking_invitations(id, email, status, created_at, full_name, phone),
+      booking_splits(id, invitation_id, amount, payment_status, stripe_payment_link_url)
     `)
     .eq('guest_id', user.id)
     .order('check_in', { ascending: false })
@@ -216,6 +234,14 @@ export default async function BookingsPage({
           <p className="text-sm font-medium text-green-800">
             Booking submitted! You&apos;ll receive a confirmation once payment
             is processed.
+          </p>
+        </div>
+      )}
+
+      {split_paid === 'true' && (
+        <div className="rounded-lg bg-green-50 border border-green-200 p-4">
+          <p className="text-sm font-medium text-green-800">
+            Split payment received! Your share of the booking has been paid.
           </p>
         </div>
       )}

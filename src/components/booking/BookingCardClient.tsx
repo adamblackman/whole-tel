@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChevronDown, ChevronUp, CalendarPlus } from 'lucide-react'
 import { BookingDetails } from './BookingDetails'
+import { SplitPaymentEditor } from './SplitPaymentEditor'
 
 interface BookingAddOnRow {
   id: string
@@ -29,6 +30,13 @@ interface InvitationRow {
   phone: string | null
 }
 
+interface SplitRow {
+  invitationId: string
+  amount: number
+  paymentStatus: 'unpaid' | 'paid'
+  stripePaymentLinkUrl: string | null
+}
+
 interface BookingCardClientProps {
   bookingId: string
   checkIn: string
@@ -45,6 +53,7 @@ interface BookingCardClientProps {
   paymentDeadline: string | null
   activityDeadline: string | null
   stripeCheckoutUrl: string | null
+  splits: SplitRow[]
   header: ReactNode
 }
 
@@ -64,6 +73,7 @@ export function BookingCardClient({
   paymentDeadline,
   activityDeadline,
   stripeCheckoutUrl,
+  splits,
   header,
 }: BookingCardClientProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -118,6 +128,21 @@ export function BookingCardClient({
             </Button>
           </div>
         )}
+        {status === 'confirmed' &&
+          invitations.some((inv) => inv.status === 'accepted') && (
+            <SplitPaymentEditor
+              bookingId={bookingId}
+              total={total}
+              attendees={invitations
+                .filter((inv) => inv.status === 'accepted')
+                .map((inv) => ({
+                  invitationId: inv.id,
+                  name: inv.full_name ?? '',
+                  email: inv.email,
+                }))}
+              existingSplits={splits}
+            />
+          )}
       </CollapsibleContent>
     </Collapsible>
   )
