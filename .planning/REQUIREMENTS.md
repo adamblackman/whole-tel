@@ -51,9 +51,9 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 - [ ] **PAY-04**: Each guest receives individual Stripe payment link for their share
 - [ ] **PAY-05**: First property payment due within 36 hours of booking
 - [ ] **PAY-06**: Activity/itinerary booking deadline: 30 days before check-in OR 7 days after booking (whichever comes first)
-- [ ] **PAY-07**: Hotel tax declaration: hotels must declare required taxes, otherwise Whole-Tel sends gross amount and hotel submits taxes from gross
+- [x] **PAY-07**: Hotel tax declaration: hotels must declare required taxes, otherwise Whole-Tel sends gross amount and hotel submits taxes from gross
 - [ ] **PAY-08**: Payment deadline enforcement (expired unpaid bookings auto-cancel)
-- [ ] **PAY-09**: Per-person cost breakdown displayed on booking confirmation
+- [x] **PAY-09**: Per-person cost breakdown displayed on booking confirmation
 
 ## Future Requirements
 
@@ -98,8 +98,8 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | BRAND-07 | Phase 12 | Complete |
 | BRAND-08 | Phase 12 | Complete |
 | AMEN-01 | Phase 12 | Complete |
-| PAY-07 | Phase 12 | Pending |
-| PAY-09 | Phase 12 | Pending |
+| PAY-07 | Phase 12 | Complete |
+| PAY-09 | Phase 12 | Complete |
 | PAY-01 | Phase 13 | Pending |
 | PAY-02 | Phase 13 | Pending |
 | PAY-05 | Phase 13 | Pending |

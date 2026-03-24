@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Milestone Goal:** Deliver frontend copy overhaul, amenities system, partner application workflow, guest registration, interactive itinerary builder, and split payment display.
 
-- [ ] **Phase 12: Branding, Copy & Amenities Schema** - Homepage copy overhaul, ™ branding, hotel tax in pricing, Coming Soon cities, and amenities DB foundation
+- [x] **Phase 12: Branding, Copy & Amenities Schema** - Homepage copy overhaul, ™ branding, hotel tax in pricing, Coming Soon cities, and amenities DB foundation (completed 2026-03-24)
 - [ ] **Phase 13: Guest Registration & Payment Deadlines** - Attendee name/phone collection, 36hr deadline enforcement, per-person cost display, and cron-based expiry
 - [ ] **Phase 14: Partner Application Workflow** - Multi-step application form, ENUM state machine, admin review UI, and approval-triggered owner account creation
 - [ ] **Phase 15: Amenities Owner UI & Guest Display** - Owner checkbox grid by category, guest amenity display with "See all" modal, and amenity highlights on property cards
@@ -60,7 +60,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Coming Soon cards for Miami, Palm Springs, Los Angeles, and Las Vegas appear on the browse/landing page
   4. Property cards display bed count by type (King x2, Queen x1, etc.)
   5. Hotel tax amount appears as a line item in the price breakdown, calculated through calculatePricing() — not added externally
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 12-01-PLAN.md — Landing page copy overhaul (Hero, BrandStory, TakeoverSteps, FeaturedProperties, DestinationCards, Testimonials)
@@ -137,7 +137,7 @@ Plans:
 | 9. Owner Property Tools | v1.1 | 3/3 | Complete | 2026-03-08 |
 | 10. Photo Management | v1.1 | 4/4 | Complete | 2026-03-08 |
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
-| 12. Branding, Copy & Amenities Schema | 3/4 | In Progress|  | - |
+| 12. Branding, Copy & Amenities Schema | 4/4 | Complete   | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | v1.2 | 0/TBD | Not started | - |
 | 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
