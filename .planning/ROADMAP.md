@@ -45,7 +45,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 13: Guest Registration & Payment Deadlines** - Attendee name/phone collection, 36hr deadline enforcement, per-person cost display, and cron-based expiry (completed 2026-03-24)
 - [x] **Phase 14: Partner Application Workflow** - Multi-step application form, ENUM state machine, admin review UI, and approval-triggered owner account creation (completed 2026-03-24)
 - [x] **Phase 15: Amenities Owner UI & Guest Display** - Owner checkbox grid by category, guest amenity display with "See all" modal, and amenity highlights on property cards (completed 2026-03-24)
-- [ ] **Phase 16: Itinerary Builder** - Calendar-based day-by-day activity scheduler, owner time slot configuration, auto-save to bookings, and timezone-safe storage
+- [x] **Phase 16: Itinerary Builder** - Calendar-based day-by-day activity scheduler, owner time slot configuration, auto-save to bookings, and timezone-safe storage (completed 2026-03-24)
 - [ ] **Phase 17: Split Payments** - Group lead payment division UI, per-person Stripe payment links, and split amount validation against canonical pricing
 
 ## Phase Details
@@ -124,7 +124,7 @@ Plans:
   3. Guest can add custom events (e.g., "Pool day 11am-5pm") to any day in the booking range
   4. Activity time slot availability respects windows set by the hotel; slots outside those windows are not selectable
   5. Itinerary auto-saves on every change and persists when the guest navigates away and returns
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 16-01-PLAN.md — Database schema (property_activities, itinerary_events, timezone column), types, Zod validations, owner activity CRUD and ActivityEditor UI
@@ -160,5 +160,5 @@ Plans:
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
-| 16. Itinerary Builder | 2/3 | In Progress|  | - |
+| 16. Itinerary Builder | 3/3 | Complete    | 2026-03-24 | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |
