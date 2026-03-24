@@ -35,7 +35,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 ### Itinerary Builder
 
-- [ ] **ITIN-01**: Owner can add activities/experiences with time/length and available time slots (e.g., boat ride 9:30-12, 1-4, 5-7; dinner 2hrs, any time 5pm or later)
+- [x] **ITIN-01**: Owner can add activities/experiences with time/length and available time slots (e.g., boat ride 9:30-12, 1-4, 5-7; dinner 2hrs, any time 5pm or later)
 - [ ] **ITIN-02**: Interactive calendar-based itinerary builder within booked dates for guests
 - [ ] **ITIN-03**: Guest can add property activities to specific days/time slots
 - [ ] **ITIN-04**: Guest can add custom events (e.g., "pool day 11am-5pm")
@@ -113,7 +113,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | AMEN-02 | Phase 15 | Complete |
 | AMEN-03 | Phase 15 | Complete |
 | AMEN-04 | Phase 15 | Complete |
-| ITIN-01 | Phase 16 | Pending |
+| ITIN-01 | Phase 16 | Complete |
 | ITIN-02 | Phase 16 | Pending |
 | ITIN-03 | Phase 16 | Pending |
 | ITIN-04 | Phase 16 | Pending |

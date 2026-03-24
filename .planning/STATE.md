@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-24T14:13:14.868Z"
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-24T14:56:39.157Z"
 last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 13
   percent: 98
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Groups can find, customize, and book a Whole-Tel with unique local add-on experiences and seamless group coordination in a single flow.
-**Current focus:** Phase 13 — Guest Registration & Payment Deadlines
+**Current focus:** Phase 16 — Itinerary Builder
 
 ## Current Position
 
-Phase: 13 of 17 (Guest Registration & Payment Deadlines)
-Plan: 03 complete (of 4 planned)
+Phase: 16 of 17 (Itinerary Builder)
+Plan: 01 complete (of 3 planned)
 Status: In progress
-Last activity: 2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route
+Last activity: 2026-03-24 — 16-01 complete: Vitest config, itinerary schema, Zod validations, ActivityEditor, activities page
 
-Progress: [██████████] 98%
+Progress: [██████████] 96%
 
 ## Accumulated Context
 
@@ -68,6 +68,8 @@ Progress: [██████████] 98%
 - [Phase 15]: Supabase nested join type mismatch in browse page resolved with (property as any) cast — consistent with existing bed_config cast pattern
 - [Phase 15-amenities-owner-ui-guest-display]: AmenitiesEditor saves independently from PropertyForm via dedicated Server Action
 - [Phase 15-amenities-owner-ui-guest-display]: [Phase 15-01]: Property edit page runs 3 parallel queries (property + catalog + selectedIds) for amenity editor
+- [Phase 16-01]: Zod v4 uses error.issues not error.errors — fixed in activities.ts Server Actions
+- [Phase 16-01]: property_activities RLS uses EXISTS subquery on properties.owner_id — no extra verification query in Server Actions
 
 ### Blockers/Concerns
 
@@ -82,6 +84,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T14:10:00.729Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-03-24T14:56:39.135Z
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None
