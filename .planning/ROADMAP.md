@@ -165,4 +165,4 @@ Plans:
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
 | 16. Itinerary Builder | 3/3 | Complete    | 2026-03-24 | - |
-| 17. Split Payments | 2/2 | Complete   | 2026-03-24 | - |
+| 17. Split Payments | 2/2 | Complete    | 2026-03-24 | - |

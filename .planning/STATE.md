@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
 stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-03-24T16:46:26.924Z"
+last_updated: "2026-03-24T16:52:53.979Z"
 last_activity: "2026-03-24 — 16-02 complete: FullCalendar integration, itinerary Server Actions, ItineraryCalendar/AddEventDialog/ActivityPicker, booking page link"
 progress:
   total_phases: 6
