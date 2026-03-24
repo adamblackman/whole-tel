@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-03-24T04:55:59.771Z"
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-03-24T04:57:03.700Z"
 last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 98
 ---
 
@@ -60,6 +60,8 @@ Progress: [██████████] 98%
 - [Phase 14-partner-application-workflow]: No UNIQUE constraint on applicant_email — rejected applicants can reapply
 - [Phase 14-partner-application-workflow]: [Phase 14-01]: createOwnerFromApplication does NOT query profiles after creation — handle_new_user trigger is async, not immediately consistent
 - [Phase 14-partner-application-workflow]: [Phase 14-01]: Zod v4 uses error option instead of required_error for z.enum params
+- [Phase 14-partner-application-workflow]: All 5 form steps co-located in ApplicationForm.tsx as sub-components with initialData props for back-nav preservation
+- [Phase 14-partner-application-workflow]: owner/signup page left in place after unlinking — orphaned but not deleted, separate cleanup concern
 
 ### Blockers/Concerns
 
@@ -74,6 +76,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T04:55:59.750Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-03-24T04:57:03.678Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
