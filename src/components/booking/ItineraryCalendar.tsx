@@ -10,7 +10,7 @@ import type { EventClickArg, EventInput } from '@fullcalendar/core'
 import { upsertItineraryEvent, deleteItineraryEvent } from '@/lib/actions/itinerary'
 import { AddEventDialog } from './AddEventDialog'
 import { ActivityPicker } from './ActivityPicker'
-import type { ItineraryEvent, PropertyActivity } from '@/types/database'
+import type { ItineraryEvent, AddOn } from '@/types/database'
 
 // ---------------------------------------------------------------------------
 // Timezone-aware helpers (Research Pitfall 3 — never store raw UTC as wall clock)
@@ -62,7 +62,7 @@ interface ItineraryCalendarProps {
   checkOut: string
   timezone: string
   initialEvents: ItineraryEvent[]
-  activities: PropertyActivity[]
+  activities: AddOn[]
   isLocked: boolean
 }
 

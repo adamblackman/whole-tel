@@ -8,12 +8,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import type { PropertyActivity } from '@/types/database'
+import type { AddOn } from '@/types/database'
 
 interface ActivityPickerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  activities: PropertyActivity[]
+  activities: AddOn[]
   date: string
   timezone: string
   onAdd: (event: {
@@ -54,15 +54,18 @@ export function ActivityPicker({
 }: ActivityPickerProps) {
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null)
 
+  // Only show experiences that have time slots configured
+  const schedulable = activities.filter((a) => a.available_slots.length > 0 && a.duration_min)
+
   const handleOpenChange = (val: boolean) => {
     if (!val) setSelectedActivityId(null)
     onOpenChange(val)
   }
 
-  const selectedActivity = activities.find((a) => a.id === selectedActivityId) ?? null
+  const selectedActivity = schedulable.find((a) => a.id === selectedActivityId) ?? null
 
   const handleSlotClick = (slotStart: string, slotEnd: string) => {
-    if (!selectedActivity) return
+    if (!selectedActivity || !selectedActivity.duration_min) return
     const endTime = addMinutes(slotStart, selectedActivity.duration_min, slotEnd)
     onAdd({
       activityId: selectedActivity.id,
@@ -78,19 +81,19 @@ export function ActivityPicker({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add Property Activity</DialogTitle>
+          <DialogTitle>Add Property Experience</DialogTitle>
         </DialogHeader>
 
-        {activities.length === 0 ? (
+        {schedulable.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4">
-            No activities available for this property.
+            No schedulable experiences available for this property.
           </p>
         ) : !selectedActivity ? (
           <div className="space-y-2 mt-2">
             <p className="text-sm text-muted-foreground mb-3">
-              Select an activity to see available time slots.
+              Select an experience to see available time slots.
             </p>
-            {activities.map((activity) => (
+            {schedulable.map((activity) => (
               <button
                 key={activity.id}
                 type="button"
@@ -134,7 +137,7 @@ export function ActivityPicker({
 
             {selectedActivity.available_slots.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No time slots configured for this activity.
+                No time slots configured for this experience.
               </p>
             ) : (
               <div className="grid grid-cols-2 gap-2">

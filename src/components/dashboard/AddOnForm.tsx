@@ -20,7 +20,9 @@ import {
   saveExperiencePhoto,
   removeExperiencePhoto,
 } from '@/lib/actions/photos'
+import { TimeInput } from '@/components/ui/time-input'
 import type { ActionState } from '@/lib/validations/property'
+import type { TimeSlot } from '@/types/database'
 
 interface AddOnFormProps {
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>
@@ -33,6 +35,8 @@ interface AddOnFormProps {
     included_guests?: number | null
     per_person_above?: number | null
     photo_url?: string | null
+    duration_min?: number | null
+    available_slots?: TimeSlot[]
   }
   /** Required for photo upload (only available when editing an existing add-on) */
   addOnId?: string
@@ -43,9 +47,14 @@ interface AddOnFormProps {
   onCreated?: (addOnId: string) => void
 }
 
+const EMPTY_SLOT: TimeSlot = { start: '', end: '' }
+
 export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabel, onCancel, onCreated }: AddOnFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
   const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photo_url ?? null)
+  const [slots, setSlots] = useState<TimeSlot[]>(
+    initialData?.available_slots?.length ? [...initialData.available_slots] : []
+  )
   const [uploading, setUploading] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -389,6 +398,76 @@ export function AddOnForm({ action, initialData, addOnId, propertyId, submitLabe
           </div>
         </div>
         <p className="text-xs text-muted-foreground">Optional. Base price includes up to this many guests, then charge per additional person.</p>
+      </div>
+
+      {/* Scheduling — Time Slots */}
+      <div className="space-y-3">
+        <Label>Scheduling (optional)</Label>
+        <p className="text-xs text-muted-foreground -mt-1">
+          Add time slots if guests can book this experience at specific times during their stay.
+        </p>
+
+        {slots.length > 0 && (
+          <div className="space-y-1.5">
+            <Label htmlFor="addon-duration">Duration (minutes)</Label>
+            <Input
+              id="addon-duration"
+              name="duration_min"
+              type="number"
+              min={15}
+              max={1440}
+              defaultValue={initialData?.duration_min ?? 60}
+            />
+            {state.errors?.duration_min && (
+              <p className="text-sm text-destructive">{(state.errors as Record<string, string[]>).duration_min[0]}</p>
+            )}
+          </div>
+        )}
+
+        {slots.map((slot, i) => (
+          <div key={i} className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <TimeInput
+              value={slot.start}
+              onChange={(val) => {
+                const updated = [...slots]
+                updated[i] = { ...updated[i], start: val }
+                setSlots(updated)
+              }}
+              aria-label={`Slot ${i + 1} start time`}
+            />
+            <span className="text-muted-foreground text-sm shrink-0">to</span>
+            <TimeInput
+              value={slot.end}
+              onChange={(val) => {
+                const updated = [...slots]
+                updated[i] = { ...updated[i], end: val }
+                setSlots(updated)
+              }}
+              aria-label={`Slot ${i + 1} end time`}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSlots(slots.filter((_, j) => j !== i))}
+              className="text-destructive hover:text-destructive shrink-0"
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setSlots([...slots, { ...EMPTY_SLOT }])}
+        >
+          + Add Time Slot
+        </Button>
+
+        {/* Hidden field to pass slots as JSON to the FormData-based server action */}
+        <input type="hidden" name="available_slots" value={JSON.stringify(slots)} />
       </div>
 
       <div className="flex items-center gap-2">

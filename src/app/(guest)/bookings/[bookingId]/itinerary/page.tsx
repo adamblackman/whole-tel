@@ -7,7 +7,7 @@ import { verifySession } from '@/lib/dal'
 import { createClient } from '@/lib/supabase/server'
 import { isDeadlinePassed } from '@/lib/validations/itinerary-event'
 import { ItineraryCalendar } from '@/components/booking/ItineraryCalendar'
-import type { PropertyActivity, ItineraryEvent } from '@/types/database'
+import type { AddOn, ItineraryEvent } from '@/types/database'
 
 export const metadata: Metadata = {
   title: 'Plan Your Trip — Whole-Tel',
@@ -43,12 +43,12 @@ export default async function ItineraryPage({
     notFound()
   }
 
-  // Fetch active property activities
-  const { data: activities } = await supabase
-    .from('property_activities')
+  // Fetch experiences with time slots configured (schedulable)
+  const { data: addOns } = await supabase
+    .from('add_ons')
     .select('*')
     .eq('property_id', property.id)
-    .eq('is_active', true)
+    .not('duration_min', 'is', null)
     .order('name')
 
   // Fetch existing itinerary events
@@ -102,7 +102,7 @@ export default async function ItineraryPage({
         checkOut={booking.check_out}
         timezone={property.timezone}
         initialEvents={(events ?? []) as ItineraryEvent[]}
-        activities={(activities ?? []) as PropertyActivity[]}
+        activities={(addOns ?? []) as AddOn[]}
         isLocked={isLocked}
       />
     </div>

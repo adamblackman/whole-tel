@@ -8,7 +8,7 @@ import { updateProperty } from '@/lib/actions/properties'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
-import { ArrowLeft, CalendarPlus } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default async function EditPropertyPage({
   params,
@@ -77,15 +77,6 @@ export default async function EditPropertyPage({
         selectedIds={selectedIds}
         propertyId={propertyId}
       />
-
-      <div className="pt-2">
-        <Button variant="secondary" asChild>
-          <Link href={`/dashboard/properties/${propertyId}/activities`}>
-            <CalendarPlus className="h-4 w-4 mr-2" />
-            Manage Activities
-          </Link>
-        </Button>
-      </div>
     </div>
   )
 }

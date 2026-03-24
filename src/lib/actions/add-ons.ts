@@ -23,10 +23,16 @@ export async function createAddOn(
     return { errors: parsed.error.flatten().fieldErrors }
   }
 
+  const { available_slots, ...rest } = parsed.data
+
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('add_ons')
-    .insert({ ...parsed.data, property_id: propertyId })
+    .insert({
+      ...rest,
+      property_id: propertyId,
+      available_slots: JSON.stringify(available_slots),
+    })
     .select('id')
     .single()
 
@@ -56,10 +62,15 @@ export async function updateAddOn(
     return { errors: parsed.error.flatten().fieldErrors }
   }
 
+  const { available_slots, ...rest } = parsed.data
+
   const supabase = await createClient()
   const { error } = await supabase
     .from('add_ons')
-    .update(parsed.data)
+    .update({
+      ...rest,
+      available_slots: JSON.stringify(available_slots),
+    })
     .eq('id', addOnId)
 
   if (error) {

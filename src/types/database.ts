@@ -83,6 +83,8 @@ export interface AddOn {
   included_guests: number | null
   per_person_above: number | null
   photo_url: string | null
+  duration_min: number | null
+  available_slots: TimeSlot[]
   created_at: string
   updated_at: string
 }
@@ -153,18 +155,6 @@ export interface PartnerApplication {
 export interface TimeSlot {
   start: string
   end: string
-}
-
-export interface PropertyActivity {
-  id: string
-  property_id: string
-  name: string
-  description: string | null
-  duration_min: number
-  available_slots: TimeSlot[]
-  is_active: boolean
-  created_at: string
-  updated_at: string
 }
 
 export interface BookingSplit {
