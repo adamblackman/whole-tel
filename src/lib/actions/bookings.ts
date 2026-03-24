@@ -9,6 +9,18 @@ import { bookingInputSchema } from '@/lib/validations/booking'
 import { calculatePricing } from '@/lib/pricing'
 
 /**
+ * Computes the activity deadline as the earlier of:
+ * - check-in minus 30 days
+ * - created_at plus 7 days
+ */
+function computeActivityDeadline(checkIn: string, createdAt: Date): string {
+  const checkInMinus30 = new Date(new Date(checkIn).getTime() - 30 * 24 * 3600 * 1000)
+  const createdPlus7 = new Date(createdAt.getTime() + 7 * 24 * 3600 * 1000)
+  const deadline = checkInMinus30 < createdPlus7 ? checkInMinus30 : createdPlus7
+  return deadline.toISOString()
+}
+
+/**
  * Creates a pending booking and redirects to Stripe Checkout.
  *
  * Security model:
@@ -123,7 +135,7 @@ export async function createBookingAndCheckout(input: {
         total,
         status: 'pending',
       })
-      .select('id')
+      .select('id, created_at')
       .single()
 
     if (bookingError || !booking) throw new Error('Failed to create booking')
@@ -235,6 +247,17 @@ export async function createBookingAndCheckout(input: {
     })
 
     stripeUrl = session.url!
+
+    // Store Stripe checkout URL and compute deadlines before redirecting
+    const bookingCreatedAt = new Date(booking.created_at)
+    await supabase
+      .from('bookings')
+      .update({
+        stripe_checkout_url: session.url,
+        payment_deadline: new Date(bookingCreatedAt.getTime() + 36 * 3600 * 1000).toISOString(),
+        activity_deadline: computeActivityDeadline(input.checkIn, bookingCreatedAt),
+      })
+      .eq('id', booking.id)
   } catch (err) {
     console.error('Booking creation failed:', err)
     throw new Error('Failed to create booking. Please try again.')
