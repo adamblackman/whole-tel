@@ -1,100 +1,176 @@
 # Technology Stack
 
-**Project:** Whole-Tel v1.1 -- Rebrand & Owner Enhancements
-**Researched:** 2026-03-07
-**Scope:** New libraries/patterns needed for v1.1 features ONLY. Core stack (Next.js 16, Supabase, Stripe, shadcn/ui, React Bits) is validated and unchanged.
+**Project:** Whole-Tel v1.2 — Amenities, Calendar & Client Refinements
+**Researched:** 2026-03-23
+**Scope:** New libraries/patterns needed for v1.2 features ONLY. Everything from v1.1 STACK.md is still valid and in production.
+**Confidence:** HIGH
 
 ---
 
-## New Dependencies for v1.1
+## Context: What Already Exists
 
-### Drag-and-Drop (Photo Reordering)
+Before listing new additions, the following are already installed and in use — do NOT add duplicates:
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| @dnd-kit/react | ^0.3.2 | Photo grid drag-to-reorder | The only production-ready React DnD library with React 19 support. Built specifically for React (not a generic DOM wrapper). Supports sortable grids natively -- exactly what photo reordering needs. |
-| @dnd-kit/dom | ^0.3.2 | Required peer dependency of @dnd-kit/react | Core DnD engine that @dnd-kit/react builds on. Installed automatically as dependency. |
-
-**Why NOT alternatives:**
-
-| Alternative | Why Not |
-|-------------|---------|
-| @hello-pangea/dnd | Does NOT support React 19. Latest release (18.0.1) is over a year old. Open issue #864 requesting React 19 support with no timeline. This project runs React 19.2.3 -- incompatible. |
-| @dnd-kit/core + @dnd-kit/sortable (legacy API) | The old API (v5.x). The maintainer is moving to @dnd-kit/react as the new React-first API. Legacy packages still work but are being deprecated in favor of the new architecture. Use the new API for a greenfield feature. |
-| react-beautiful-dnd | Abandoned. Superseded by @hello-pangea/dnd, which itself lacks React 19 support. |
-| Native HTML5 drag-and-drop | No touch support, no smooth animations, no accessibility. Unacceptable for an Airbnb-quality UI. |
-
-**Integration notes:**
-- @dnd-kit/react provides `useSortable` hook and `SortableContext` -- wrap the existing photo grid in these.
-- On drag end, update `display_order` for affected photos via a Server Action (batch update).
-- The existing `PhotoUploader.tsx` component becomes the container; each photo thumbnail becomes a sortable item.
-- Touch and pointer support is built in -- critical for mobile owner dashboard usage.
-
-### Batch File Upload
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| *No new library needed* | -- | Multi-file selection | The existing `<input type="file">` just needs `multiple` attribute added. The signed URL upload pattern already works. Loop over selected files and upload each with its own signed URL. |
-
-**Why NOT react-dropzone:**
-- The existing upload UX is a button click, not a drag-drop zone. Adding a large dropzone area to the photo management UI is unnecessary visual clutter for a dashboard that already has a clean layout.
-- The only thing react-dropzone adds is drag-from-desktop-to-browser-zone, which is a nice-to-have for a file management app but not essential for a hotel listing form where owners upload 5-20 photos.
-- If drag-to-upload UX is wanted later, react-dropzone v14.3.6+ supports React 19 and can be added incrementally. But do not add it preemptively.
-
-**Implementation approach:**
-- Change `<input type="file" accept="image/*">` to `<input type="file" accept="image/*" multiple>`.
-- On change, iterate over `e.target.files` (FileList), get a signed URL for each, upload in parallel (with a concurrency limit of 3 to avoid rate limits).
-- Show per-file upload progress indicators using local state.
+| Existing Capability | Package | Notes |
+|---------------------|---------|-------|
+| Drag-and-drop | `@dnd-kit/react@0.3.2`, `@dnd-kit/helpers@0.3.2` | Used for photo reordering in owner dashboard |
+| Form handling | `react-hook-form@7.71.2`, `@hookform/resolvers@5.2.2`, `zod@4.3.6` | Multi-field forms already wired up |
+| Date utilities | `date-fns@4.1.0` | Date formatting, arithmetic |
+| Date picker | `react-day-picker@9.14.0` | Already powers booking date range UI |
+| Email | `resend@6.9.3` | Transactional email for invites |
+| Payments | `stripe@20.4.0` | Checkout + webhooks operational |
+| Icons | `lucide-react@0.576.0` | Already used for amenity icons in `AmenityList.tsx` |
+| File upload | `<input multiple>` + Supabase signed URLs | Pattern validated in v1.1 photo manager |
 
 ---
 
-## shadcn/ui Components to Add
+## New Dependencies for v1.2
 
-These components are NOT npm dependencies (shadcn copies source into the project), but they need to be added via the CLI for v1.1 features.
+### 1. Interactive Calendar / Itinerary Builder
 
-| Component | Install Command | Used For |
-|-----------|----------------|----------|
-| Accordion | `npx shadcn@latest add accordion` | Expandable booking details -- each booking row expands to show guest list, add-ons, pricing breakdown |
-| Collapsible | `npx shadcn@latest add collapsible` | Photo sections -- "Rooms", "Common Area", "Pool" sections that expand/collapse in the owner dashboard |
-| Tabs | `npx shadcn@latest add tabs` | Bed configuration UI -- tab per bedroom, or tiered pricing tab vs base pricing tab |
-| Dialog | `npx shadcn@latest add dialog` | Guest invite modal -- enter email, send invite. Also useful for photo section management. |
-| Tooltip | `npx shadcn@latest add tooltip` | Bed type icons, pricing tier help text, invite status indicators |
-| Dropdown Menu | `npx shadcn@latest add dropdown-menu` | Photo actions (set as cover, move to section, delete), booking actions |
+**Decision: Use `@fullcalendar/react` with the interaction + timegrid plugins.**
 
-**Already installed (no action needed):** Button, Card, Input, Label, Form, Select, Textarea, Badge, Table, Separator, Alert Dialog, Calendar.
+The itinerary builder requires a week/day timeline view with 30-minute time slots, draggable activity cards, and visual availability windows. This is a full calendar UX problem, not a list or sortable grid. `@dnd-kit/react` handles list reordering; it does not provide a calendar grid, time-slot snapping, or the visual timeline that this feature requires. These are fundamentally different UI primitives.
 
-**Note:** The project already has `radix-ui@1.4.3` (unified package) installed, so all Radix primitives these shadcn components depend on are already available. The shadcn CLI just generates the styled wrapper components.
+| Package | Version | Purpose | Why |
+|---------|---------|---------|-----|
+| `@fullcalendar/react` | `6.1.20` | React wrapper for FullCalendar engine | Explicitly supports React 19 (declared in peer deps since v6.1.14). Actively maintained — v6.1.20 released Jan 2026. |
+| `@fullcalendar/core` | `6.1.20` | Required peer dependency of all FC packages | Provides the calendar engine; must be installed alongside the React adapter. |
+| `@fullcalendar/timegrid` | `6.1.20` | Week/day views with hourly rows | Needed for time-slot display — the "itinerary day" view with draggable hour blocks. |
+| `@fullcalendar/interaction` | `6.1.20` | Drag-drop and resize for calendar events | Enables dragging activities between time slots. Works with timegrid out of the box. |
+| `@fullcalendar/daygrid` | `6.1.20` | Month/week grid view | Needed if the itinerary has a multi-day overview mode. Can be omitted if day view only, but add for completeness. |
+
+**Why NOT build on `@dnd-kit/react` for the calendar:**
+The project already uses `@dnd-kit/react` for photo reordering (sortable list). Building a calendar time-grid with time-snapping drag behavior on top of raw DnD primitives would require building a custom calendar engine from scratch — column layout, slot calculation, event overlap handling, resize handles. That is 2-3 weeks of work that FullCalendar ships as a tested package. Use the right tool.
+
+**Why NOT `react-big-calendar`:**
+react-big-calendar does not include drag-drop built-in; it requires a separate addon (`react-big-calendar/lib/addons/dragAndDrop`) plus manual wiring. FullCalendar's interaction plugin is the same API as the calendar itself — no separate addon coordination. FullCalendar also ships its own styles in the JS bundle starting in v6, eliminating the CSS import complexity that plagued v5 + Next.js App Router.
+
+**React 19 compatibility verified:**
+`npm info @fullcalendar/react@6.1.20 peerDependencies` returns `react: '^16.7.0 || ^17 || ^18 || ^19'`. React 19 support was added in v6.1.14 and is explicit in all subsequent releases. HIGH confidence.
+
+**Integration with existing `@dnd-kit/react`:**
+No conflict. FullCalendar manages its own drag state internally within the calendar container. `@dnd-kit/react` continues to handle photo reorder on the owner dashboard. The two DnD systems do not share context and will not interfere.
+
+**"use client" requirement:**
+FullCalendar is a purely client-side library (DOM manipulation for resize/drag). Wrap in a `'use client'` component boundary, same pattern as the existing `DndProvider.tsx`. The calendar data (activities, availability windows) can still be fetched server-side and passed as props.
 
 ---
 
-## No New Libraries Needed For
+### 2. Split Payment System
 
-| Feature | Why No New Library |
-|---------|-------------------|
-| **Photo sections** | Database schema change (add `section` column to `property_photos`) + existing Select component for section assignment. The Collapsible shadcn component handles the UI grouping. |
-| **Bed configuration** | Pure form UI: array of `{bed_type, count}` objects. Use existing Input + Select + Button components. No specialized bed/room library exists or is needed. |
-| **Tiered per-person pricing** | Form fields for `threshold_guests` and `per_person_rate`. Pricing calculation is server-side math in the booking flow. No library needed. |
-| **Experience photos** | Reuse the same `PhotoUploader` pattern but for `experience_photos` table instead of `property_photos`. Same Supabase Storage bucket. |
-| **Experience tiered pricing** | Same pattern as property tiered pricing. Form fields + server-side calculation. |
-| **Guest invite system** | Supabase Auth for user lookup, Resend (already installed v6.9.3) for invite emails, new `booking_guests` junction table. No new library. |
-| **Expandable booking details** | shadcn Accordion component (to be added). No runtime library needed beyond Radix primitives already installed. |
-| **Rebrand** | Copy/content changes only. No library implications. |
+**Decision: No new Stripe library. Custom database tracking with existing Stripe Checkout.**
+
+The PROJECT.md explicitly scopes this as "Split payment system with guest registration (all attendees: name, email, phone)" and separately notes "Individual payment splitting (each guest pays separately) — calculator only for now" is OUT OF SCOPE.
+
+This means the feature is:
+1. Collect registered guest list (name, email, phone) on booking
+2. Show per-person cost (total / guest count)
+3. Track payment deadline rules (36hr first payment)
+4. NOT: each guest pays their own share through separate Stripe charges
+
+This does not require Stripe Connect, additional Stripe packages, or a new payment library. It requires:
+- A `booking_registrations` table (guest name, email, phone, booking_id)
+- Payment deadline logic in the booking flow
+- Deadline reminder emails via existing Resend
+
+| Approach | Package | Why |
+|----------|---------|-----|
+| Guest registration form | `react-hook-form` + `zod` (already installed) | Multi-field form per guest — name, email, phone. Same pattern as existing booking form. |
+| Payment deadlines | Custom Supabase column + cron or Supabase Edge Functions | `payment_due_at` timestamp on booking. Check on booking load. No new library. |
+| Deadline emails | `resend` (already installed) | New email template for payment reminders. Resend supports scheduled sends or use Supabase cron to trigger. |
+
+**What NOT to add for split payments:**
+- Stripe Connect: Not needed. All payments still go to Whole-Tel's single Stripe account. Connect is for marketplace payouts to third parties.
+- Any "split billing" SaaS (Splitwise API, etc.): Out of scope. This is a display/registration feature, not a financial splitting feature.
 
 ---
 
-## Recommended Stack (v1.1 Additions Only)
+### 3. Partner Application Form
 
-### Install Command
+**Decision: No new library. react-hook-form already handles multi-step forms and file uploads.**
+
+The partner application is a multi-section form with file uploads (property photos, documents). The project already has:
+- `react-hook-form` + `zod` for form state and validation
+- Supabase Storage with signed URL uploads (validated pattern from photo manager)
+- `resend` for notification emails
+
+A multi-step wizard UI can be built with React local state controlling which step is visible. The form data accumulates in a single `useForm` instance across steps — this is a standard react-hook-form pattern.
+
+The one potential addition is a file drop zone for document uploads in the application form:
+
+| Package | Version | Purpose | Add? |
+|---------|---------|---------|------|
+| `react-dropzone` | `15.0.0` | Drag-from-desktop file drop for application documents | OPTIONAL — only if UX spec requires drag-drop zone. The existing `<input type="file">` pattern works. The v1.1 STACK.md consciously deferred react-dropzone. Add only if the partner application explicitly needs a polished drop zone UX rather than a file picker button. |
+
+**If added:**
+`react-dropzone@15.0.0` peer dep declares `react: '>= 16.8 || 18.0.0'` in npm metadata, but the library uses standard React hooks and has been confirmed working with React 19 in community usage. The peer dep metadata is a documentation gap, not a true incompatibility. Install with `--legacy-peer-deps` only if npm complains; pnpm typically handles this without flags.
+
+**What NOT to add:**
+- Formik: Project uses react-hook-form. Do not mix form libraries.
+- React Wizard / Stepper libraries (e.g., react-step-wizard): Over-engineered for a 3-4 step form. Custom step state is 10 lines of React.
+
+---
+
+### 4. Amenities Management System
+
+**Decision: No new library. The groundwork already exists.**
+
+`AmenityList.tsx` already exists with a `lucide-react` icon map for common amenity types. The new system adds:
+1. Owner UI to select/manage amenities per property (checkboxes + category grouping)
+2. Database storage (`property_amenities` table or JSONB column)
+3. Guest-facing display (extends existing `AmenityList.tsx`)
+
+The categorization (Water, Social, Work/Event, Culinary, Wellness) is a UI concern — `shadcn/ui` Tabs or a section grouping with existing components handles this. `lucide-react` already provides all needed icons (pool, gym, WiFi, etc.). No additional icon library needed.
+
+| Feature | Approach | Package |
+|---------|----------|---------|
+| Owner amenity selector | Checkbox grid, grouped by category | shadcn `Checkbox` component (add via CLI) |
+| Category tabs | Organize amenities into Water/Social/etc. sections | shadcn `Tabs` (add via CLI if not already present) |
+| Guest display | Extend existing `AmenityList.tsx` with category headers | No change to icon mapping |
+| Storage | JSONB column on `properties` table or `property_amenities` join table | Supabase (no new library) |
+
+---
+
+## shadcn/ui Components to Add for v1.2
+
+These are CLI-generated, not npm dependencies.
+
+| Component | CLI Command | Used For |
+|-----------|-------------|----------|
+| Checkbox | `npx shadcn@latest add checkbox` | Amenity selector in owner dashboard |
+| Tabs (if not present) | `npx shadcn@latest add tabs` | Amenity category grouping (may already be installed from v1.1 — check first) |
+| Progress | `npx shadcn@latest add progress` | Multi-step partner application progress indicator |
+
+**Already installed from v1.1 (do not re-add):** Accordion, Collapsible, Dialog, Tooltip, Dropdown Menu.
+
+---
+
+## Installation Commands
 
 ```bash
-# New runtime dependency -- drag-and-drop for photo reordering
-pnpm add @dnd-kit/react
+# FullCalendar — calendar/itinerary builder
+pnpm add @fullcalendar/react @fullcalendar/core @fullcalendar/timegrid @fullcalendar/interaction @fullcalendar/daygrid
 
-# New shadcn/ui components (copies source, no npm dependency)
-npx shadcn@latest add accordion collapsible tabs dialog tooltip dropdown-menu
+# shadcn components (generates source files, no npm install)
+npx shadcn@latest add checkbox progress
+
+# Optional: react-dropzone for partner application file drop zone
+# Only add if UX spec requires drag-drop zone (not just file picker button)
+pnpm add react-dropzone
 ```
 
-That is it. One new npm dependency (`@dnd-kit/react`, which pulls `@dnd-kit/dom` as a peer). Everything else is either already installed or handled by shadcn component generation.
+---
+
+## Alternatives Considered
+
+| Recommended | Alternative | Why Not |
+|-------------|-------------|---------|
+| `@fullcalendar/react` v6 | Build calendar on `@dnd-kit/react` | Raw DnD primitives don't include calendar grid, time snapping, event overlap, or resize. Would require building a calendar engine. |
+| `@fullcalendar/react` v6 | `react-big-calendar` | No built-in drag-drop; requires separate addon coordination. CSS import issues with Next.js App Router. Lower overall DX. |
+| Supabase custom tables for payment tracking | Stripe Connect | Stripe Connect is for multi-party payouts. Whole-Tel keeps all payments on one account by design (PROJECT.md Key Decisions). Connect adds significant complexity for no benefit here. |
+| `react-hook-form` multi-step (already installed) | Formik | Project already uses RHF. Two form libraries = maintenance nightmare. |
+| `lucide-react` (already installed) for amenity icons | react-icons | Already in codebase with existing icon map. react-icons is 100KB+; lucide covers all needed icons. |
 
 ---
 
@@ -102,73 +178,65 @@ That is it. One new npm dependency (`@dnd-kit/react`, which pulls `@dnd-kit/dom`
 
 | Temptation | Why Resist |
 |------------|-----------|
-| react-dropzone | Existing `<input multiple>` pattern is sufficient. Adds 12KB for drag-from-desktop UX that is not a requirement. |
-| @hello-pangea/dnd | Incompatible with React 19. Would require downgrading React or using --legacy-peer-deps (fragile). |
-| react-sortable-hoc | Deprecated, uses legacy findDOMNode API removed in React 19. |
-| Framer Motion (for drag) | Massive bundle (32KB+). @dnd-kit handles drag animations natively. Framer Motion is fine for page transitions but overkill for sortable grids. |
-| TanStack Query | Not needed for v1.1. All new features use Server Actions for mutations and Server Components for reads. Client-side cache invalidation is handled by `revalidatePath()` in Server Actions. |
-| Supabase Realtime | Not needed until v2. Guest invites use email, not live push. Booking status uses server-side queries. |
-| nanoid / uuid (for invite tokens) | Already have `crypto.randomUUID()` in Node.js 20+ and Supabase can generate UUIDs server-side. No library needed. |
-| @stripe/react-stripe-js | No new Stripe UI needed for v1.1. Tiered pricing is calculated server-side before creating the Checkout Session. |
+| `@dnd-kit/react` calendar grid | Already in use for list sorting. Does not provide calendar timeline UX. Use FullCalendar for calendar features. |
+| `react-beautiful-dnd` / `@hello-pangea/dnd` | Incompatible with React 19. Already resolved in v1.1. |
+| Stripe Connect | All payments go to Whole-Tel account. Connect is for marketplace payouts. Explicitly out of scope in PROJECT.md. |
+| Stripe Payment Intents (individual guest payments) | Out of scope per PROJECT.md: "Individual payment splitting — calculator only for now." |
+| Supabase Realtime | Not needed until v2. No live collaboration features in v1.2 scope. |
+| Date picker library for calendar | `react-day-picker` is already installed for booking date range. FullCalendar has its own navigation. No third date library needed. |
+| Stepper/wizard UI library | Partner form is 3-4 steps. Local React state handles step progression in 10 lines. Libraries add bundle weight and styling conflicts. |
 
 ---
 
-## Version Compatibility Check
+## Version Compatibility
 
-| New Package | React 19.2.3 | Next.js 16.1.6 | Notes |
-|-------------|--------------|-----------------|-------|
-| @dnd-kit/react@0.3.2 | Compatible | Compatible | Published Feb 2026, built for React 19. Has open issue (#1654) about "use client" directive -- may need to add "use client" to wrapper component, which we are doing anyway since drag is inherently client-side. |
-| @dnd-kit/dom@0.3.2 | N/A (no React dep) | Compatible | Core engine, framework-agnostic. |
+| Package | Version | React 19.2.3 | Next.js 16.1.6 | Notes |
+|---------|---------|--------------|-----------------|-------|
+| `@fullcalendar/react` | `6.1.20` | Explicit `^19` peer dep | Compatible | Must use `'use client'` wrapper. CSS is bundled in JS (no separate import). |
+| `@fullcalendar/core` | `6.1.20` | N/A (no React dep) | Compatible | Required alongside React adapter. |
+| `@fullcalendar/timegrid` | `6.1.20` | N/A | Compatible | Peer dep on `@fullcalendar/core ~6.1.20`. |
+| `@fullcalendar/interaction` | `6.1.20` | N/A | Compatible | Peer dep on `@fullcalendar/core ~6.1.20`. |
+| `@fullcalendar/daygrid` | `6.1.20` | N/A | Compatible | Peer dep on `@fullcalendar/core ~6.1.20`. |
+| `react-dropzone` | `15.0.0` (if added) | Functional (peer dep metadata gap) | Compatible | Peer dep says `>= 16.8 || 18.0.0` but works on React 19. Use `--legacy-peer-deps` only if npm blocks install. |
 
 ---
 
 ## Integration Points with Existing Code
 
-### PhotoUploader.tsx Evolution
+### FullCalendar + existing `@dnd-kit/react`
 
-The existing `PhotoUploader.tsx` handles single-file upload + delete. For v1.1 it needs:
+No conflict. They live in separate component trees:
+- `@dnd-kit/react` → `DndProvider` → photo management in owner dashboard
+- FullCalendar → `ItineraryCalendar` component → booking flow / guest itinerary view
 
-1. **Batch upload**: Add `multiple` to file input, loop over FileList with parallel signed URL uploads.
-2. **Drag reorder**: Wrap photo grid in `@dnd-kit/react` SortableContext, make each photo a sortable item.
-3. **Photo sections**: Add section selector (shadcn Select) per photo or per batch. Group photos by section in display.
-4. **Cover photo**: First photo in "Hero" section (or `display_order: 0`) becomes the listing cover.
+Neither shares DnD context with the other.
 
-### PropertyForm.tsx Evolution
+### FullCalendar + existing `date-fns`
 
-The existing form needs new sections for:
+FullCalendar v6 has its own internal date handling. For date formatting in surrounding UI (e.g., displaying "March 24" labels outside the calendar), continue using `date-fns`. Do not add a FullCalendar date adapter unless the calendar needs to consume dates from a locale-specific source.
 
-1. **Bed configuration**: Dynamic array of `{bed_type: enum, count: number}` with add/remove buttons. Use existing Input + Select.
-2. **Tiered pricing**: Additional fields below nightly rate -- `guest_threshold` (number) and `per_person_rate` (currency).
+### Partner Application + existing photo upload pattern
 
-### Booking Detail Evolution
+The partner application file uploads (property photos, documents) should reuse the same signed URL upload pattern from `PhotoUploader.tsx`. Do not build a second upload mechanism. Extract the upload logic into a shared utility if needed.
 
-Currently `BookingsTable.tsx` shows a flat table. For v1.1:
+### Amenities + existing `AmenityList.tsx`
 
-1. Wrap each row in shadcn Accordion for expandable details.
-2. Expanded view shows: guest list (from `booking_guests` table), add-on selections, pricing breakdown, invite actions.
-
-### Guest Invite Flow
-
-1. Owner or booking creator opens invite dialog (shadcn Dialog).
-2. Enters email, Server Action checks if user exists in Supabase Auth.
-3. If exists: add to `booking_guests` table, send notification via Resend.
-4. If not: send invite email via Resend with signup link containing booking reference.
+The existing `AmenityList.tsx` uses a flat icon map keyed by string name. For v1.2, this needs to be extended with category metadata (Water, Social, etc.). The simplest approach: add a `AMENITY_CATEGORIES` constant grouping amenity names, and render category headers above each group. No new library.
 
 ---
 
 ## Sources
 
-- [@dnd-kit/react on npm](https://www.npmjs.com/package/@dnd-kit/react) -- v0.3.2, published Feb 2026, React 19 compatible. HIGH confidence.
-- [@dnd-kit/dom on npm](https://www.npmjs.com/@dnd-kit/dom) -- v0.3.2, published Feb 2026. HIGH confidence.
-- [dnd-kit "use client" issue #1654](https://github.com/clauderic/dnd-kit/issues/1654) -- React 19 Server Components compatibility note. MEDIUM confidence.
-- [@hello-pangea/dnd React 19 discussion #810](https://github.com/hello-pangea/dnd/discussions/810) -- Confirms no React 19 support. HIGH confidence.
-- [@hello-pangea/dnd React 19 issue #864](https://github.com/hello-pangea/dnd/issues/863) -- Open issue, no resolution. HIGH confidence.
-- [react-dropzone v14.3.6 release](https://github.com/react-dropzone/react-dropzone/releases) -- React 19 fix, but not needed for this project. MEDIUM confidence.
-- [shadcn/ui Accordion docs](https://ui.shadcn.com/docs/components/radix/accordion) -- Built on Radix, supports type="multiple". HIGH confidence.
-- [shadcn/ui Collapsible docs](https://ui.shadcn.com/docs/components/radix/collapsible) -- Three-part API (Collapsible, Trigger, Content). HIGH confidence.
-- [Top 5 DnD Libraries for React 2026](https://puckeditor.com/blog/top-5-drag-and-drop-libraries-for-react) -- Ecosystem comparison. MEDIUM confidence.
+- `npm info @fullcalendar/react@6.1.20 peerDependencies` — React 19 peer dep verified directly. HIGH confidence.
+- [FullCalendar React Component docs](https://fullcalendar.io/docs/react) — Integration guide, "use client" pattern. HIGH confidence.
+- [FullCalendar v6 Upgrade Guide](https://fullcalendar.io/docs/upgrading-from-v5) — CSS now bundled in JS (no separate import). HIGH confidence.
+- `npm info react-dropzone version` — v15.0.0 confirmed. MEDIUM confidence (React 19 peer dep gap noted).
+- Existing `package.json` — Confirmed all v1.1 dependencies in production. HIGH confidence.
+- Existing `DndProvider.tsx` — `@dnd-kit/react` usage pattern confirmed. HIGH confidence.
+- Existing `AmenityList.tsx` — Existing amenity icon map confirmed; no new icon library needed. HIGH confidence.
+- PROJECT.md v1.2 scope — Split payment "calculator only" scope confirmed. HIGH confidence.
 
 ---
 
-*Stack research for: Whole-Tel v1.1 enhancements*
-*Researched: 2026-03-07*
+*Stack research for: Whole-Tel v1.2 — Calendar, Split Payments, Partner Application, Amenities*
+*Researched: 2026-03-23*

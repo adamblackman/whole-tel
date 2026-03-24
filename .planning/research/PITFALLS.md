@@ -1,353 +1,431 @@
-# Domain Pitfalls: v1.1 Whole-Tel Enhancements
+# Domain Pitfalls: v1.2 Whole-Tel — Itinerary Builder, Split Payments, Partner Application, Amenities
 
-**Domain:** Boutique hotel booking platform -- adding photo management, tiered pricing, guest invites, rebrand
-**Researched:** 2026-03-07
-**Confidence:** HIGH (pitfalls derived from actual codebase analysis + official docs + community patterns)
+**Domain:** Group hotel booking platform — adding calendar/itinerary builder, split payments with deadlines, partner application workflow, amenities system to an existing Stripe + Supabase booking flow
+**Researched:** 2026-03-23
+**Confidence:** HIGH (derived from codebase analysis of existing payment flow, webhook handler, pricing module, and invitation system + verified patterns)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Photo Reorder Race Condition -- display_order Corruption
+### Pitfall 1: Split Payment Breaks the "Single Stripe Checkout Session Per Booking" Model
 
 **What goes wrong:**
-The existing `savePhotoRecord` action (line 56-60 of `photos.ts`) calculates `display_order` by counting existing photos: `count ?? 0`. When adding drag-to-reorder, developers typically UPDATE individual rows with new `display_order` values. If the user drags rapidly or the network is slow, multiple reorder requests fire concurrently. Two requests read the same current order, then both write conflicting orders. Result: duplicate `display_order` values, photos appear in wrong positions, or photos "jump back" to old positions after briefly showing the correct order.
+The existing flow creates one Stripe Checkout Session for the full booking total and the webhook sets `status = 'confirmed'` when it fires. With a split payment system, the booking lead pays a deposit (e.g., 36hr deadline) and group members each pay their share by a later deadline. The naive approach is to create a new Stripe Checkout Session per payment installment and have the webhook confirm the booking. This creates multiple webhook events for the same booking UUID — the existing `fulfillCheckout` handler tries to `UPDATE ... WHERE status = 'pending'` every time, which is idempotent but means booking confirmation happens on the FIRST individual payment, not when all payments are collected.
 
 **Why it happens:**
-No database-level uniqueness constraint on `(property_id, display_order)`. The count-based ordering in `savePhotoRecord` already has this flaw for rapid sequential uploads, but it becomes catastrophic with drag-and-drop where every drag fires a reorder mutation.
+Developers extend the existing `createBookingAndCheckout` Server Action by adding a `paymentType: 'deposit' | 'split'` flag, fire multiple Stripe sessions, and assume the existing webhook handles it. It doesn't — the booking goes `confirmed` as soon as any single person pays, even if the total collected is far less than the booking value.
 
 **Consequences:**
-- Photos display in wrong order on the guest-facing property page
-- PhotoGallery hero image (index 0) becomes unpredictable
-- Owner loses trust in the reorder feature, stops using it
+- Booking is marked `confirmed` with only 20% of the total collected
+- Hotel gets a confirmation email for a booking with unpaid balance
+- No mechanism to cancel if remaining installments aren't paid
+- Financial reconciliation is impossible: `bookings.total` says $10,000 but Stripe shows $2,000 collected
 
-**Prevention:**
-1. Send the entire ordered array of photo IDs in a single server action call, not individual position updates. One atomic UPDATE per reorder operation.
-2. Use a transaction or a single SQL statement: `UPDATE property_photos SET display_order = data.new_order FROM (VALUES ...) AS data(id, new_order) WHERE property_photos.id = data.id`
-3. Add a UNIQUE constraint on `(property_id, display_order)` with DEFERRABLE INITIALLY DEFERRED so the batch update can temporarily violate it within the transaction.
-4. Use `useOptimistic` on the client to show the new order immediately, but do NOT fire the server action until the user stops dragging (debounce 300ms).
+**How to avoid:**
+1. Add a `payment_schedule` table: one row per expected payment, with `(booking_id, amount_due, due_at, paid_at, stripe_session_id, status)`.
+2. Booking status logic: `pending` → `deposit_paid` (after first payment) → `confirmed` (after all payments collected). Add the intermediate status to the `BookingStatus` type.
+3. The webhook handler must check if all payment schedule rows are `paid` before transitioning to `confirmed`.
+4. Never use the existing `fulfillCheckout` for installment sessions — write a separate `fulfillInstallment` path in the webhook switch.
+5. For the v1.2 scope where Whole-Tel collects total and distributes a cost calculator (not individual Stripe charges per person), the payment schedule tracks WHO owes WHAT as a UI ledger, with the group lead still responsible for full Stripe payment. Clarify this scope before building.
 
-**Detection:**
-- Two photos sharing the same `display_order` for the same property
-- Gallery hero image changes unexpectedly between page loads
-- Photo order differs between owner dashboard and guest-facing page
+**Warning signs:**
+- Booking moves to `confirmed` before all split payments are recorded as received
+- `bookings.total` does not match sum of completed `payment_schedule.amount_due` rows
+- Webhook handler has a single path for all checkout events with no payment-type discrimination
 
-**Phase to address:** Photo management phase (sections + ordering)
+**Phase to address:** Split payment system phase — design the payment schedule data model before writing any Stripe session creation code
 
 ---
 
-### Pitfall 2: Schema Migration Breaks Existing Photo Queries -- NULL section Column
+### Pitfall 2: calculatePricing() State Drift When Split Amounts Are Computed Client-Side
 
 **What goes wrong:**
-Adding a `section` column to the existing `property_photos` table means all existing photos have `section = NULL`. The guest-facing `PhotoGallery` component and the owner `PhotoUploader` component both query photos without any section filter. If the new photo management UI groups by section, existing sectionless photos become invisible -- they don't appear in any section group. The property page looks like it has zero photos.
+The existing `calculatePricing()` module (confirmed in `src/lib/pricing.ts`) is a pure function used by both `PricingWidget` (client) and `createBookingAndCheckout` (server). For split payments, the group lead adjusts how costs are divided per person. Developers build the split calculator in the client and store only the per-person amounts in the database — not the canonical breakdown from `calculatePricing()`. Later, when reconciling or recalculating (e.g., a guest cancels), the server must reconstruct the split from the per-person rows. If the client rounded differently or applied a processing fee before splitting, the server recalculation produces a different total.
 
 **Why it happens:**
-Developer adds `ALTER TABLE property_photos ADD COLUMN section TEXT` and builds the new UI to `GROUP BY section` or filter by section. Existing rows have NULL section. `WHERE section = 'Rooms'` excludes them. Even `GROUP BY section` puts them in a NULL group that the UI doesn't render.
+The split UI is purely presentational ("divide $10,240 among 8 people"), so developers implement it in the client with simple arithmetic. The processing fee (2.9% + $0.30) is already baked into `calculatePricing()`'s `total`. If the client divides `total / guestCount` each person owes includes a fractional processing fee. But if one person drops out, the server recalculates the fee on a different guest count, producing a different per-person amount. The ledger never reconciles.
 
 **Consequences:**
-- All existing property photos disappear from the guest-facing gallery
-- Owner dashboard photo management shows empty state for properties that had photos
-- Data appears lost (it's not -- just invisible)
+- Per-person amounts stored in the split ledger do not sum to the Stripe payment amount
+- When a guest drops out, recalculated amounts differ from what everyone already agreed to
+- Penny rounding errors compound over many adjustments
 
-**Prevention:**
-1. Migration must set a default: `ALTER TABLE property_photos ADD COLUMN section TEXT NOT NULL DEFAULT 'General'`
-2. Backfill existing rows in the same migration: `UPDATE property_photos SET section = 'General' WHERE section IS NULL`
-3. The guest-facing `PhotoGallery` must continue to work with a flat list -- section grouping is an enhancement for the detail page, not a requirement for the gallery grid
-4. Test the migration against the existing property detail page BEFORE building any new section UI
+**How to avoid:**
+1. The processing fee is the group lead's responsibility — it is not split among guests. The split calculator divides `(total - processingFee)` among guests, then adds the full `processingFee` back to the lead's share.
+2. Store the split as absolute dollar amounts per person, not as fractions, to avoid rounding.
+3. The server must validate that `sum(split_amounts) + processingFee == booking.total` before saving any split configuration.
+4. Use `round2()` (the same internal function in `pricing.ts`) for all split arithmetic to ensure consistent rounding.
+5. Re-export `round2` or create a `splitAmounts(total, processingFee, shares)` helper in `pricing.ts` so it stays in the shared module.
 
-**Detection:**
-- Property detail page shows "No photos yet" for properties that previously had photos
-- `SELECT COUNT(*) FROM property_photos WHERE section IS NULL` returns > 0 after migration
+**Warning signs:**
+- `SUM(split_amount) FROM payment_splits WHERE booking_id = X` does not equal `bookings.total`
+- Different per-person amounts shown on refresh vs. initial calculation
+- Processing fee appears in individual guest payment requests
 
-**Phase to address:** Photo management phase -- first migration, before any UI changes
+**Phase to address:** Split payment system phase — extend `pricing.ts` with a `splitAmounts()` helper before building the split UI
 
 ---
 
-### Pitfall 3: Tiered Per-Person Pricing Breaks Existing Booking Flow
+### Pitfall 3: Payment Deadlines Without a Reliable Cron — Silent Booking Expiry
 
 **What goes wrong:**
-The existing `createBookingAndCheckout` action (line 77-90 of `bookings.ts`) calculates pricing as `nightly_rate * nights + cleaning_fee`. Adding per-person pricing above a threshold (e.g., "$100/night/person above 25 guests") requires changing this calculation. But the change must be backward-compatible: properties WITHOUT tiered pricing (the current properties) must still calculate correctly. If the new fields (`extra_person_rate`, `included_guests`) are required or default to 0, existing properties either error or charge $0 for all guests.
+The spec requires: 36hr deadline for the lead's first payment, and activity booking due 30 days before check-in OR 7 days after booking (whichever comes first). Developers implement deadline enforcement in the UI ("your deadline is Feb 3rd"), but rely on the next page load or user action to actually expire bookings. There is no background process cancelling unpaid bookings when deadlines pass.
 
 **Why it happens:**
-Developer adds `extra_person_rate` and `included_guests` columns to `properties`, makes them required, deploys. Existing properties have these set to 0 or NULL. The pricing formula becomes: `nightly_rate * nights + MAX(0, guest_count - included_guests) * extra_person_rate * nights`. If `included_guests = 0`, EVERY guest is "extra" and gets charged the extra rate. If `included_guests = NULL`, the subtraction produces NULL and the whole calculation breaks.
+Supabase has no built-in scheduler. Next.js has no built-in cron. The existing webhook handler only fires when Stripe events occur. Developers mark deadlines in the database and assume "we'll check on load." But: the group lead never returns, the booking never expires, and the property date remains blocked indefinitely.
 
 **Consequences:**
-- Existing properties show wildly wrong prices on the guest-facing pricing widget
-- Stripe Checkout receives incorrect amounts
-- Guests are overcharged or undercharged for existing properties
+- Properties show unavailable dates for bookings that will never convert
+- Hosts hold dates for non-paying leads, rejecting other inquiries
+- No automated deadline reminders sent because nothing triggers them
 
-**Prevention:**
-1. Add columns with safe defaults: `included_guests INTEGER NOT NULL DEFAULT 0` and `extra_person_rate NUMERIC(10,2) NOT NULL DEFAULT 0`
-2. When `extra_person_rate = 0`, the tiered pricing formula adds $0 -- backward compatible by math, not by conditional logic
-3. Update the `PricingWidget` component AND the `createBookingAndCheckout` server action simultaneously -- they must use the exact same formula
-4. The pricing formula should be extracted into a shared utility function used by both client display and server calculation to prevent drift
-5. Write a test that verifies existing properties (extra_person_rate=0) produce the same total as the current formula
+**How to avoid:**
+1. Use Supabase's `pg_cron` extension (available on paid plans) for deadline enforcement. A daily job: `UPDATE bookings SET status = 'expired' WHERE status = 'pending' AND created_at < NOW() - INTERVAL '36 hours'`.
+2. For deadline reminder emails, use Supabase Edge Functions triggered by `pg_cron` or a Vercel Cron Job (`/api/cron/deadline-reminders`).
+3. If `pg_cron` is unavailable (free tier), implement a lazy expiry check: `createBookingAndCheckout` checks for expired pending bookings for the same dates before creating new ones, and date availability queries exclude bookings that are past deadline even if still `pending`.
+4. The 30-day/7-day activity deadline logic belongs in a computed column or a view, not application code, so it is enforced consistently across all query paths.
+5. Add a Vercel Cron job as a minimum viable solution (`vercel.json` cron, calls a protected `/api/cron/expire-bookings` route).
 
-**Detection:**
-- Price shown on property page differs from Stripe Checkout amount
-- Existing property pricing changes after migration
-- `PricingWidget` shows a per-person surcharge line for properties that shouldn't have one
+**Warning signs:**
+- `SELECT COUNT(*) FROM bookings WHERE status = 'pending' AND created_at < NOW() - INTERVAL '48 hours'` keeps growing
+- Property date picker shows blocked dates for 30+ day old pending bookings
+- No cron job or scheduled function exists in the codebase
 
-**Phase to address:** Tiered pricing phase -- must include backward-compatibility test
+**Phase to address:** Split payment system phase — deadline enforcement must be designed before payment flow, not added after as an afterthought
 
 ---
 
-### Pitfall 4: Guest Invite System Creates RLS Policy Nightmare
+### Pitfall 4: Calendar Itinerary Builder Stores Times in Local Browser Timezone
 
 **What goes wrong:**
-Currently, bookings have a single `guest_id` column and the RLS policy is simple: `auth.uid() = guest_id`. Adding a guest invite system (a `booking_guests` junction table) means invited guests need to read booking details too. The RLS policy must now check: "user is the booking creator OR user is in the booking_guests table for this booking." This requires a subquery in the RLS policy. If done wrong, it either (a) blocks invited guests from seeing the booking, or (b) opens up bookings to all authenticated users.
+An interactive itinerary builder lets guests schedule activities by time slot (e.g., "boat tour at 10am on Day 2"). Developers store these times as naive datetime strings like `"2026-04-15T10:00"` in the database. The booking was made from a US browser (UTC-5). The property is in Cabo San Lucas (UTC-7). The activity operator sees `10:00` but doesn't know which timezone — their local time or the guest's booking time. The activity shows up 2 hours late or 2 hours early.
 
 **Why it happens:**
-Developer adds the junction table and updates the application query but forgets to update the RLS policy. Or they write a policy like `auth.uid() IN (SELECT user_id FROM booking_guests)` without scoping to the specific booking -- this returns true if the user is invited to ANY booking, granting access to ALL bookings.
+The existing booking flow stores `check_in` and `check_out` as DATE strings (`"2026-04-15"`) — no time component, no timezone issue. Itinerary time slots are the first time-aware data in the system. Developers use JavaScript `new Date()` or `Date.toISOString()` without realizing these are UTC representations of the local time the user typed. The `shadcn/ui` calendar component (already in use at `src/components/ui/calendar.tsx`) passes `Date` objects that behave as local time but serialize as UTC.
 
 **Consequences:**
-- Invited guests see "No bookings" or get empty results (policy too restrictive)
-- OR: Any user who has been invited to any booking can see all bookings in the system (policy too permissive)
-- Data leak of personal information, payment amounts, and travel dates
+- Activity scheduled at 10am shows as 8am or 3pm depending on who views it and from where
+- Operators see different times than guests, causing no-shows
+- The existing `react-calendar` library (known issue #511 on wojtekmaj/react-calendar) silently treats UTC midnight as the previous day in certain timezones
 
-**Prevention:**
-1. The RLS policy for bookings SELECT must be:
-```sql
-CREATE POLICY "Guests can view their own bookings"
-ON bookings FOR SELECT USING (
-  auth.uid() = guest_id
-  OR EXISTS (
-    SELECT 1 FROM booking_guests bg
-    WHERE bg.booking_id = bookings.id
-    AND bg.user_id = auth.uid()
-  )
-);
-```
-2. The `booking_guests` table itself needs RLS: only the booking creator can INSERT (invite), and invited guests can only read their own rows
-3. Use `(SELECT auth.uid())` (wrapped in subquery) for performance -- prevents per-row evaluation
-4. Test with three users: booking creator, invited guest, random authenticated user. Verify creator and invited guest see booking, random user does not.
+**How to avoid:**
+1. Store all itinerary times as `TIME` (not `TIMESTAMPTZ`) in the database — just `HH:MM` without a date or timezone. The date comes from the booking's `check_in` + day offset. This avoids DST and timezone entirely for the display case.
+2. The property's timezone should be a stored field on the `properties` table (e.g., `timezone: 'America/Mazatlan'`). All time display must use `Intl.DateTimeFormat` with `timeZone: property.timezone`, not the browser's default timezone.
+3. Never pass `new Date(dateString)` to a date picker without explicitly specifying the timezone — always parse as UTC and format as property-local.
+4. For the v1.2 scope where itinerary is a planning tool (not operator-facing scheduling), storing as wall clock time in the property's timezone is sufficient. Document this assumption explicitly.
 
-**Detection:**
-- Invited guest clicks invite link but sees empty bookings page
-- Security audit shows bookings accessible to unrelated users
-- RLS policy on bookings table doesn't reference `booking_guests`
+**Warning signs:**
+- Itinerary times shift by hours when viewed by users in different timezones
+- `check_in` date appears as the day before in timezones behind UTC
+- Database stores `TIMESTAMPTZ` for itinerary slots but displays them with `toLocaleTimeString()` (browser local)
 
-**Phase to address:** Guest invite phase -- RLS must be designed before building the invite UI
+**Phase to address:** Itinerary builder phase — define storage format in the schema before any UI work
 
 ---
 
-### Pitfall 5: Rebrand Find-and-Replace Corrupts Data and Metadata
+### Pitfall 5: Guest Registration (Name/Email/Phone) Creates an Orphaned Identity Layer
 
 **What goes wrong:**
-The rebrand from "party villas" to "Whole-Tel boutique hotels" requires changing copy across 14 files (24 occurrences of "villa/Villa" found in the codebase). A naive find-and-replace changes things it shouldn't: database column names, URL slugs, Stripe metadata, CSS class names, or variable names that happen to contain "villa". Worse: if any user-generated content in the database contains "villa" (property descriptions written by owners), it gets corrupted.
+The spec requires registering all attendees: name, email, phone. The existing system already has `booking_invitations` (by email) and `profiles` (authenticated users). Adding a third identity layer — "registered attendee" (not necessarily a Supabase Auth user) — creates three places where a guest can exist: as a Supabase Auth user, as a `booking_invitation`, and as an "attendee" registration. Developers build a new `booking_attendees` table with no link to `booking_invitations` or `profiles`. When an invited guest accepts their invitation AND is registered as an attendee, they exist in all three tables with no FK relationship. Deduplication becomes impossible.
 
 **Why it happens:**
-Developer runs a global find-and-replace across the codebase, or writes a database migration that updates text columns. The replace hits: Stripe `client_reference_id` metadata (breaks webhook reconciliation), `metadata.title` in `layout.tsx` (fine), but also catches property descriptions stored in the database that owners wrote themselves.
+The attendee registration form is built independently of the invitation system because they serve different UX moments (registration at booking time vs. invites sent afterward). The developer doesn't realize these can represent the same physical person.
 
 **Consequences:**
-- Stripe webhook fails to reconcile because booking metadata changed
-- Owner-authored property descriptions get silently modified
-- Database values that happened to contain "villa" are corrupted
-- SEO metadata inconsistencies if some pages are missed
+- Guest count on the booking is tracked in `bookings.guest_count` (incremented by acceptInvitation) AND separately in `booking_attendees` row count — these drift
+- Emails sent to "all attendees" hit both tables, causing duplicate emails to anyone who is in both
+- When a guest cancels, their record in one table is removed but not the other
 
-**Prevention:**
-1. The rebrand is a UI/copy-only change -- NEVER modify database values or Stripe metadata
-2. Create a checklist of the 14 files identified by grep and review each change manually
-3. Changes fall into categories: (a) user-facing copy in JSX, (b) metadata/SEO strings, (c) alt text. Only change these.
-4. Do NOT change: database column names, variable names, Stripe metadata keys, storage bucket names, URL paths
-5. The existing storage bucket `property-photos` and table names like `properties` are generic and don't need renaming
-6. Run `git diff` after all changes and review every line -- flag any change outside of string literals
+**How to avoid:**
+1. Use `booking_invitations` as the single source of truth for all attendees. The "guest registration" form creates `booking_invitation` rows with `status = 'registered'` (a new status), not a separate table.
+2. The group lead fills in name/email/phone for each attendee upfront. This creates `booking_invitation` rows. The invitation email is sent from those rows. If a guest accepts, their row's `accepted_by` is populated.
+3. Add `name` and `phone` columns to `booking_invitations` for the registration data. Do not create a separate `booking_attendees` table.
+4. The existing `acceptInvitation` action already increments `guest_count` — this remains the canonical guest count source.
 
-**Detection:**
-- Stripe webhook returns errors after deploy
-- Variable names or imports broken (TypeScript compiler catches this)
-- Owner-authored descriptions changed without their consent
-- Next.js build fails due to renamed imports
+**Warning signs:**
+- A `booking_attendees` table exists alongside `booking_invitations` with no FK between them
+- Duplicate email sends reported by guests (two confirmation emails)
+- `booking_attendees` row count differs from `bookings.guest_count`
 
-**Phase to address:** Rebrand phase -- should be isolated from all functional changes and done as its own PR
+**Phase to address:** Guest registration / split payment phase — unify the data model before building either the registration form or the split calculator
+
+---
+
+### Pitfall 6: Partner Application Workflow Has No State Machine — Status Field Becomes Inconsistent
+
+**What goes wrong:**
+Partner applications move through states: `submitted → under_review → approved → onboarded` (or `rejected`). Developers add a `status` TEXT column with no constraints and update it ad-hoc from multiple places: the admin dashboard, an approval email link, a Supabase trigger. Without a defined state machine, invalid transitions occur: an `approved` application gets moved back to `under_review` because an admin clicked the wrong button. Or: a `rejected` application is `approved` without re-review because the frontend doesn't prevent the transition.
+
+**Why it happens:**
+A status column is simple to add. A state machine feels like over-engineering for an MVP. But without it, every status update is unconstrained. Multiple code paths that update status don't check preconditions.
+
+**Consequences:**
+- Approved partners get rejection emails because an admin accidentally re-processed their application
+- A rejected application leaks through to the property creation flow because the approval check is a string comparison (`status === 'approved'`) that passes if the string was updated inconsistently
+- Audit trail is impossible — no history of who changed what when
+
+**How to avoid:**
+1. Use a PostgreSQL `ENUM` type for application status: `CREATE TYPE partner_status AS ENUM ('submitted', 'under_review', 'approved', 'rejected', 'onboarded')`. This prevents invalid values at the database level.
+2. Add a CHECK constraint or trigger that enforces valid transitions: `submitted → under_review`, `under_review → approved | rejected`, `approved → onboarded`.
+3. All status updates go through a single Server Action `updateApplicationStatus(id, newStatus)` that validates the current status before transitioning — never update status columns directly in ad-hoc queries.
+4. Add an `application_status_history` table: `(application_id, from_status, to_status, changed_by, changed_at, notes)` for audit trail.
+5. When an application is `approved`, automatically create the owner profile row in the same transaction — don't rely on a separate manual step.
+
+**Warning signs:**
+- Multiple code paths that call `.update({ status: '...' })` on the applications table without checking current status
+- `status` column is TEXT with no enum or check constraint
+- Approved partners can't access the owner dashboard because the profile creation step was missed
+
+**Phase to address:** Partner application phase — define the state machine and enum in the schema before building any admin UI
 
 ---
 
 ## Moderate Pitfalls
 
-### Pitfall 6: Batch Photo Upload Overwhelms Signed URL Generation
+### Pitfall 7: Amenities Stored as JSONB Conflicts with Categorized Display
 
 **What goes wrong:**
-The existing `getSignedUploadUrl` action generates one signed URL per call. For batch upload (selecting 10+ photos at once), the client fires 10+ concurrent server action calls. Each call creates a new Supabase client, verifies ownership, and generates a signed URL. This overwhelms the server action queue, causes timeouts, and may hit Supabase rate limits.
+The existing `properties` table already has an `amenities: Json` column (confirmed in `src/types/database.ts` line 52). The v1.2 spec wants amenities categorized: Water, Social, Work/Event, Culinary, Wellness. Developers assume they can just add sub-keys to the existing JSONB column: `{ "water": ["pool", "jacuzzi"], "social": ["bar", "game_room"] }`. But: (1) the existing `AmenityList` component at `src/components/property/AmenityList.tsx` already reads this column in some format — changing the schema breaks it. (2) The existing data in the column (if any properties have data) has a different shape and must be migrated. (3) No validation prevents typos in amenity names ("swimmingpool" vs "swimming_pool").
 
-**Prevention:**
-1. Create a new `getSignedUploadUrls` (plural) action that accepts a count parameter and returns multiple signed URLs in one call -- one ownership check, one Supabase client, multiple `createSignedUploadUrl` calls
-2. Limit batch size client-side (max 10 photos per batch)
-3. Upload files in parallel with a concurrency limit (3-4 simultaneous uploads, not all at once)
-4. Show individual progress per photo, not just a single spinner
-5. If any upload fails, don't abort the batch -- upload what you can and show which failed
+**Why it happens:**
+JSONB is flexible — it's tempting to just add more keys. But the existing column was added before categorization was designed, so its structure was never validated.
 
-**Phase to address:** Photo management phase (batch upload)
+**Consequences:**
+- `AmenityList` component renders nothing or throws because the JSONB shape changed
+- Existing property amenity data silently ignored (different key structure)
+- Owner dashboard shows incorrect amenities for properties created before the schema change
+
+**How to avoid:**
+1. Read `src/components/property/AmenityList.tsx` before touching the schema — understand the current expected JSONB shape.
+2. Define a fixed TypeScript type for the amenities object: `{ water: string[], social: string[], work_event: string[], culinary: string[], wellness: string[] }` and add a Zod schema to validate it.
+3. Add a database migration that reshapes existing data to the new categorized format (likely all properties have empty `{}` amenities — verify before assuming).
+4. The canonical list of amenity options per category should live in a constants file, not be freetext — prevents misspellings and enables icon mapping.
+5. If any existing property has non-empty amenities in the old format, write a migration function with explicit before/after verification.
+
+**Warning signs:**
+- `AmenityList` component shows empty or throws after the amenities schema change
+- Owner amenity form doesn't pre-populate existing amenities on edit
+- `SELECT amenities FROM properties WHERE amenities != '{}'::jsonb` returns rows with old-format data
+
+**Phase to address:** Amenities phase — first step is read AmenityList.tsx and understand current shape, then design migration
 
 ---
 
-### Pitfall 7: Experience Tiered Pricing Inconsistent with Property Tiered Pricing
+### Pitfall 8: Hotel Tax Gross Amount Breaks the Processing Fee Calculation
 
 **What goes wrong:**
-The add_ons table currently has a flat `price` column with `pricing_unit` (per_person or per_booking). Adding tiered pricing to experiences ("up to X people included, $Y per person above X") creates a second tiered pricing model that must be consistent with property tiered pricing but operates on different entities. If the schemas or formulas diverge, the booking total calculation becomes a maze of special cases.
+The current `calculatePricing()` computes the Stripe processing fee as 2.9% of (accommodation + surcharge + cleaning + add-ons) + $0.30. The spec says "hotel declares taxes, Whole-Tel sends gross amount" — meaning Whole-Tel charges the guest the tax-inclusive amount and remits the full gross to the hotel. If tax is added AFTER the processing fee calculation, the fee is understated (Stripe charges on the full amount including tax). If tax is added BEFORE, the fee is correctly calculated but `calculatePricing()` needs a `taxAmount` parameter it doesn't currently accept.
 
-**Prevention:**
-1. Use the same column naming convention for both: `included_guests` + `extra_person_rate` on both `properties` and `add_ons` tables
-2. Extract the tiered pricing calculation into a single shared function:
-```typescript
-function calculateTieredCost(baseRate: number, guestCount: number, includedGuests: number, extraPersonRate: number): number
+**Why it happens:**
+Tax is an afterthought. The developer adds a "hotel tax" line item to the Stripe session using the booking total from `calculatePricing()`, but `calculatePricing()` doesn't know about tax. The Stripe session total includes tax, but `booking.total` in the database doesn't — they diverge.
+
+**Consequences:**
+- Stripe collects more than `booking.total` in the database
+- Processing fee in `booking.processing_fee` is understated (calculated pre-tax)
+- Financial reconciliation: `SUM(stripe.amount)` ≠ `SUM(bookings.total)`
+- If Stripe fee dispute arises, the "processing fee" line item shown to the guest is wrong
+
+**How to avoid:**
+1. Add `taxAmount: number` to `PricingInput` in `pricing.ts`. Include it in the processing fee base: `processingFee = (accommodationSubtotal + perPersonSurcharge + cleaningFee + addOnsTotal + taxAmount) * 0.029 + 0.30`.
+2. Add `taxAmount` and `taxTotal` to `PricingBreakdown` so the breakdown is transparent.
+3. Add `hotel_tax_total` column to the `bookings` table to store the tax amount per booking.
+4. The Stripe line items must include the tax line with the same `taxAmount` from the breakdown — the sum of all line items must equal `booking.total`.
+5. Document clearly in code that `taxAmount` is provided by the hotel at booking time and is not a platform fee.
+
+**Warning signs:**
+- `SUM(price_data.unit_amount) / 100` across Stripe line items ≠ `bookings.total`
+- `processing_fee` column value does not match 2.9% × (total - processing_fee) + $0.30
+- A "hotel tax" Stripe line item exists but `calculatePricing()` was not updated to include it in the fee base
+
+**Phase to address:** Split payment / pricing phase — update `pricing.ts` before creating any new Stripe sessions
+
+---
+
+### Pitfall 9: Itinerary State Management Loses Unsaved Changes on Navigation
+
+**What goes wrong:**
+The itinerary builder is a rich interactive component — guests add, reorder, and time-slot activities across multiple days. In a Next.js App Router application with Server Components, navigating away from the itinerary page (clicking the booking summary, property details, etc.) causes the client component state to be lost. The guest returns to find an empty itinerary. If the auto-save debounce (common pattern) fires but the Server Action is still in flight when they navigate, the save is cancelled.
+
+**Why it happens:**
+Next.js App Router's client components unmount on navigation. Without explicit persistence (Server Action save on each change, or explicit "Save" button), the state exists only in React memory. Developers build the builder as a `'use client'` component with local state and plan to save on submit — but the "submit" never happens because users navigate away.
+
+**Consequences:**
+- Hours of itinerary planning lost on accidental navigation
+- Users blame the platform ("it deleted my plans")
+- Auto-save that fires during navigation may create partial/corrupt itinerary saves
+
+**How to avoid:**
+1. Persist itinerary to the database as a draft after every meaningful change — use `useTransition` + Server Action, not `useEffect` + fetch. This makes saves non-blocking and works within App Router's paradigm.
+2. Debounce saves to 2-3 seconds after the last change, not per-keystroke.
+3. Store itinerary as a JSONB column on the `bookings` table: `itinerary: Json` — no separate table needed for v1.2.
+4. On component mount, fetch the existing itinerary draft from the booking record. The Server Component page can pass it as a prop.
+5. Add a `beforeunload` warning if there are unsaved changes (use a `ref` to track pending save state).
+
+**Warning signs:**
+- Itinerary builder component has `useState` with no persistence path to the database
+- No debounced Server Action save exists in the component
+- Users report losing itinerary data after clicking back or reloading
+
+**Phase to address:** Itinerary builder phase — persistence must be designed before UX
+
+---
+
+### Pitfall 10: Multiple Group Members Racing to Accept Invitations Exceeds Max Guests
+
+**What goes wrong:**
+The existing `acceptInvitation` action (confirmed in `src/lib/actions/booking-invitations.ts` line 204-208) checks `if (newGuestCount > property.max_guests) return error`. But this check reads `booking.guest_count`, increments it, and then writes it back — a non-atomic read-modify-write. If two guests accept simultaneously (common when the group lead sends all invites at once), both read `guest_count = 14`, both check against `max_guests = 15`, both pass, and both write `guest_count = 15`. Actual count is 16 — over capacity.
+
+**Why it happens:**
+This was an existing limitation in v1.1's invite flow. In v1.2, split payment registration means the group lead registers ALL attendees upfront, and they might all accept simultaneously.
+
+**Consequences:**
+- Booking exceeds hotel max_guests silently
+- Hotel capacity violated, creating operational problems for the host
+- `bookings.guest_count` reflects one increment, but the actual number of accepted invitations in `booking_invitations` is higher
+
+**How to avoid:**
+1. Replace the read-modify-write pattern with a PostgreSQL atomic increment with a constraint check:
+```sql
+UPDATE bookings
+SET guest_count = guest_count + 1
+WHERE id = $1
+  AND guest_count < (SELECT max_guests FROM properties WHERE id = bookings.property_id)
+RETURNING guest_count
 ```
-3. Use this function in: PricingWidget (client display), createBookingAndCheckout (server calculation), and booking_add_ons insertion
-4. When `pricing_unit = 'per_booking'`, the tiered pricing fields are ignored (per-booking add-ons don't scale with guests)
+2. If the UPDATE returns no rows, the max was exceeded — return the error.
+3. Alternatively, use a Supabase RPC function with `FOR UPDATE` row locking on the bookings row before reading `guest_count`.
+4. Add a database-level CHECK constraint: `guest_count <= max_guests` (requires joining to properties, use a trigger instead).
 
-**Phase to address:** Experience pricing phase -- design schema alongside property tiered pricing, not after
+**Warning signs:**
+- `SELECT COUNT(*) FROM booking_invitations WHERE booking_id = X AND status = 'accepted'` exceeds `SELECT guest_count FROM bookings WHERE id = X`
+- High concurrent acceptance test shows guest_count below actual accepted count
+- No `FOR UPDATE` or atomic increment in `acceptInvitation`
 
----
-
-### Pitfall 8: Experience Photos Stored Without Add-On Ownership Verification
-
-**What goes wrong:**
-Experience photos need the same signed-URL upload pattern as property photos, but the ownership chain is longer: user must own the property that owns the add-on. If the server action only checks add-on existence (not ownership chain), any authenticated owner could upload photos to another owner's experiences.
-
-**Prevention:**
-1. The signed URL action for experience photos must verify: `add_on.property.owner_id = auth.uid()`
-2. Use a joined query: `supabase.from('add_ons').select('id, property_id, properties(owner_id)').eq('id', addOnId).single()`
-3. Create a separate `add_on_photos` table (not reuse `property_photos`) to keep RLS policies clean
-4. Storage path should include the property_id: `{owner_id}/{property_id}/add-ons/{add_on_id}/{uuid}`
-
-**Phase to address:** Experience photos phase
+**Phase to address:** Guest registration phase — fix the race condition when adding bulk registration
 
 ---
 
-### Pitfall 9: Bed Configuration Stored as Unstructured JSON
+## Technical Debt Patterns
 
-**What goes wrong:**
-Developer stores bed configuration as a JSON blob in a single column: `beds: '{"king": 2, "queen": 1}'`. This works initially but prevents querying ("show me all properties with king beds"), prevents validation (negative bed counts, misspelled types), and makes the schema invisible to RLS and database constraints.
-
-**Prevention:**
-1. Use a structured approach: either a `bed_configurations` table with `(property_id, bed_type, count)` rows, or a JSONB column with a CHECK constraint
-2. If using JSONB: add a CHECK constraint that validates the structure: `CHECK (beds IS NULL OR (beds ?& ARRAY['king','queen','double','twin','bunk']))`
-3. If using a separate table: simpler to query but requires an extra join
-4. Recommendation: JSONB column with validation -- it's simpler for this use case since bed config is read-heavy, write-rare, and doesn't need independent querying in v1.1
-5. Define the bed types as an enum in both Zod validation and database constraint -- don't let owners invent types
-
-**Phase to address:** Bed configuration phase
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Storing split amounts as fractions (1/8, 1/4) instead of absolute dollars | Simpler math | Rounding errors accumulate; fraction becomes wrong if guest count changes | Never — always store absolute dollar amounts |
+| Single `status` TEXT column for partner applications (no enum) | Fast to add | Invalid transitions silently accepted; impossible to enforce state machine | Never for multi-state workflows |
+| Using browser timezone for itinerary times | Correct for the user who booked | Wrong for everyone else; hotel staff see different times | Never — always store in property timezone |
+| Adding hotel tax outside `calculatePricing()` | Avoids touching shared module | Stripe total diverges from database total; processing fee understated | Never — tax must be inside the shared module |
+| Separate `booking_attendees` table instead of extending `booking_invitations` | Clean separation | Three identity layers; duplicate emails; guest_count drift | Never for v1.2 scope |
+| No background job for deadline enforcement | Nothing to deploy | Expired pending bookings block property dates indefinitely | Only acceptable if deadline is purely informational (not enforced) |
 
 ---
 
-### Pitfall 10: Expandable Booking Detail View Exposes Data Without RLS Check
-
-**What goes wrong:**
-The expandable booking detail needs to fetch additional data (add-ons breakdown, guest list, property details) when the user clicks to expand. If this is implemented as a client-side fetch to a new API endpoint or server action that doesn't verify the requesting user owns that booking, it leaks booking details.
-
-**Prevention:**
-1. Fetch all expandable data in the initial server component query -- no additional client-side fetches needed for the detail view
-2. The existing bookings query already joins `properties(id, name, location)` -- extend it to include `booking_add_ons(*, add_ons(*))` and `booking_guests(*, profiles(display_name, email))`
-3. RLS on `booking_add_ons` and `booking_guests` must scope to the parent booking's guest_id or booking_guests membership
-4. If lazy-loading is required for performance, use a server action that calls `verifySession()` and checks booking ownership before returning data
-
-**Phase to address:** Expandable bookings phase
-
----
-
-## Minor Pitfalls
-
-### Pitfall 11: Photo Section Names Not Standardized
-
-**What goes wrong:**
-Owners type "Pool", "pool", "POOL", "Swimming Pool" -- all different sections in the UI. The guest-facing gallery shows 4 separate groups for what is conceptually the same area.
-
-**Prevention:**
-Use a predefined set of sections (Rooms, Common Areas, Pool, Exterior, Kitchen) as a dropdown/select, plus one "Custom" option with freetext. Store the canonical name, not user input.
-
-**Phase to address:** Photo sections phase
-
----
-
-### Pitfall 12: Guest Invite Email Delivery Not Tracked
-
-**What goes wrong:**
-The invite system sends emails to prospective guests, but there's no tracking of delivery status. The booking creator has no idea if their invites were received, bounced, or ignored.
-
-**Prevention:**
-Store invite status in `booking_guests`: `invited`, `email_sent`, `accepted`, `declined`. Update status via webhook from email provider (or at minimum, on acceptance). Show status to the booking creator.
-
-**Phase to address:** Guest invite phase
-
----
-
-### Pitfall 13: formatCurrency Bug in Existing Bookings Page
-
-**What goes wrong:**
-The existing `BookingCard` component (bookings/page.tsx line 63-64) divides by 100: `formatCurrency = (cents: number) => $(cents / 100)...`. But the `bookings` table stores amounts in DOLLARS (the `createBookingAndCheckout` action inserts `total` as a dollar amount, e.g., 5000.00, not 500000). This means the bookings page currently shows $50.00 instead of $5,000.00 for a $5,000 booking.
-
-**Note:** This is an existing bug, not a v1.1 pitfall, but the expandable booking detail work will expose it further. Fix it when building the expandable detail view.
-
-**Prevention:**
-Verify the unit of `total` in the database schema before building any new display logic. The booking action stores dollars; the display should NOT divide by 100.
-
-**Phase to address:** Expandable bookings phase -- fix alongside the detail view build
-
----
-
-## Phase-Specific Warnings
-
-| Phase Topic | Likely Pitfall | Mitigation |
-|-------------|---------------|------------|
-| Rebrand | Find-and-replace corrupts non-copy strings | Manual review of all 14 files; never touch database values |
-| Rebrand | Metadata inconsistency (some pages say "villa", others say "hotel") | Create a constants file for brand copy; grep after completion |
-| Photo sections | Existing photos disappear (NULL section) | DEFAULT 'General' in migration; backfill existing rows |
-| Photo ordering | Race condition on concurrent reorder | Batch update with full array; debounce client-side |
-| Photo batch upload | Server action queue overwhelmed | Plural signed URL action; concurrency limit on client |
-| Bed configuration | Unstructured JSON prevents validation | JSONB with CHECK constraint or separate table |
-| Property tiered pricing | Existing properties break (NULL/0 defaults) | Safe defaults that produce $0 extra charge |
-| Property tiered pricing | Client/server price calculation drift | Shared pricing utility function |
-| Experience tiered pricing | Inconsistent formula with property pricing | Same function, same column naming |
-| Experience photos | Missing ownership chain verification | Join through add_on -> property -> owner |
-| Guest invites | RLS too permissive or too restrictive | Scoped subquery; test with 3 user types |
-| Guest invites | No invite delivery tracking | Status column in booking_guests table |
-| Expandable bookings | Lazy fetch without auth check | Fetch in initial server query or verify ownership |
-| Expandable bookings | Existing formatCurrency bug (divides by 100 when values are in dollars) | Verify storage unit before building display |
-
----
-
-## Integration Gotchas Specific to v1.1
+## Integration Gotchas
 
 | Integration | Common Mistake | Correct Approach |
 |-------------|----------------|------------------|
-| Photo reorder + Supabase RLS | UPDATE policy only checks `auth.uid() = owner_id` on property_photos, but reorder updates multiple rows -- partial failure if one row fails RLS | Ensure all photos in the reorder batch belong to the same property owned by the current user; verify in server action before UPDATE |
-| Tiered pricing + Stripe line items | Adding a "per-person surcharge" line item to Stripe that shows `$100 x 5 extra guests` but the actual charge is calculated differently | Build Stripe line items from the same shared pricing function; verify line item sum equals booking total |
-| Guest invites + Supabase Auth | Inviting a user by email who doesn't have an account yet | Store invite by email in `booking_guests` with `user_id = NULL`; link on signup when email matches; don't require account creation before invite |
-| Batch upload + Next.js revalidation | Each photo save calls `revalidatePath` -- 10 photos = 10 revalidations flooding the server | Revalidate once after the entire batch completes, not per-photo |
-| Rebrand + Vercel preview deployments | Old brand cached in Vercel edge cache | Purge cache on deploy; verify preview deployment shows new brand |
+| Stripe Checkout + installments | Reuse `createBookingAndCheckout` for deposit payments by passing a partial amount | Create a separate `createPaymentSession(bookingId, amount, purpose)` that references the existing booking, does NOT create a new booking row, and uses a different webhook path |
+| Stripe webhook + payment schedule | Existing `fulfillCheckout` sets `status = 'confirmed'` on any payment | Add payment type to Stripe session `metadata` (`{ booking_id, payment_type: 'full' | 'deposit' | 'installment' }`); route to different fulfillment functions in the switch |
+| Supabase RLS + partner applications | Application table accessible to the applicant but not other guests | RLS policy: `auth.uid() = applicant_user_id` for SELECT; INSERT open to authenticated guest-role users; UPDATE only via admin client (service role) |
+| `calculatePricing()` + tax | Adding tax line to Stripe without updating the shared module | Tax must be a parameter to `calculatePricing()` — it affects the processing fee base and must appear in `PricingBreakdown` |
+| Next.js Server Actions + itinerary saves | `revalidatePath('/bookings')` called on every character change | Debounce saves to 2-3s; revalidate once after the debounce fires; never revalidate in a `useEffect` |
+| Existing `acceptInvitation` + bulk registration | Guest count incremented by non-atomic read-modify-write | Use PostgreSQL `UPDATE ... WHERE guest_count < max_guests RETURNING guest_count` atomic pattern |
 
 ---
 
-## "Looks Done But Isn't" Checklist for v1.1
+## Performance Traps
 
-- [ ] **Photo sections:** Photos display grouped by section on property page -- verify existing photos (migrated with DEFAULT section) also appear
-- [ ] **Photo ordering:** Drag-to-reorder works -- verify rapid dragging doesn't corrupt order; verify order persists on page reload
-- [ ] **Batch upload:** 10 photos upload -- verify all 10 saved with correct display_order; verify only 1 revalidation fires
-- [ ] **Tiered pricing:** Property shows per-person surcharge -- verify properties WITHOUT tiered pricing still show correct price (no surcharge line)
-- [ ] **Tiered pricing:** Booking total matches Stripe total -- verify by comparing `booking.total` in database with Stripe session `amount_total`
-- [ ] **Experience pricing:** Add-on with tiered pricing calculates correctly -- verify `booking_add_ons.total_price` accounts for included guests
-- [ ] **Guest invites:** Invited guest can see booking -- verify by logging in as invited user and checking bookings page
-- [ ] **Guest invites:** Random user cannot see others' bookings -- verify RLS blocks access
-- [ ] **Rebrand:** No "villa" or "party" references remain -- run `grep -ri "villa\|party villa" src/` after all changes
-- [ ] **Rebrand:** Stripe metadata unchanged -- verify webhook still processes correctly after rebrand deploy
-- [ ] **Bed config:** Saved bed configuration displays on guest-facing property page -- verify edge case of 0 beds of a type (should not show)
-- [ ] **Expandable bookings:** Booking detail shows correct total -- verify it doesn't divide by 100 (existing bug)
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Loading full itinerary JSON on every booking card render | Bookings list page slow when users have detailed itineraries | Don't select `itinerary` column in list queries; only load it on the detail view | At 50+ itinerary items per booking, or 20+ bookings on the list page |
+| Querying `payment_splits` for every booking in the list | N+1 queries: one per booking to show split status | Join `payment_splits` in the initial bookings query with aggregation, not in a loop | At 10+ bookings in the list |
+| Re-running `calculatePricing()` on every render in the itinerary builder | CPU spike on complex bookings with many add-ons | Memoize with `useMemo(()=> calculatePricing(input), [input])` | With 10+ add-ons and frequent re-renders |
+| Fetching all partner applications for admin without pagination | Admin page times out | Add `.range(offset, offset+19)` pagination from the first commit; never load all rows | At 100+ applications |
+
+---
+
+## Security Mistakes
+
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| Partner application status updated via public API without admin role check | Any authenticated user approves themselves as a partner | Status updates must use the Supabase admin client (service role) or a Server Action that checks `profile.role === 'admin'`; RLS policy on applications table must block UPDATE for non-admins |
+| Split payment amounts submitted from client | Guest manipulates their own share to $0 | Split amounts must be calculated server-side from `calculatePricing()` output; client only sends adjustment intent (e.g., "guest X pays Y% of base"), server computes final amounts |
+| Itinerary contains other guests' PII (name, phone) visible via shared URL | Privacy violation if itinerary page is publicly accessible | Itinerary page must be behind `verifySession()` + booking membership check; never render other guests' contact info unless the viewer is the booking lead |
+| Partner application exposes other applicants' data | Privacy violation | RLS policy: `SELECT WHERE applicant_user_id = auth.uid()` — applicants can only see their own application; admin view uses service role via Server Action only |
+
+---
+
+## UX Pitfalls
+
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| Showing all split payment fields before guests have accepted | Confusing to plan splits for people who haven't confirmed attendance | Show split UI only after all invited guests have accepted or been registered; use a "tentative" split view for pending guests |
+| Multi-step itinerary builder with no progress save indicator | Users don't know if their itinerary was saved; they duplicate saves | Show a "Saved" / "Saving..." indicator tied to the debounced Server Action transition state |
+| Partner application form without save-and-resume | Complex applications (photos, property details) are abandoned mid-form | Save application as `draft` status on every field blur; allow resuming; only submit when explicit "Submit Application" button is clicked |
+| Requiring all attendee details upfront during booking | Group lead doesn't know everyone's email/phone at booking time | Make attendee details optional at booking time, required before the activity deadline; show completion status on the booking dashboard |
+| Activity deadline dates shown as absolute dates without relative context | "March 15" means nothing to a user who just booked | Show "by March 15 (21 days from now)" — always pair absolute dates with relative context |
+
+---
+
+## "Looks Done But Isn't" Checklist
+
+- [ ] **Split payment ledger:** UI shows per-person amounts — verify `SUM(split_amounts) + processingFee == bookings.total` in the database
+- [ ] **Payment deadlines:** 36hr deadline shown in UI — verify a cron job or lazy-expiry mechanism actually cancels unpaid bookings, not just shows a warning
+- [ ] **Itinerary builder:** Activities save when navigating away — verify by adding an activity, clicking to a different page, and returning; items must still be there
+- [ ] **Itinerary timezone:** Activity scheduled at 10am — verify it displays as 10am for a user in UTC-5 AND for a user in UTC+2 (it should show 10am both times, not shifted)
+- [ ] **Partner application approval:** Admin approves an application — verify the applicant's `profiles.role` is set to `owner` in the same transaction; verify they can access `/dashboard` immediately
+- [ ] **Partner application state machine:** Admin tries to approve an already-approved application — verify it rejects the transition gracefully, does not create a duplicate profile
+- [ ] **Amenities display:** Property with amenities saved in new categorized format — verify `AmenityList` component renders all categories correctly and does not show empty categories
+- [ ] **Amenities migration:** Existing properties with old-format amenities — verify they display correctly after migration, not empty
+- [ ] **Guest registration + invite deduplication:** Group lead registers attendee by email, then separately invites same email — verify no duplicate `booking_invitations` rows are created
+- [ ] **Max guest race condition:** Two guests accept invitations simultaneously when booking is at max_guests - 1 — verify only one succeeds, the other receives a clear error
+- [ ] **Hotel tax in processing fee:** Tax amount added to booking — verify `processingFee` in `bookings` table is 2.9% × (all line items including tax) + $0.30, not 2.9% × (line items excluding tax)
+- [ ] **Stripe session total:** All line items (accommodation + surcharge + add-ons + cleaning + tax + processing fee) sum to the same value as `bookings.total` — verify by comparing against Stripe dashboard
+
+---
+
+## Recovery Strategies
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| Booking confirmed before all installments paid | HIGH | Requires manual audit of payment_schedule vs confirmed bookings; notify affected hosts; implement proper multi-payment status before re-enabling |
+| Split amounts don't sum to booking total | MEDIUM | Recalculate splits server-side from canonical `calculatePricing()` output; update stored split rows; notify guests of corrected amounts |
+| Itinerary data lost due to navigation | LOW | Itinerary is a planning aid, not a contract — losing it is annoying but not a financial issue; restore from database last-saved state |
+| Partner approved without profile creation | MEDIUM | Write a one-time migration script: `INSERT INTO profiles WHERE applications.status = 'approved' AND NOT EXISTS (SELECT 1 FROM profiles WHERE role = 'owner' AND ...)` |
+| Amenities migration broke existing display | LOW | Rollback migration; fix AmenityList component first; re-run migration with verified component |
+
+---
+
+## Pitfall-to-Phase Mapping
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| Split payment breaks single Stripe session model | Phase: Split payment system | Confirm `payment_schedule` table exists; webhook has separate paths for deposit vs full payment |
+| `calculatePricing()` drift on split amounts | Phase: Split payment system | `splitAmounts()` helper in `pricing.ts`; test that split sum + processingFee == total |
+| Payment deadlines without cron | Phase: Split payment system | Cron job or Vercel Cron exists; test by manually setting deadline to 1 minute ago |
+| Itinerary timezone storage | Phase: Itinerary builder | Schema uses `TIME` not `TIMESTAMPTZ` for slots; property has `timezone` field |
+| Guest registration orphaned identity | Phase: Guest registration | No `booking_attendees` table; `booking_invitations` has `name` and `phone` columns |
+| Partner application state machine | Phase: Partner application | `partner_status` enum in Postgres; single `updateApplicationStatus` Server Action |
+| Amenities JSONB shape conflict | Phase: Amenities | Read `AmenityList.tsx` first; migration verified against existing data |
+| Hotel tax outside `calculatePricing()` | Phase: Split payment / pricing | `taxAmount` parameter in `PricingInput`; Stripe line item sum == `bookings.total` |
+| Itinerary unsaved state on navigation | Phase: Itinerary builder | Debounced Server Action save; itinerary persists after navigation test |
+| Max guest race condition on bulk accept | Phase: Guest registration | Atomic UPDATE in `acceptInvitation`; concurrent acceptance test passes |
 
 ---
 
 ## Sources
 
-- Codebase analysis: `src/lib/actions/photos.ts` -- existing photo upload pattern with count-based ordering (HIGH confidence)
-- Codebase analysis: `src/lib/actions/bookings.ts` -- existing pricing calculation, single guest_id model (HIGH confidence)
-- Codebase analysis: `src/app/(guest)/bookings/page.tsx` -- formatCurrency divides by 100, possible bug (HIGH confidence)
-- Codebase analysis: grep for "villa" across 14 files, 24 occurrences (HIGH confidence)
-- [dnd-kit Discussion #1522 -- optimistic update race condition with drag-and-drop](https://github.com/clauderic/dnd-kit/discussions/1522) (MEDIUM confidence)
-- [Supabase Database Migrations Documentation](https://supabase.com/docs/guides/deployment/database-migrations) (HIGH confidence)
-- [Supabase RLS Best Practices: Production Patterns for Secure Multi-Tenant Apps](https://makerkit.dev/blog/tutorials/supabase-rls-best-practices) (MEDIUM confidence)
-- [SEO Rebrand Rankings Protection -- Search Engine Journal](https://www.searchenginejournal.com/seo-rebrand-rankings/433350/) (MEDIUM confidence)
-- [Supabase Multi-Tenant RLS Deep Dive](https://dev.to/blackie360/-enforcing-row-level-security-in-supabase-a-deep-dive-into-lockins-multi-tenant-architecture-4hd2) (MEDIUM confidence)
+- Codebase analysis: `src/lib/pricing.ts` — `calculatePricing()` does not include `taxAmount`; `processingFee` calculation base confirmed (HIGH confidence)
+- Codebase analysis: `src/app/api/webhooks/stripe/route.ts` — single `fulfillCheckout` path, no payment-type discrimination (HIGH confidence)
+- Codebase analysis: `src/lib/actions/booking-invitations.ts` line 204-208 — non-atomic read-modify-write guest_count increment (HIGH confidence)
+- Codebase analysis: `src/types/database.ts` line 52 — `amenities: Json` column already exists on properties (HIGH confidence)
+- [Stripe Idempotent Requests](https://docs.stripe.com/api/idempotent_requests) — idempotency key requirements for multiple payment sessions (HIGH confidence)
+- [Stripe Partial Payments for Invoices](https://docs.stripe.com/invoicing/partial-payments) — partial payment tracking patterns (MEDIUM confidence)
+- [Supabase Concurrent Writes Guide](https://bootstrapped.app/guide/how-to-handle-concurrent-writes-in-supabase) — atomic UPDATE patterns for race condition prevention (MEDIUM confidence)
+- [react-calendar Issue #511 — UTC/local time ambiguity](https://github.com/wojtekmaj/react-calendar/issues/511) — confirms timezone bug in calendar component already in use (HIGH confidence)
+- [How to Solve Race Conditions in a Booking System — HackerNoon](https://hackernoon.com/how-to-solve-race-conditions-in-a-booking-system) — atomic booking patterns (MEDIUM confidence)
+- Booking UX Best Practices — form length, progress indicators, guest checkout friction (MEDIUM confidence)
 
 ---
 
-*Pitfalls research for: Whole-Tel v1.1 enhancements (photo management, tiered pricing, guest invites, rebrand)*
-*Researched: 2026-03-07*
+*Pitfalls research for: Whole-Tel v1.2 — interactive itinerary builder, split payments, partner application, amenities*
+*Researched: 2026-03-23*

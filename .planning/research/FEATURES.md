@@ -1,208 +1,232 @@
-# Feature Landscape: Whole-Tel v1.1 Enhancements
+# Feature Research
 
-**Domain:** Boutique hotel booking platform -- owner management tools, photo management, pricing tiers, guest invites
-**Researched:** 2026-03-07
-**Focus:** NEW features only (v1.0 property listing, booking flow, auth, Stripe payment already built)
+**Domain:** Group villa/hotel booking — itinerary coordination, split payments, partner application, amenities
+**Researched:** 2026-03-23
+**Confidence:** MEDIUM — WebSearch + official platform docs; no Context7 applicable for travel domain
 
 ---
 
-## Table Stakes
+## Feature Landscape
 
-Features users expect from a property booking platform at this maturity level. Missing = product feels incomplete or amateurish.
+### Table Stakes (Users Expect These)
 
-| Feature | Why Expected | Complexity | Dependencies on Existing | Notes |
-|---------|--------------|------------|--------------------------|-------|
-| **Multi-photo upload (batch)** | Single-photo upload feels broken -- every competitor supports batch. Owners won't tolerate uploading 30 photos one at a time. | Low | Extends existing `PhotoUploader` component and `getSignedUploadUrl` action. Same signed-URL pattern, just loop over files. | Parallel uploads with progress indicators per file. Limit to ~5 concurrent uploads to avoid browser memory issues. |
-| **Photo ordering (drag-to-reorder)** | Without ordering, hero image is random. First photo is the listing's "cover" -- owners must control it. | Medium | Extends `property_photos.display_order` column (already exists). New `updatePhotoOrder` server action needed. | Use `@dnd-kit/sortable` -- modern, maintained, lightweight (10kB). `react-beautiful-dnd` is officially deprecated by Atlassian. |
-| **Bed configuration** | "5 bedrooms" tells guests nothing. They need to know bed types to plan sleeping arrangements for groups. Standard on Airbnb, Booking.com, VRBO. | Low | New JSONB column on `properties` or new `bed_configurations` table. PropertyForm gets a new section. | Simple repeatable row UI: bed type dropdown (King, Queen, Double, Twin, Bunk) + count stepper. No drag-and-drop needed. |
-| **Expandable booking detail view** | Current booking cards show summary only. Guests need to see add-ons selected, price breakdown, dates, and property details without navigating away. | Low | Extends existing `BookingCard` in bookings page. Needs `booking_add_ons` join query (already typed as `BookingWithDetails`). | Accordion/collapsible pattern with shadcn `Collapsible` or simple state toggle. |
-| **Correct guest count display/editing** | If guest count is wrong on a booking, the per-person cost calculator is meaningless. | Low | Updates `bookings` table `guest_count` field. New server action `updateGuestCount`. | Must recalculate per-person add-on costs when count changes. If booking is already paid, this is display-only (no price change post-payment). |
+Features users assume exist. Missing these = product feels incomplete.
 
-## Differentiators
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Amenity display with categories and icons | Every booking platform (Airbnb, VRBO, Booking.com) groups amenities by category with icons; guests scan before booking | LOW | Icon per category, checkmark per amenity, "See all" modal to avoid page bloat — Holidu 2-column modal is the current standard UX |
+| Guest registration (name, email, phone) | Group coordinators need a roster; venues need headcount with contact info for emergencies and check-in | LOW | Upgrade the existing invite system — invitees fill out registration fields (name + phone) when accepting. New bookings require organizer to enter names upfront or invite via email |
+| Payment deadline display | Guests expect to know when money is due; "pay now or lose your dates" is expected on any hold-based system | LOW | Display the 36hr deadline prominently on booking confirmation page and in booking detail view |
+| Per-person cost display on confirmation | Groups always ask "what's my share?" — showing it proactively is expected | LOW | Already built as a calculator; surface the per-person amount on the booking confirmation screen and in the invite email |
+| Partner/host application form | Curated marketplace pattern: prospective owners apply, platform reviews, not open self-serve signup | MEDIUM | Plum Guide and Mr & Mrs Smith both use form + manual review. Replaces current owner self-signup flow |
+| "Coming Soon" destination cards | Users landing on unavailable cities expect a signal rather than a 404 or missing card | LOW | Simple UI state on the browse/landing page; email capture for notification is optional bonus |
+| Hotel tax declaration in price breakdown | All-inclusive pricing must note that tax is owner-submitted; guests need clarity on what they're paying | LOW | Copy and display change in the price breakdown component — no Stripe changes |
 
-Features that set Whole-Tel apart. Not strictly expected at this stage, but add significant value for the group booking use case.
+### Differentiators (Competitive Advantage)
 
-| Feature | Value Proposition | Complexity | Dependencies on Existing | Notes |
-|---------|-------------------|------------|--------------------------|-------|
-| **Photo sections (Rooms, Common Area, Pool, custom)** | Organized photo tours help guests visualize the property. Airbnb uses AI to auto-categorize into 19 room types. For Whole-Tel, owner-managed sections are simpler and sufficient. Groups care about common areas and sleeping arrangements -- sections let them find what matters. | Medium | New `photo_sections` table (id, property_id, name, display_order). `property_photos` gets `section_id` FK (nullable for uncategorized). | Preset sections: "Rooms", "Common Areas", "Pool & Outdoor", "Kitchen & Dining". Plus custom sections. Owner assigns photos to sections during upload or via management view. Guest-facing gallery groups by section with tabs or scrollable anchors. |
-| **Tiered per-person pricing (property)** | Core to the Whole-Tel model: "$X/night base, +$Y/person/night above N guests." This is how large group properties actually price -- Booking.com calls it "occupancy-based pricing." Without it, pricing is either too expensive for small groups or unprofitable for large ones. | Medium | Extends `properties` table with `extra_guest_rate` (decimal), `extra_guest_threshold` (int). `PricingWidget` calculation logic changes. `createBookingAndCheckout` server-side pricing must match. | Formula: `base_rate + max(0, guest_count - threshold) * extra_guest_rate * nights`. Display in PricingWidget as: "$2,500/night (up to 25 guests) + $100/person/night above 25". Must be calculated server-side in booking action -- never trust client math. |
-| **Tiered experience pricing** | Experiences like "private chef dinner" have a base price for up to X people, then $Y per person above. Current flat per_person/per_booking model can't express this. | Medium | Extends `add_ons` table with `included_guests` (int, nullable) and `extra_person_rate` (decimal, nullable). AddOnForm gets conditional fields. PricingWidget add-on cost calculation changes. | Formula: `base_price + max(0, guest_count - included_guests) * extra_person_rate`. When `included_guests` is null, falls back to current flat pricing. Backward compatible. |
-| **Experience photos** | Experiences with photos convert better. A "sunset yacht cruise" with a photo is far more compelling than text alone. | Low | `add_ons.photo_url` column already exists in the schema but isn't populated via UI. AddOnForm needs photo upload field. Guest-facing `AddOnCard` already handles `photo_url`. | Same signed-URL upload pattern as property photos. Single photo per experience is sufficient (not a gallery). Can reuse `PhotoUploader` pattern but simplified to single-file. |
-| **Guest invite system** | The killer feature for group bookings. Booking organizer invites friends, they can view booking details and potentially see what's planned. Turns a solo booking into a group coordination tool. | High | New `booking_invites` table (id, booking_id, invited_email, invited_user_id nullable, status, token_hash, expires_at, created_at). Email sending (already have Resend integration via `src/lib/email.ts`). | Two invite methods: (1) email invite with secure token link, (2) shareable booking link. Invited user sees booking details (property, dates, guest list) but cannot modify the booking itself. Status flow: pending -> accepted / declined. Security: hashed tokens in DB, expiration. |
+Features that set the product apart. Not required, but valuable.
 
-## Anti-Features
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Interactive calendar-based itinerary builder | Groups can plan activities across booking days — turns Whole-Tel into a trip planning hub, not just a booking receipt | HIGH | Per-booking calendar, day-by-day cards with time slots, drag-to-reorder. @dnd-kit already in codebase. Core flow: create card on a day, set time range, add title/description. Owner can pre-populate activity suggestions from their experience catalog |
+| Activity booking deadlines on the itinerary | Showing "book by [date]" on add-on experience cards creates urgency and reduces late-booking cancellations | LOW | Display field on experience cards within the itinerary — deadline date stored on add_ons or set per-booking |
+| Amenity-based property filtering | Guests searching "private pool + chef service" can filter before browsing — reduces pogo-sticking | MEDIUM | Requires amenities stored as structured IDs (not free text). Filter UI on browse page. Dependency: amenities system must be built first |
+| Partner application status tracking | Applicants see "under review / approved / declined" rather than a black-hole form submission | LOW | Status field on partner_applications table. Admin updates manually. Triggered email notification on status change |
+| Frontend copy/branding overhaul | "Custom-Inclusive" and Whole-Tel™ messaging positions the product clearly; generic copy undermines premium positioning | LOW | Hero, about section, property pages — copy changes across the site. Zero technical dependency |
 
-Features to explicitly NOT build in v1.1. Each has been considered and rejected for good reason.
+### Anti-Features (Commonly Requested, Often Problematic)
 
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| **AI-powered photo categorization** | Airbnb built this with a massive ML pipeline across millions of listings. Whole-Tel has a handful of properties. Owner-managed sections are simpler, more accurate for small scale, and zero infrastructure cost. | Owner manually assigns photos to sections during upload. Preset section names cover 90% of cases. |
-| **Individual payment splitting** | PROJECT.md explicitly defers this. Stripe Connect complexity, per-person checkout flows, partial refund handling -- massive scope. | Per-person cost calculator (already built) shows "your share." Venmo/Zelle between friends handles the rest. |
-| **Guest add-on customization per invitee** | Each invited guest choosing their own add-ons creates order amendment complexity, partial payment flows, and Stripe session management headaches. | Booking organizer selects add-ons for the whole group. Invited guests can view but not modify. |
-| **Drag-and-drop photo sections** | Reordering photos within sections is valuable. Reordering the sections themselves adds complexity for minimal value -- section order is predictable (Rooms first, then common areas). | Fixed section display order based on preset priority. Custom sections appear at the end. |
-| **Real-time collaborative booking editing** | WebSocket infrastructure, conflict resolution, operational transforms -- way out of scope. | Single organizer edits. Invited guests are read-only viewers of booking details. |
-| **Photo cropping/editing in browser** | Canvas manipulation, aspect ratio management, quality loss -- complex client-side work for marginal value. | Accept photos as-is. Use `object-cover` CSS for consistent display. Recommend photo guidelines to owners. |
-| **Guest count changes post-payment** | Changing guest count after Stripe payment means recalculating per-person add-ons, potentially issuing partial refunds or collecting additional payment. Enormous complexity. | Guest count is locked after payment. Display per-person cost as informational. If group size changes, contact support. |
+Features that seem good but create problems.
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Individual per-guest Stripe Checkout | "Real" split payment — each person pays their own card | Requires Stripe Connect (explicitly deferred in PROJECT.md), complex partial refund logic, booking state fragmented across N payments | Show per-person calculated amount. One payer completes checkout. Venmo/Zelle reconciliation is a social problem at this scale |
+| Installment payment plans (deposit now, balance later) | Reduces drop-off for high-cost bookings | Requires Stripe SetupIntent + saved payment methods (not Checkout), scheduled charge jobs, missed payment redistribution logic — significant Stripe scope for v1.2 | 36hr payment deadline enforces timely payment. Installment plans deferred to v2 when Stripe complexity is warranted |
+| Real-time collaborative itinerary editing | Groups want to plan together simultaneously | WebSocket complexity, conflict resolution, presence indicators — months of work for edge-case usage. Most group trip planning is async | Optimistic single-editor model: last write wins, show "last updated by X at T" timestamp |
+| In-app messaging / chat | Groups want to communicate inside the product | Explicitly deferred to v2 in PROJECT.md. WebSockets, notifications, read receipts — high complexity, low differentiation for a booking platform | Organizer can broadcast trip updates via email to all registered attendees |
+| AI itinerary suggestions | "Tell me what to do in Cabo" | External API integration, hallucination risk for specific venue hours/names, maintenance burden | Curated activity templates per property that the owner pre-populates — more reliable and on-brand |
+| 150-amenity exhaustive checklist | VRBO-style completeness | Overwhelming for boutique all-inclusive hotel context; most items irrelevant to whole-hotel takeovers | Curated 30-40 amenity set across 5 categories (Water, Social, Work/Event, Culinary, Wellness) — matches PROJECT.md spec |
+| Automated partner application approval | Remove manual review bottleneck | At <100 applications/month, automation adds complexity with no time savings. Automated approval bypasses curation quality control that defines the brand | Manual review by Whole-Tel team. Admin marks application approved/declined. Account created on approval |
 
 ## Feature Dependencies
 
 ```
-Batch Photo Upload -----> Photo Ordering (reorder needs multiple photos)
-                    \
-                     +--> Photo Sections (assign to section needs photos)
+Guest Registration (name, email, phone)
+    └──enhances──> Split Payment Display (show "your share" per registered guest)
+    └──enhances──> Itinerary Builder (invited attendees can view itinerary)
+    └──requires──> Existing invite system (upgrade accept flow to collect fields)
 
-Photo Sections ---------> Section-grouped Gallery (guest-facing display)
+Amenities System (structured data: category + amenity IDs in DB)
+    └──enables──> Amenity Display on property detail page
+    └──enables──> Amenity-Based Browse Filtering (future)
+    └──requires──> Owner amenity management UI (owner picks from preset list)
 
-Tiered Property Pricing -> PricingWidget Update -> Booking Action Update
-                                                    (server-side calc must match)
+Partner Application Form
+    └──replaces──> Owner Self-Signup (current auth/onboarding flow)
+    └──creates──> partner_applications record with pending status
+    └──triggers──> Manual admin review → account creation on approval
 
-Tiered Experience Pricing -> AddOnForm Update -> PricingWidget Add-on Calc Update
-                                                  -> Booking Action Update
+Itinerary Builder (per-booking calendar)
+    └──requires──> Booking exists (itinerary is scoped to a booking, not a property)
+    └──enhances──> Guest Registration (attendees see the itinerary read-only)
+    └──can pull from──> Property experience catalog (owner pre-populates activity templates)
 
-Experience Photos -------> AddOnForm Photo Upload (independent of other photo work)
+Payment Deadline Rules (36hr first payment, activity deadlines)
+    └──depends on──> Existing Stripe Checkout flow (enforced at server action level)
+    └──requires──> Booking "pending" state before payment completes
 
-Guest Invite System -----> Email Integration (already exists via Resend)
-                     \---> Booking Detail View (invitees need to see details)
-                      \--> Auth Flow (invited user may not have account yet)
+Hotel Tax Declaration
+    └──depends on──> Existing price breakdown component (add a copy line)
 
-Bed Configuration -------> PropertyForm Update (independent, no dependencies)
+Coming Soon Cities
+    └──depends on──> Landing page / browse page (UI state change only)
 
-Expandable Booking Detail -> Booking Query Update (join booking_add_ons)
-
-Rebrand -----------------> All UI copy changes (independent, can be done in parallel)
+Frontend Copy / Branding
+    └──independent──> All other features (parallel work)
 ```
 
-## MVP Recommendation
+### Dependency Notes
 
-### Phase 1: Foundation (do first -- unblocks everything else)
+- **Amenities must be structured data before filtering:** Building amenities as free-text description means a migration is required to add filtering later. Build as IDs from day one.
+- **Guest registration before itinerary visibility:** The attendee roster is the prerequisite for knowing who can view the itinerary. Without registration data, the itinerary has no audience model.
+- **Itinerary is booking-scoped, not property-scoped:** The calendar lives under a booking because it requires known dates and a group. Property owners can provide activity templates (from their add-ons/experiences) but the actual per-day schedule is created post-booking by the organizer.
+- **Partner application replaces, not supplements, self-signup:** Both cannot coexist without confusion. The current owner signup flow is retired; the application form becomes the only entry point. Existing owner accounts remain unaffected.
 
-1. **Rebrand** -- Copy/UI changes across site. Independent work, can parallelize with everything.
-2. **Bed configuration** -- Simple schema + form addition. Low risk, immediate value, no dependencies.
-3. **Batch photo upload** -- Unblocks photo ordering and sections. Core owner workflow improvement.
-4. **Experience photos** -- Quick win, `photo_url` column already exists in schema.
+## MVP Definition for v1.2
 
-### Phase 2: Photo Management + Pricing
+This is a subsequent milestone. Prioritization is relative to what is already shipped in v1.0 and v1.1.
 
-5. **Photo ordering (drag-to-reorder)** -- Requires batch upload to be useful. Use `@dnd-kit/sortable`.
-6. **Photo sections** -- Requires photos to exist. Owner assigns, guest gallery groups by section.
-7. **Tiered property pricing** -- Schema change + PricingWidget + booking action update. Medium complexity but high business value.
-8. **Tiered experience pricing** -- Same pattern as property pricing tiers. Do together to share the pricing logic patterns.
+### Launch With (v1.2 core)
 
-### Phase 3: Booking Enhancements
+Minimum set to deliver client-requested milestone value.
 
-9. **Expandable booking detail view** -- Low complexity, improves guest experience.
-10. **Guest count display/editing** -- Quick fix alongside detail view.
-11. **Guest invite system** -- Highest complexity feature. Needs email tokens, new tables, invite acceptance flow, possibly signup-during-accept flow. Do last because it has the most unknowns.
+- [ ] Frontend copy and branding overhaul — client-blocking, zero technical dependency
+- [ ] Amenities system: DB schema, owner management UI (select from preset list), guest display with category icons and "See all" modal
+- [ ] Partner property application form — replaces open owner signup
+- [ ] Guest registration fields (name, email, phone) on booking and invite accept flow
+- [ ] Payment deadline display (36hr window, activity deadlines) on booking confirmation and detail view
+- [ ] Hotel tax declaration copy in price breakdown
+- [ ] Coming Soon city cards on browse/landing page
 
-**Defer to v1.2:** Guest invite system polish (notifications, reminders, decline handling, RSVP tracking) -- get basic invite/accept working first, iterate later.
+### Add After Validation (v1.2 extensions)
 
-## Implementation Notes
+Features to add once core v1.2 features are stable.
 
-### Batch Photo Upload
+- [ ] Interactive calendar-based itinerary builder — high value, high complexity; validate guest registration is stable first
+- [ ] Amenity-based browse filtering — needs real amenity data on live properties before filters are useful
+- [ ] Partner application status tracking with email notification — once applications are incoming
 
-The existing signed-URL pattern (`getSignedUploadUrl` -> browser upload -> `savePhotoRecord`) is correct and should be preserved. For batch:
-- Accept `multiple` attribute on file input
-- Generate signed URLs in parallel (one per file via `Promise.all`)
-- Upload files concurrently with a limit of 3-5 simultaneous uploads
-- Show per-file progress with status indicators (pending/uploading/done/error)
-- Call `savePhotoRecord` for each successful upload with incrementing `display_order`
-- Supabase Storage does not support batch upload -- must loop. This is confirmed by Supabase community discussions.
+### Future Consideration (v2+)
 
-### Photo Ordering with dnd-kit
+Features to defer until product-market fit is established.
 
-Use `@dnd-kit/core` + `@dnd-kit/sortable` packages. Key pieces:
-- `SortableContext` wraps the photo grid
-- `useSortable` hook on each photo item
-- `arrayMove` utility for reordering the array on drag end
-- On drag end, compute new `display_order` values and batch update via a single server action `reorderPhotos(propertyId, orderedIds[])`
-- Touch support built in (important for mobile owner management)
+- [ ] Individual per-guest Stripe Checkout (true split payments) — requires Stripe Connect, complex refund logic, explicitly deferred in PROJECT.md
+- [ ] Installment payment plans — Stripe SetupIntent + saved card + scheduled charge complexity
+- [ ] Real-time collaborative itinerary editing
+- [ ] In-app messaging / chat — deferred in PROJECT.md
+- [ ] AI activity suggestions — curated templates preferred
 
-### Tiered Pricing Calculation
+## Feature Prioritization Matrix
 
-Server-side formula (in `createBookingAndCheckout`):
-```
-nightlyCost = property.nightly_rate * nights
-extraGuestCost = max(0, guestCount - property.extra_guest_threshold) * property.extra_guest_rate * nights
-subtotal = nightlyCost + extraGuestCost + cleaningFee
-```
-Client-side mirror in `PricingWidget` for preview only (never authoritative). Both must produce identical results -- extract shared calculation logic into a pure function in `src/lib/pricing.ts`.
+| Feature | User Value | Implementation Cost | Priority |
+|---------|------------|---------------------|----------|
+| Frontend copy/branding | HIGH (client-blocking) | LOW | P1 |
+| Amenities system + display | HIGH | MEDIUM | P1 |
+| Guest registration fields | HIGH | LOW | P1 |
+| Partner application form | HIGH | LOW | P1 |
+| Payment deadline rules display | MEDIUM | LOW | P1 |
+| Hotel tax declaration display | LOW | LOW | P1 |
+| Coming Soon cities | LOW | LOW | P1 |
+| Interactive itinerary builder | HIGH | HIGH | P2 |
+| Amenity-based browse filtering | MEDIUM | MEDIUM | P2 |
+| Partner application status tracking | LOW | LOW | P2 |
+| Installment payment plans | MEDIUM | VERY HIGH | P3 |
+| Individual per-guest Stripe payments | HIGH | VERY HIGH | P3 |
 
-### Guest Invite System
+**Priority key:**
+- P1: Must have for v1.2 launch
+- P2: Should have, add when P1 is stable
+- P3: Future milestone
 
-Database design:
-- `booking_invites` table: `id`, `booking_id`, `inviter_id`, `invited_email`, `invited_user_id` (nullable, set on accept), `status` (pending/accepted/declined), `token_hash` (SHA-256 of raw token), `expires_at`, `created_at`
-- Raw token sent in email link, hashed token stored in DB (same pattern as password reset tokens)
-- Accept flow: `/bookings/invite/[token]` -> verify hash -> if logged in, link user to booking; if not logged in, redirect to signup with return URL
-- RLS: booking owner can INSERT invites; invited user (matched by email) can UPDATE their own invite status
-- Invitees are read-only viewers -- they see property details, dates, guest list, and add-ons but cannot modify anything
+## Specific Implementation Notes
 
-### Bed Configuration Schema
+### Itinerary Builder — Recommended Scope
 
-JSONB column on `properties` is simplest (avoids a separate table for a small, property-scoped dataset):
-```json
-{
-  "beds": [
-    { "type": "King", "count": 4 },
-    { "type": "Queen", "count": 2 },
-    { "type": "Bunk", "count": 3 }
-  ]
-}
-```
-Standard bed types: King, Queen, Double, Twin, Bunk. UI is a repeatable row with type dropdown + count stepper + remove button. Total sleeping capacity should display alongside `max_guests`.
+Based on YouLi/SquadTrip analysis, table-stakes is read-only schedule sharing. The differentiator is interactivity. Recommended v1.2 scope:
 
-### Photo Sections Schema
+- Calendar grid: one column per booking day (check-in through check-out)
+- Activity cards: title, time range (start/end), optional emoji, optional note
+- Drag-to-reorder within a day only (cross-day drag adds complexity, defer to v2)
+- Owner can provide a template list of suggested activities sourced from their experience catalog
+- Booking organizer can add/edit/remove cards
+- Invited registered guests see read-only view
+- No map integration, no budget tracking in the itinerary builder — these are YouLi features that exceed Whole-Tel's scoped group experience model
 
-```sql
--- New table
-CREATE TABLE photo_sections (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  property_id UUID REFERENCES properties(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  display_order INTEGER NOT NULL DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
+Library: use @dnd-kit/sortable (already in codebase from photo reorder). No new DnD library needed.
 
--- Add nullable FK to existing property_photos
-ALTER TABLE property_photos ADD COLUMN section_id UUID REFERENCES photo_sections(id) ON DELETE SET NULL;
-```
+### Split Payments — Exact v1.2 Boundary
 
-Preset sections seeded on property creation: "Rooms", "Common Areas", "Pool & Outdoor", "Kitchen & Dining". Photos without a section appear in an "Other" group. Guest-facing gallery renders sections as labeled groups with the hero image (display_order = 0) always prominent regardless of section.
+PROJECT.md is explicit: "Individual payment splitting (each guest pays separately) — calculator only for now." This means:
 
-## Complexity Budget
+1. Collect all attendees: name + email + phone during booking or via invite accept
+2. Display "Your share: $X" based on total / headcount on confirmation and booking detail
+3. One person completes the existing Stripe Checkout (unchanged flow)
+4. The 36hr payment deadline is enforced by creating a booking in `pending` state, generating the Stripe Checkout session, and expiring the booking via a scheduled job if payment is not completed in time (Supabase Edge Function with pg_cron or a webhook-based approach)
 
-| Feature | Schema Changes | New Components | Server Actions | Estimated Effort |
-|---------|---------------|----------------|----------------|-----------------|
-| Rebrand | None | All (copy changes only) | None | 1-2 days |
-| Bed configuration | 1 JSONB column | 1 form section | 1 (in existing property action) | 0.5 day |
-| Batch photo upload | None | 1 (extend PhotoUploader) | None (reuse existing) | 0.5 day |
-| Photo ordering | None | 1 (SortablePhotoGrid) | 1 (reorderPhotos) | 1 day |
-| Photo sections | 1 table + 1 FK column | 2 (SectionManager, SectionGallery) | 2 (assignSection, createSection) | 1.5 days |
-| Tiered property pricing | 2 columns on properties | 1 (extend PricingWidget) | 1 (update booking calc) | 1 day |
-| Tiered experience pricing | 2 columns on add_ons | 1 (extend AddOnForm) | 1 (update booking calc) | 1 day |
-| Experience photos | None (column exists) | 1 (extend AddOnForm) | 1 (experience photo upload) | 0.5 day |
-| Expandable booking detail | None | 1 (BookingDetail accordion) | 1 (fetch booking with add-ons) | 0.5 day |
-| Guest count display/editing | None | 1 (GuestCountEditor) | 1 (updateGuestCount) | 0.5 day |
-| Guest invite system | 1 table (booking_invites) | 3+ (InviteForm, InviteList, AcceptPage) | 3+ (sendInvite, acceptInvite, declineInvite) | 2-3 days |
+Do NOT attempt per-guest Stripe sessions in v1.2 — this is explicitly out of scope.
 
-**Total estimated effort: 10-12 days**
+### Partner Application — Recommended Field Set
+
+Based on Plum Guide application pattern and boutique curation positioning:
+
+**Contact:** First name, last name, email, phone
+**Property:** Property name, location (city + country), property type (boutique hotel, villa, resort), number of guest rooms, maximum guest capacity
+**Listing presence:** Link to existing listing (Airbnb/VRBO/website) or photo gallery URL
+**Story:** "Tell us about your property and why it's a fit for Whole-Tel" (textarea, 500 char limit)
+
+Review flow: form submission creates a `partner_applications` record with `status = 'pending'`. Whole-Tel admin reviews, updates status to `approved` or `declined`. On `approved`, system creates an owner account (or sends an invitation to create one). Email sent to applicant at both steps. No automated approval logic — volume does not warrant it for v1.2.
+
+### Amenity Category Model
+
+PROJECT.md specifies 5 categories: Water, Social, Work/Event, Culinary, Wellness. Recommended amenities per category (30-35 total):
+
+- **Water:** Private pool, Hot tub / jacuzzi, Ocean view, Beach access, Kayaks or paddleboards, Swim-up bar, Infinity pool
+- **Social:** Outdoor bar, Fire pit, Rooftop terrace, Sound system / dance floor, Game room, Cigar lounge, Sports court
+- **Work/Event:** AV equipment, Projector and screen, Event coordinator on-site, High-speed WiFi (100+ Mbps), Breakout spaces, Business center
+- **Culinary:** Private chef, Full catering service, BBQ / outdoor grill, Wine cellar, Cooking classes, Cocktail bar, Organic produce garden
+- **Wellness:** Gym / fitness center, Spa services, Yoga and meditation space, Massage room, Sauna, Plunge pool
+
+Display pattern (Holidu model, industry current):
+- Category header: icon + category name
+- Amenities below: simple list with checkmarks (no icons per amenity)
+- Property detail page shows top 6-8 amenities across categories
+- "See all amenities" button opens a modal with 2-column layout, all categories
+- Modal prevents page length bloat (Holidu found 400-600px saved by modal pattern)
+
+DB schema: `amenities` table (id, category, name, display_order), `property_amenities` join table (property_id, amenity_id). Amenity IDs are stable references — enables filtering and consistent display across all properties.
+
+## Competitor Feature Analysis
+
+| Feature | YouLi / SquadTrip | WeTravel | Our Approach |
+|---------|-------------------|----------|--------------|
+| Itinerary builder | Drag-drop day-by-day calendar, real-time updates, per-traveler views, Magic Links | Calendar view, day-by-day schedule | Per-booking calendar, day-by-day cards, drag-to-reorder within a day, @dnd-kit (already in codebase) |
+| Split payments | Individual payment pages per traveler, payment plans, auto-reminders, auto-adjust for late bookers | 1-24 installments, auto-charge, missed payment redistribution | v1.2: single payer with per-person display. v2+: individual Stripe sessions |
+| Guest registration | Full registration forms, waivers, dietary preferences, document upload | Full passenger registration with ACH or credit card | v1.2: name + email + phone. Extend with dietary/documents in v2 |
+| Partner application | Not applicable (B2B SaaS tool, not curated marketplace) | Not applicable | Short form → manual review → account creation on approval |
+| Amenities display | Not applicable | Not applicable | 5-category model, icon per category, checklist per amenity, modal for full list |
 
 ## Sources
 
-- [Airbnb Photo Categorization Engineering Blog](https://medium.com/airbnb-engineering/categorizing-listing-photos-at-airbnb-f9483f3ab7e3) -- HIGH confidence
-- [Airbnb Photo Tour Setup](https://airbnb.com/resources/hosting-homes/a/how-to-organize-listing-photos-into-a-home-tour-456) -- HIGH confidence
-- [dnd-kit Sortable Documentation](https://docs.dndkit.com/presets/sortable) -- HIGH confidence
-- [dnd-kit Sortable Image Grid Example](https://codesandbox.io/s/dndkit-sortable-image-grid-py6ve) -- HIGH confidence
-- [Booking.com Per-Guest Pricing Models](https://partner.booking.com/en-us/help/channel-manager/availability/understanding-pricing-guest-models) -- HIGH confidence
-- [Cloudbeds Extra Person Fees](https://myfrontdesk.cloudbeds.com/hc/en-us/articles/231646927-Base-Rates-and-Availability-Matrix-How-to-Add-Extra-Person-Fees) -- MEDIUM confidence
-- [Supabase Signed Upload URLs](https://supabase.com/docs/reference/javascript/storage-from-createsigneduploadurl) -- HIGH confidence
-- [Supabase Batch Upload Discussion](https://github.com/orgs/supabase/discussions/6101) -- MEDIUM confidence
-- [Invite Friends UI Pattern](https://ui-patterns.com/patterns/invite-friends) -- MEDIUM confidence
-- [System Design: Inviting Users to a Group](https://medium.com/@itayeylon/system-design-inviting-users-to-a-group-98b1e0967b06) -- MEDIUM confidence
-- [Vacasa Bed Configuration Guide](https://www.vacasa.com/homeowner-guides/best-bed-configuration-for-vacation-rental) -- MEDIUM confidence
-- [Top Drag-and-Drop Libraries for React 2026](https://puckeditor.com/blog/top-5-drag-and-drop-libraries-for-react) -- MEDIUM confidence
-- [react-beautiful-dnd Deprecated (GitHub)](https://github.com/atlassian/react-beautiful-dnd) -- HIGH confidence
+- [YouLi Group Travel Management Platform](https://go.youli.io/) — MEDIUM confidence
+- [SquadTrip — Best Tools for Group Trip Planning 2026](https://squadtrip.com/guides/best-tools-for-group-trip-planning/) — MEDIUM confidence
+- [SquadTrip — Ultimate Group Travel Planning App](https://www.squadtrip.com/guides/the-ultimate-group-travel-planning-app) — MEDIUM confidence
+- [WeTravel Payment Plans Help Documentation](https://help.wetravel.com/en/articles/1270486-payment-plans-how-they-work-setup) — HIGH confidence (official docs)
+- [Holidu Amenities Redesign Case Study](https://holidu.design/how-we-took-our-amenities-to-the-next-level/) — HIGH confidence (official engineering blog)
+- [Plum Guide Host Vetting and Application](https://hospitable.com/plum-guide-rentals) — MEDIUM confidence
+- [VRBO Host Requirements and Onboarding Fields](https://www.hostaway.com/blog/vrbo-host-requirements/) — MEDIUM confidence
+- [GroupCollect Group Travel Registration Platform](https://groupcollect.com/) — MEDIUM confidence
+- [AllFly Split Payment Feature](https://allfly.io/post/allflys-game-changing-split-payment-feature) — MEDIUM confidence
 
 ---
-
-*Feature research for: Whole-Tel v1.1 Enhancements*
-*Researched: 2026-03-07*
+*Feature research for: Whole-Tel v1.2 — Itinerary Builder, Split Payments, Partner Application, Amenities*
+*Researched: 2026-03-23*
