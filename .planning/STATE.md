@@ -4,8 +4,8 @@ milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
 stopped_at: Completed 13-03-PLAN.md
-last_updated: "2026-03-24T04:23:43.101Z"
-last_activity: "2026-03-24 — 13-02 complete: acceptInvitation registration gating, atomic RPC, addAttendeeManually, deadline column storage"
+last_updated: "2026-03-24T04:27:37.339Z"
+last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
 progress:
   total_phases: 6
   completed_phases: 2

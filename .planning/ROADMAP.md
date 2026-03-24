@@ -143,7 +143,7 @@ Plans:
 | 10. Photo Management | v1.1 | 4/4 | Complete | 2026-03-08 |
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
-| 13. Guest Registration & Payment Deadlines | 3/3 | Complete   | 2026-03-24 | - |
+| 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
 | 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
