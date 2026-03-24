@@ -143,3 +143,28 @@ export async function createOwnerFromApplication(
   revalidatePath('/dashboard/applications')
   return { tempPassword }
 }
+
+export async function saveApplicationNotes(
+  applicationId: string,
+  notes: string
+): Promise<{ error?: string }> {
+  const user = await requireOwner()
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('partner_applications')
+    .update({
+      admin_notes: notes || null,
+      reviewed_by: user.id,
+      reviewed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', applicationId)
+
+  if (error) {
+    return { error: 'Failed to save notes' }
+  }
+
+  revalidatePath('/dashboard/applications')
+  return {}
+}
