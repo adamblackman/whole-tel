@@ -21,7 +21,6 @@ export default async function DashboardLayout({
             >
               Whole-Tel
             </Link>
-            <span className="text-muted-foreground text-sm">Host Dashboard</span>
             <nav className="flex items-center gap-4 text-sm">
               <Link
                 href="/dashboard"
