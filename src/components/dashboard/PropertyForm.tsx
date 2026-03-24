@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,21 +8,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import type { ActionState } from '@/lib/validations/property'
 import type { BedConfig } from '@/types/database'
-
-const AMENITY_OPTIONS = [
-  'Pool',
-  'Hot Tub',
-  'BBQ',
-  'Ocean View',
-  'Rooftop',
-  'Private Beach',
-  'Chef Kitchen',
-  'Game Room',
-  'Home Theater',
-  'Gym',
-  'Parking',
-  'WiFi',
-] as const
 
 interface PropertyFormProps {
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>
@@ -36,7 +21,7 @@ interface PropertyFormProps {
     max_guests?: number
     nightly_rate?: number
     cleaning_fee?: number
-    amenities?: string[]
+    amenities?: string[]  // kept for schema compatibility — not rendered here
     house_rules?: string
     check_in_time?: string
     check_out_time?: string
@@ -51,15 +36,6 @@ interface PropertyFormProps {
 
 export function PropertyForm({ action, initialData, submitLabel, children }: PropertyFormProps) {
   const [state, formAction, pending] = useActionState(action, {})
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
-    initialData?.amenities ?? []
-  )
-
-  function toggleAmenity(amenity: string) {
-    setSelectedAmenities((prev) =>
-      prev.includes(amenity) ? prev.filter((a) => a !== amenity) : [...prev, amenity]
-    )
-  }
 
   return (
     <form action={formAction} className="space-y-6">
@@ -314,32 +290,6 @@ export function PropertyForm({ action, initialData, submitLabel, children }: Pro
         />
         {state.errors?.description && (
           <p className="text-sm text-destructive">{state.errors.description[0]}</p>
-        )}
-      </div>
-
-      {/* Amenities checkbox group — full width */}
-      <div className="space-y-2">
-        <Label>Amenities</Label>
-        {/* Hidden input serializes checked values for the Server Action */}
-        <input type="hidden" name="amenities" value={selectedAmenities.join(',')} />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {AMENITY_OPTIONS.map((amenity) => (
-            <label
-              key={amenity}
-              className="flex items-center gap-2 text-sm cursor-pointer select-none"
-            >
-              <input
-                type="checkbox"
-                className="rounded border-input"
-                checked={selectedAmenities.includes(amenity)}
-                onChange={() => toggleAmenity(amenity)}
-              />
-              {amenity}
-            </label>
-          ))}
-        </div>
-        {state.errors?.amenities && (
-          <p className="text-sm text-destructive">{state.errors.amenities[0]}</p>
         )}
       </div>
 
