@@ -43,6 +43,7 @@ interface PropertyFormProps {
     bed_config?: BedConfig
     guest_threshold?: number | null
     per_person_rate?: number | null
+    tax_rate?: number | null
   }
   submitLabel?: string
   children?: React.ReactNode
@@ -280,6 +281,25 @@ export function PropertyForm({ action, initialData, submitLabel, children }: Pro
           </div>
         </div>
         <p className="text-xs text-muted-foreground">Optional. Charge extra per guest per night above this threshold.</p>
+      </div>
+
+      {/* Hotel Tax Rate */}
+      <div className="space-y-1.5">
+        <Label htmlFor="tax_rate">Hotel Tax Rate (%)</Label>
+        <Input
+          id="tax_rate"
+          name="tax_rate"
+          type="number"
+          min="0"
+          max="100"
+          step="0.01"
+          defaultValue={initialData?.tax_rate != null ? initialData.tax_rate * 100 : ''}
+          placeholder="e.g. 12 for 12%"
+        />
+        <p className="text-xs text-muted-foreground">Leave blank if hotel submits taxes from gross payment</p>
+        {state.errors?.tax_rate && (
+          <p className="text-sm text-destructive">{state.errors.tax_rate[0]}</p>
+        )}
       </div>
 
       {/* Description — full width */}

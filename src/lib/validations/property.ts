@@ -30,6 +30,11 @@ export const PropertySchema = z
       (val) => (val === '' || val === undefined ? null : val),
       z.coerce.number().positive().nullable()
     ),
+    // Tax rate as a percentage (0–100). Stored as decimal in DB (divided by 100 in server action).
+    tax_rate: z.preprocess(
+      (val) => (val === '' || val === undefined ? null : val),
+      z.coerce.number().min(0).max(100).nullable().optional()
+    ),
   })
   .refine(
     (data) =>
