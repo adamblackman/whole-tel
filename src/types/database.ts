@@ -10,6 +10,7 @@ export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'expired'
 export type InvitationStatus = 'pending' | 'accepted' | 'declined'
 export type PricingUnit = 'per_person' | 'per_booking'
 export type UserRole = 'guest' | 'owner'
+export type ApplicationStatus = 'submitted' | 'under_review' | 'approved' | 'rejected' | 'onboarded'
 
 export interface BedConfig {
   king: number
@@ -129,6 +130,24 @@ export interface BookingInvitation {
   updated_at: string
 }
 
+export interface PartnerApplication {
+  id: string
+  created_at: string
+  updated_at: string
+  status: ApplicationStatus
+  applicant_name: string
+  applicant_email: string
+  applicant_phone: string | null
+  property_basics: Json
+  capacity: Json
+  common_areas: Json
+  group_hosting: Json
+  logistics: Json
+  admin_notes: string | null
+  reviewed_by: string | null
+  reviewed_at: string | null
+}
+
 // Joined types for common query patterns
 export interface PropertyWithAddOns extends Property {
   add_ons: AddOn[]
@@ -151,6 +170,7 @@ export interface Database {
       bookings: { Row: Booking; Insert: Omit<Booking, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Booking> }
       booking_add_ons: { Row: BookingAddOn; Insert: Omit<BookingAddOn, 'id' | 'created_at'>; Update: Partial<BookingAddOn> }
       booking_invitations: { Row: BookingInvitation; Insert: Omit<BookingInvitation, 'id' | 'token' | 'created_at' | 'updated_at'>; Update: Partial<BookingInvitation> }
+      partner_applications: { Row: PartnerApplication; Insert: Omit<PartnerApplication, 'id' | 'created_at' | 'updated_at'>; Update: Partial<PartnerApplication> }
     }
   }
 }
