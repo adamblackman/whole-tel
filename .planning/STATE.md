@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-03-24T04:18:31.938Z"
+stopped_at: Completed 13-03-PLAN.md
+last_updated: "2026-03-24T04:23:43.101Z"
 last_activity: "2026-03-24 — 13-02 complete: acceptInvitation registration gating, atomic RPC, addAttendeeManually, deadline column storage"
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
-  percent: 95
+  completed_plans: 7
+  percent: 98
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-23)
 ## Current Position
 
 Phase: 13 of 17 (Guest Registration & Payment Deadlines)
-Plan: 02 complete (of 4 planned)
+Plan: 03 complete (of 4 planned)
 Status: In progress
-Last activity: 2026-03-24 — 13-02 complete: acceptInvitation registration gating, atomic RPC, addAttendeeManually, deadline column storage
+Last activity: 2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route
 
 Progress: [██████████] 98%
 
@@ -55,6 +55,8 @@ Progress: [██████████] 98%
 - [Phase 12-branding-copy-amenities-schema]: Hotel tax applies to (accommodationSubtotal + perPersonSurcharge) only, not cleaning fee or add-ons — processingFee base includes hotelTax so Stripe total matches breakdown.total
 - [Phase 13]: acceptInvitation signature requires registration — InvitationActions.tsx updated with minimal inline form; Plan 13-03 will replace with polished UI
 - [Phase 13]: booking.created_at used for deadline computation instead of new Date() — avoids clock drift between insert and Stripe session creation
+- [Phase 13]: PaymentDeadlineCountdown recalculates from deadline timestamp in interval callback to avoid stale closure
+- [Phase 13]: Complete Payment CTA uses plain anchor tag (not Next.js Link) — Stripe Checkout is an external URL
 
 ### Blockers/Concerns
 
@@ -69,6 +71,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T04:18:31.916Z
-Stopped at: Completed 13-02-PLAN.md
+Last session: 2026-03-24T04:23:43.081Z
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
