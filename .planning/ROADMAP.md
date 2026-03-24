@@ -43,7 +43,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 12: Branding, Copy & Amenities Schema** - Homepage copy overhaul, ™ branding, hotel tax in pricing, Coming Soon cities, and amenities DB foundation (completed 2026-03-24)
 - [x] **Phase 13: Guest Registration & Payment Deadlines** - Attendee name/phone collection, 36hr deadline enforcement, per-person cost display, and cron-based expiry (completed 2026-03-24)
-- [ ] **Phase 14: Partner Application Workflow** - Multi-step application form, ENUM state machine, admin review UI, and approval-triggered owner account creation
+- [x] **Phase 14: Partner Application Workflow** - Multi-step application form, ENUM state machine, admin review UI, and approval-triggered owner account creation (completed 2026-03-24)
 - [ ] **Phase 15: Amenities Owner UI & Guest Display** - Owner checkbox grid by category, guest amenity display with "See all" modal, and amenity highlights on property cards
 - [ ] **Phase 16: Itinerary Builder** - Calendar-based day-by-day activity scheduler, owner time slot configuration, auto-save to bookings, and timezone-safe storage
 - [ ] **Phase 17: Split Payments** - Group lead payment division UI, per-person Stripe payment links, and split amount validation against canonical pricing
@@ -93,7 +93,7 @@ Plans:
   2. Applicant completes all 5 form sections (Property Basics, Capacity, Common Areas, Group Hosting Experience, Logistics) and receives confirmation of submission
   3. Admin can see all submitted applications, update status through the ENUM state machine (submitted → under_review → approved/rejected → onboarded), and changes persist correctly
   4. An approved application triggers an owner account creation flow for the applicant
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 14-01-PLAN.md — Database migration, Zod validation schemas, and Server Actions (submit, update status, create owner)
@@ -149,7 +149,7 @@ Plans:
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
-| 14. Partner Application Workflow | 2/3 | In Progress|  | - |
+| 14. Partner Application Workflow | 3/3 | Complete   | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |

@@ -30,7 +30,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 - [x] **PART-01**: "Apply to be featured partner on Whole-Tel™" replaces "New Owner? Create owner account" link
 - [x] **PART-02**: Multi-step application form with 5 sections (Property Basics & Classification, Capacity & Inventory, Common Areas & Amenities, Group Hosting Experience, Logistics & Content)
 - [x] **PART-03**: Application stored in DB with ENUM status (submitted, under_review, approved, rejected, onboarded)
-- [ ] **PART-04**: Admin can review and update application status
+- [x] **PART-04**: Admin can review and update application status
 - [x] **PART-05**: Approved application triggers owner account creation flow
 
 ### Itinerary Builder
@@ -108,7 +108,7 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | PART-01 | Phase 14 | Complete |
 | PART-02 | Phase 14 | Complete |
 | PART-03 | Phase 14 | Complete |
-| PART-04 | Phase 14 | Pending |
+| PART-04 | Phase 14 | Complete |
 | PART-05 | Phase 14 | Complete |
 | AMEN-02 | Phase 15 | Pending |
 | AMEN-03 | Phase 15 | Pending |

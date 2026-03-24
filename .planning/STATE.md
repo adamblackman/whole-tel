@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-03-24T04:57:03.700Z"
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-03-24T05:12:22.277Z"
 last_activity: "2026-03-24 — 13-03 complete: PaymentDeadlineCountdown, ManualAttendeeForm, BookingDetails/GuestList extended, Vercel Cron expiry route"
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
   percent: 98
 ---
 
@@ -62,6 +62,8 @@ Progress: [██████████] 98%
 - [Phase 14-partner-application-workflow]: [Phase 14-01]: Zod v4 uses error option instead of required_error for z.enum params
 - [Phase 14-partner-application-workflow]: All 5 form steps co-located in ApplicationForm.tsx as sub-components with initialData props for back-nav preservation
 - [Phase 14-partner-application-workflow]: owner/signup page left in place after unlinking — orphaned but not deleted, separate cleanup concern
+- [Phase 14-partner-application-workflow]: ApplicationActions is 'use client' while list/detail pages are Server Components — clean separation of read (server) and mutate (client)
+- [Phase 14-partner-application-workflow]: saveApplicationNotes Server Action added for notes-only saves without requiring a status transition
 
 ### Blockers/Concerns
 
@@ -76,6 +78,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T04:57:03.678Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-03-24T05:12:15.705Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
