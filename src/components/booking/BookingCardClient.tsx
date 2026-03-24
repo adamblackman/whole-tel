@@ -23,6 +23,8 @@ interface InvitationRow {
   email: string
   status: 'pending' | 'accepted' | 'declined'
   created_at: string
+  full_name: string | null
+  phone: string | null
 }
 
 interface BookingCardClientProps {
@@ -38,6 +40,9 @@ interface BookingCardClientProps {
   maxGuests: number
   bookingAddOns: BookingAddOnRow[]
   invitations: InvitationRow[]
+  paymentDeadline: string | null
+  activityDeadline: string | null
+  stripeCheckoutUrl: string | null
   header: ReactNode
 }
 
@@ -54,6 +59,9 @@ export function BookingCardClient({
   maxGuests,
   bookingAddOns,
   invitations,
+  paymentDeadline,
+  activityDeadline,
+  stripeCheckoutUrl,
   header,
 }: BookingCardClientProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -92,6 +100,9 @@ export function BookingCardClient({
           maxGuests={maxGuests}
           bookingAddOns={bookingAddOns}
           invitations={invitations}
+          paymentDeadline={paymentDeadline}
+          activityDeadline={activityDeadline}
+          stripeCheckoutUrl={stripeCheckoutUrl}
         />
       </CollapsibleContent>
     </Collapsible>

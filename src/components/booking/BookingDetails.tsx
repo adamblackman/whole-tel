@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
-import { Pencil, Users } from 'lucide-react'
+import { Pencil, Users, Clock, Calendar } from 'lucide-react'
 import { GuestCountEditor } from './GuestCountEditor'
 import { InviteGuestForm } from './InviteGuestForm'
 import { GuestList } from './GuestList'
+import { PaymentDeadlineCountdown } from './PaymentDeadlineCountdown'
+import { ManualAttendeeForm } from './ManualAttendeeForm'
 import type { InvitationStatus } from '@/types/database'
 
 interface BookingAddOnRow {
@@ -23,6 +25,8 @@ interface InvitationRow {
   email: string
   status: InvitationStatus
   created_at: string
+  full_name: string | null
+  phone: string | null
 }
 
 interface BookingDetailsProps {
@@ -38,6 +42,9 @@ interface BookingDetailsProps {
   maxGuests: number
   bookingAddOns: BookingAddOnRow[]
   invitations: InvitationRow[]
+  paymentDeadline: string | null
+  activityDeadline: string | null
+  stripeCheckoutUrl: string | null
 }
 
 function formatCurrency(dollars: number) {
@@ -45,6 +52,14 @@ function formatCurrency(dollars: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`
+}
+
+function formatDeadlineDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
 }
 
 export function BookingDetails({
@@ -60,8 +75,12 @@ export function BookingDetails({
   maxGuests,
   bookingAddOns,
   invitations,
+  paymentDeadline,
+  activityDeadline,
+  stripeCheckoutUrl,
 }: BookingDetailsProps) {
   const [isEditingGuests, setIsEditingGuests] = useState(false)
+  const [showManualForm, setShowManualForm] = useState(false)
 
   const checkInDate = new Date(checkIn)
   const checkOutDate = new Date(checkOut)
@@ -69,9 +88,49 @@ export function BookingDetails({
     (checkOutDate.getTime() - checkInDate.getTime()) / 86400000
   )
 
+  const isExpired = status === 'expired'
+
   return (
     <div className="pt-4 space-y-4">
       <Separator />
+
+      {/* Expired banner */}
+      {isExpired && (
+        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
+          <p className="text-sm text-amber-800 font-medium">
+            This booking has expired. The payment deadline has passed.
+          </p>
+        </div>
+      )}
+
+      {/* Payment deadline countdown for pending bookings */}
+      {status === 'pending' && paymentDeadline && (
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <PaymentDeadlineCountdown deadline={paymentDeadline} />
+          {stripeCheckoutUrl && (
+            <a
+              href={stripeCheckoutUrl}
+              className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 hover:bg-amber-700 px-3 py-1.5 text-xs font-semibold text-white transition-colors shrink-0"
+            >
+              <Clock className="h-3 w-3" />
+              Complete Payment
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Activity deadline */}
+      {activityDeadline && (
+        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Calendar className="h-3.5 w-3.5 shrink-0" />
+          <span>
+            Activity booking deadline:{' '}
+            <span className="font-medium text-foreground">
+              {formatDeadlineDate(activityDeadline)}
+            </span>
+          </span>
+        </div>
+      )}
 
       {/* Guest count with edit */}
       <div className="flex items-center justify-between">
@@ -150,6 +209,23 @@ export function BookingDetails({
           <Separator />
           <GuestList invitations={invitations} />
           <InviteGuestForm bookingId={bookingId} />
+
+          {/* Manual attendee entry */}
+          {!showManualForm ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs h-7"
+              onClick={() => setShowManualForm(true)}
+            >
+              Add manually
+            </Button>
+          ) : (
+            <ManualAttendeeForm
+              bookingId={bookingId}
+              onClose={() => setShowManualForm(false)}
+            />
+          )}
         </>
       )}
     </div>

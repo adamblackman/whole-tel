@@ -7,6 +7,8 @@ interface GuestListProps {
     email: string
     status: InvitationStatus
     created_at: string
+    full_name: string | null
+    phone: string | null
   }>
 }
 
@@ -54,17 +56,31 @@ export function GuestList({ invitations }: GuestListProps) {
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium">Invited guests</p>
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {invitations.map((inv) => (
           <div
             key={inv.id}
-            className="flex items-center justify-between text-sm"
+            className="flex items-start justify-between text-sm gap-2"
           >
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="truncate text-muted-foreground">{inv.email}</span>
-              <span className="text-xs text-muted-foreground shrink-0">
-                {timeAgo(inv.created_at)}
-              </span>
+            <div className="min-w-0 flex-1">
+              {inv.status === 'accepted' && inv.full_name ? (
+                <>
+                  <p className="font-medium truncate">{inv.full_name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {inv.email}
+                    {inv.phone && (
+                      <span className="ml-2">&middot; {inv.phone}</span>
+                    )}
+                  </p>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="truncate text-muted-foreground">{inv.email}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {timeAgo(inv.created_at)}
+                  </span>
+                </div>
+              )}
             </div>
             <StatusBadge status={inv.status} />
           </div>

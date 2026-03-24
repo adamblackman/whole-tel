@@ -27,6 +27,12 @@ function StatusBadge({ status }: { status: string }) {
       )
     case 'cancelled':
       return <Badge variant="destructive">Cancelled</Badge>
+    case 'expired':
+      return (
+        <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+          Expired
+        </Badge>
+      )
     default:
       return <Badge variant="outline">{status}</Badge>
   }
@@ -46,6 +52,8 @@ type InvitationRow = {
   email: string
   status: 'pending' | 'accepted' | 'declined'
   created_at: string
+  full_name: string | null
+  phone: string | null
 }
 
 type BookingRow = {
@@ -59,6 +67,9 @@ type BookingRow = {
   total: number
   status: string
   created_at: string
+  payment_deadline: string | null
+  activity_deadline: string | null
+  stripe_checkout_url: string | null
   properties:
     | { id: string; name: string; location: string; max_guests: number }
     | { id: string; name: string; location: string; max_guests: number }[]
@@ -103,6 +114,9 @@ function BookingCard({ booking }: { booking: BookingRow }) {
           maxGuests={property ? Number(property.max_guests) : 1}
           bookingAddOns={booking.booking_add_ons ?? []}
           invitations={booking.booking_invitations ?? []}
+          paymentDeadline={booking.payment_deadline}
+          activityDeadline={booking.activity_deadline}
+          stripeCheckoutUrl={booking.stripe_checkout_url}
           header={
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="space-y-2 min-w-0">
@@ -177,9 +191,10 @@ export default async function BookingsPage({
     .select(`
       id, check_in, check_out, guest_count, subtotal, add_ons_total,
       processing_fee, total, status, created_at,
+      payment_deadline, activity_deadline, stripe_checkout_url,
       properties(id, name, location, max_guests),
       booking_add_ons(id, add_on_id, quantity, unit_price, total_price, add_ons(name)),
-      booking_invitations(id, email, status, created_at)
+      booking_invitations(id, email, status, created_at, full_name, phone)
     `)
     .eq('guest_id', user.id)
     .order('check_in', { ascending: false })
