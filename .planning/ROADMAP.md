@@ -93,7 +93,12 @@ Plans:
   2. Applicant completes all 5 form sections (Property Basics, Capacity, Common Areas, Group Hosting Experience, Logistics) and receives confirmation of submission
   3. Admin can see all submitted applications, update status through the ENUM state machine (submitted → under_review → approved/rejected → onboarded), and changes persist correctly
   4. An approved application triggers an owner account creation flow for the applicant
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 14-01-PLAN.md — Database migration, Zod validation schemas, and Server Actions (submit, update status, create owner)
+- [ ] 14-02-PLAN.md — Multi-step application form at /apply and owner login page link replacement
+- [ ] 14-03-PLAN.md — Admin review UI at /dashboard/applications with status transitions and owner account creation
 
 ### Phase 15: Amenities Owner UI & Guest Display
 **Goal**: Owners can manage amenities for their property through a structured checkbox grid; guests see categorized amenities on the property detail page and highlights on property cards
@@ -144,7 +149,7 @@ Plans:
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
 | 13. Guest Registration & Payment Deadlines | 3/3 | Complete    | 2026-03-24 | - |
-| 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
+| 14. Partner Application Workflow | v1.2 | 0/3 | Planning complete | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
 | 17. Split Payments | v1.2 | 0/TBD | Not started | - |
