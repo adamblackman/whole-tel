@@ -55,7 +55,7 @@ completed: "2026-03-24"
 - **Duration:** ~3 min
 - **Started:** 2026-03-24T16:22:55Z
 - **Completed:** 2026-03-24T16:25:27Z
-- **Tasks:** 1 of 2 (Task 2 is human-verify checkpoint)
+- **Tasks:** 2 of 2 (Task 2 checkpoint approved — verification deferred to end of milestone)
 - **Files modified:** 3
 
 ## Accomplishments
@@ -69,6 +69,7 @@ completed: "2026-03-24"
 ## Task Commits
 
 1. **Task 1: SplitPaymentEditor component and bookings page integration** - `1b77330` (feat)
+2. **Task 2: Verify split payment flow end-to-end** - Approved at checkpoint; verification deferred to end of milestone
 
 ## Files Created/Modified
 
@@ -98,7 +99,7 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 - Split payment UI complete and wired to Plan 01 Server Actions
-- Human verification (Task 2) required to confirm end-to-end flow in browser
+- Task 2 (human verification) approved — end-to-end flow will be confirmed when DB migrations are applied at end of v1.2 milestone
 - No blockers for next phase
 
 ---

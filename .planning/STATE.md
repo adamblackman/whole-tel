@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 17-02-PLAN.md Task 1 — awaiting human verification at Task 2 checkpoint
-last_updated: "2026-03-24T16:26:21.472Z"
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-03-24T16:46:26.924Z"
 last_activity: "2026-03-24 — 16-02 complete: FullCalendar integration, itinerary Server Actions, ItineraryCalendar/AddEventDialog/ActivityPicker, booking page link"
 progress:
   total_phases: 6
@@ -77,6 +77,8 @@ Progress: [██████████] 98%
 - [Phase 17-split-payments]: centsEqual exported from validations (not Server Actions) so tests can import without 'use server' context issues
 - [Phase 17-split-payments]: Amount state stored as strings not numbers — avoids mid-type float parse flickering in SplitPaymentEditor
 - [Phase 17-split-payments]: splitsSaved flag gates Generate Link button — prevents generating links for unsaved split amounts
+- [Phase 17-split-payments]: Amount state stored as strings not numbers — avoids mid-type float parse flickering in SplitPaymentEditor
+- [Phase 17-split-payments]: splitsSaved flag gates Generate Link button — prevents generating links for unsaved split amounts
 
 ### Blockers/Concerns
 
@@ -91,6 +93,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T16:26:21.447Z
-Stopped at: Completed 17-02-PLAN.md Task 1 — awaiting human verification at Task 2 checkpoint
+Last session: 2026-03-24T16:46:22.094Z
+Stopped at: Completed 17-02-PLAN.md
 Resume file: None
