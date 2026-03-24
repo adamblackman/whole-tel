@@ -139,7 +139,7 @@ Plans:
   1. Group lead can view all attendees and assign a payment amount to each person, with the UI showing remaining unallocated balance
   2. Each attendee receives a Stripe payment link scoped to their assigned share
   3. Split amounts server-side validate that the sum equals the canonical booking total from calculatePricing() before any link is generated
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 17-01-PLAN.md — Database migration, types, Zod schemas, Server Actions (saveSplits + generatePaymentLink), webhook extension, unit tests
@@ -165,4 +165,4 @@ Plans:
 | 14. Partner Application Workflow | 3/3 | Complete    | 2026-03-24 | - |
 | 15. Amenities Owner UI & Guest Display | 2/2 | Complete    | 2026-03-24 | - |
 | 16. Itinerary Builder | 3/3 | Complete    | 2026-03-24 | - |
-| 17. Split Payments | v1.2 | 0/2 | Not started | - |
+| 17. Split Payments | 1/2 | In Progress|  | - |

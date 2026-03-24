@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 16-02-PLAN.md
-last_updated: "2026-03-24T15:37:03.123Z"
+stopped_at: Completed 17-01-PLAN.md
+last_updated: "2026-03-24T16:21:53.429Z"
 last_activity: "2026-03-24 — 16-02 complete: FullCalendar integration, itinerary Server Actions, ItineraryCalendar/AddEventDialog/ActivityPicker, booking page link"
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 17
+  completed_plans: 16
   percent: 98
 ---
 
@@ -72,6 +72,9 @@ Progress: [██████████] 98%
 - [Phase 16-01]: property_activities RLS uses EXISTS subquery on properties.owner_id — no extra verification query in Server Actions
 - [Phase 16]: Pure helpers (isEventDateInRange, isDeadlinePassed) moved to itinerary-event.ts — Next.js 'use server' requires all exports to be async functions
 - [Phase 16]: 400ms debounced auto-save via useTransition — optimistic UI without blocking re-renders
+- [Phase 17-split-payments]: saveSplits validates sum in cents (Math.round * 100) not floats — handles 0.1+0.2 edge case
+- [Phase 17-split-payments]: Webhook returns early after split update — prevents re-confirming already-confirmed booking
+- [Phase 17-split-payments]: centsEqual exported from validations (not Server Actions) so tests can import without 'use server' context issues
 
 ### Blockers/Concerns
 
@@ -86,6 +89,6 @@ Progress: [██████████] 98%
 
 ## Session Continuity
 
-Last session: 2026-03-24T15:06:05.652Z
-Stopped at: Completed 16-02-PLAN.md
+Last session: 2026-03-24T16:21:47.331Z
+Stopped at: Completed 17-01-PLAN.md
 Resume file: None

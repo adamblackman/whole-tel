@@ -47,8 +47,8 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 - [x] **PAY-01**: Guest registration requires full name, email, and phone for all attendees 18+
 - [x] **PAY-02**: Group lead can add attendees via email/username or enter details manually
-- [ ] **PAY-03**: Group lead can divide payment and adjust split amounts per person
-- [ ] **PAY-04**: Each guest receives individual Stripe payment link for their share
+- [x] **PAY-03**: Group lead can divide payment and adjust split amounts per person
+- [x] **PAY-04**: Each guest receives individual Stripe payment link for their share
 - [x] **PAY-05**: First property payment due within 36 hours of booking
 - [x] **PAY-06**: Activity/itinerary booking deadline: 30 days before check-in OR 7 days after booking (whichever comes first)
 - [x] **PAY-07**: Hotel tax declaration: hotels must declare required taxes, otherwise Whole-Tel sends gross amount and hotel submits taxes from gross
@@ -120,8 +120,8 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | ITIN-05 | Phase 16 | Complete |
 | ITIN-06 | Phase 16 | Complete |
 | ITIN-07 | Phase 16 | Complete |
-| PAY-03 | Phase 17 | Pending |
-| PAY-04 | Phase 17 | Pending |
+| PAY-03 | Phase 17 | Complete |
+| PAY-04 | Phase 17 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 33 total
