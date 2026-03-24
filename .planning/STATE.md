@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Amenities, Calendar & Client Refinements
 status: executing
-stopped_at: Completed 12-04-PLAN.md
-last_updated: "2026-03-24T03:40:14.259Z"
-last_activity: "2026-03-23 — 12-01 complete: homepage branding copy overhauled, TakeoverSteps created, DestinationCards split"
+stopped_at: Completed 13-01-PLAN.md
+last_updated: "2026-03-24T04:13:17Z"
+last_activity: "2026-03-24 — 13-01 complete: guest registration deadlines schema migration, expired status, atomic RPC"
 progress:
   total_phases: 6
   completed_phases: 1
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Groups can find, customize, and book a Whole-Tel with unique local add-on experiences and seamless group coordination in a single flow.
-**Current focus:** Phase 12 — Branding, Copy & Amenities Schema
+**Current focus:** Phase 13 — Guest Registration & Payment Deadlines
 
 ## Current Position
 
-Phase: 12 of 17 (Branding, Copy & Amenities Schema)
+Phase: 13 of 17 (Guest Registration & Payment Deadlines)
 Plan: 01 complete (of 4 planned)
 Status: In progress
-Last activity: 2026-03-23 — 12-01 complete: homepage branding copy overhauled, TakeoverSteps created, DestinationCards split
+Last activity: 2026-03-24 — 13-01 complete: guest registration deadlines schema migration, expired status, atomic RPC
 
 Progress: [██████████] 95%
 
@@ -56,11 +56,17 @@ Progress: [██████████] 95%
 
 ### Blockers/Concerns
 
-- Phase 13 (deadline enforcement): Confirm Supabase plan tier supports pg_cron before designing cron approach; if not, use Vercel Cron
+- Phase 15 (amenities): Read AmenityList.tsx before any schema migration — existing JSONB shape is unconfirmed and may need live data migration
+- [Phase 13-01]: increment_booking_guest_count uses SECURITY DEFINER SQL RPC for atomic guest_count increment with max_guests guard — fixes STATE.md noted race condition
+- [Phase 13-01]: Deadline backfill uses WHERE payment_deadline IS NULL guard — idempotent, safe for existing pending bookings
+- [Phase 13-01]: GiST exclusion index unchanged — existing WHERE status='confirmed' partial filter already excludes expired bookings from date-range blocking
+
+### Blockers/Concerns
+
 - Phase 15 (amenities): Read AmenityList.tsx before any schema migration — existing JSONB shape is unconfirmed and may need live data migration
 
 ## Session Continuity
 
-Last session: 2026-03-24T03:36:23.097Z
-Stopped at: Completed 12-04-PLAN.md
+Last session: 2026-03-24T04:13:17Z
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None

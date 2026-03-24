@@ -45,14 +45,14 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 
 ### Payment & Booking
 
-- [ ] **PAY-01**: Guest registration requires full name, email, and phone for all attendees 18+
+- [x] **PAY-01**: Guest registration requires full name, email, and phone for all attendees 18+
 - [ ] **PAY-02**: Group lead can add attendees via email/username or enter details manually
 - [ ] **PAY-03**: Group lead can divide payment and adjust split amounts per person
 - [ ] **PAY-04**: Each guest receives individual Stripe payment link for their share
-- [ ] **PAY-05**: First property payment due within 36 hours of booking
-- [ ] **PAY-06**: Activity/itinerary booking deadline: 30 days before check-in OR 7 days after booking (whichever comes first)
+- [x] **PAY-05**: First property payment due within 36 hours of booking
+- [x] **PAY-06**: Activity/itinerary booking deadline: 30 days before check-in OR 7 days after booking (whichever comes first)
 - [x] **PAY-07**: Hotel tax declaration: hotels must declare required taxes, otherwise Whole-Tel sends gross amount and hotel submits taxes from gross
-- [ ] **PAY-08**: Payment deadline enforcement (expired unpaid bookings auto-cancel)
+- [x] **PAY-08**: Payment deadline enforcement (expired unpaid bookings auto-cancel)
 - [x] **PAY-09**: Per-person cost breakdown displayed on booking confirmation
 
 ## Future Requirements
@@ -100,11 +100,11 @@ Requirements for milestone v1.2: Amenities, Calendar & Client Refinements.
 | AMEN-01 | Phase 12 | Complete |
 | PAY-07 | Phase 12 | Complete |
 | PAY-09 | Phase 12 | Complete |
-| PAY-01 | Phase 13 | Pending |
+| PAY-01 | Phase 13 | Complete |
 | PAY-02 | Phase 13 | Pending |
-| PAY-05 | Phase 13 | Pending |
-| PAY-06 | Phase 13 | Pending |
-| PAY-08 | Phase 13 | Pending |
+| PAY-05 | Phase 13 | Complete |
+| PAY-06 | Phase 13 | Complete |
+| PAY-08 | Phase 13 | Complete |
 | PART-01 | Phase 14 | Pending |
 | PART-02 | Phase 14 | Pending |
 | PART-03 | Phase 14 | Pending |

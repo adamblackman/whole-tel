@@ -77,7 +77,7 @@ Plans:
   2. Booking detail view displays the first-payment deadline (36 hours after booking) and activity booking deadline (30 days before check-in OR 7 days after booking, whichever is first)
   3. Unpaid bookings that miss the 36-hour deadline are automatically cancelled and property dates released
   4. Per-person cost breakdown is visible on booking confirmation
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 13-01-PLAN.md — Database migration: deadline columns, status constraint, registration columns, atomic increment RPC
@@ -143,7 +143,7 @@ Plans:
 | 10. Photo Management | v1.1 | 4/4 | Complete | 2026-03-08 |
 | 11. Booking Enhancements | v1.1 | 2/2 | Complete | 2026-03-08 |
 | 12. Branding, Copy & Amenities Schema | 4/4 | Complete    | 2026-03-24 | - |
-| 13. Guest Registration & Payment Deadlines | v1.2 | 0/3 | Not started | - |
+| 13. Guest Registration & Payment Deadlines | 1/3 | In Progress|  | - |
 | 14. Partner Application Workflow | v1.2 | 0/TBD | Not started | - |
 | 15. Amenities Owner UI & Guest Display | v1.2 | 0/TBD | Not started | - |
 | 16. Itinerary Builder | v1.2 | 0/TBD | Not started | - |
