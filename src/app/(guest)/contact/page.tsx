@@ -2,7 +2,7 @@ import { Mail } from 'lucide-react'
 import { ContactForm } from '@/components/contact/ContactForm'
 
 export const metadata = {
-  title: 'Contact Us | Whole-Tel',
+  title: 'Contact Us | Whole-Tel\u2122',
 }
 
 export default function ContactPage() {

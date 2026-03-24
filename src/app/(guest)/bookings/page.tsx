@@ -208,7 +208,7 @@ export default async function BookingsPage({
               href="/properties"
               className="text-brand-teal hover:underline"
             >
-              Browse Hotels
+              Browse Whole-Tels&trade;
             </Link>{' '}
             to plan your next getaway
           </p>

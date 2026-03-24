@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Whole-Tel | All-Inclusive Group Hotels",
+    default: "Whole-Tel | Custom-Inclusive Group Getaways",
     template: "%s | Whole-Tel",
   },
-  description: "Book hand-picked all-inclusive hotels for group travel in Cabo, Puerto Vallarta, and Miami. One booking, one crew, one unforgettable trip.",
+  description: "Book hand-picked Custom-Inclusive villas for group travel in Cabo and Puerto Vallarta. One booking, one crew, one unforgettable trip.",
   openGraph: {
-    title: "Whole-Tel | All-Inclusive Group Hotels",
-    description: "Hand-picked all-inclusive hotels with curated experiences for unforgettable group trips.",
+    title: "Whole-Tel | Custom-Inclusive Group Getaways",
+    description: "Hand-picked Custom-Inclusive villas with curated experiences for unforgettable group trips.",
     siteName: "Whole-Tel",
   },
 };

@@ -69,7 +69,7 @@ export function LoginForm({ message, returnTo }: { message?: string; returnTo?: 
           )}
         </form>
         <p className="text-sm text-center text-muted-foreground mt-4">
-          New to Whole-Tel?{' '}
+          New to Whole-Tel&trade;?{' '}
           <a href="/signup" className="underline">
             Create account
           </a>

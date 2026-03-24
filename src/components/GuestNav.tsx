@@ -28,11 +28,11 @@ export async function GuestNav() {
     <header className="border-b border-border bg-background">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-brand-teal font-bold text-xl">
-          Whole-Tel
+          Whole-Tel&trade;
         </Link>
         <nav className="flex items-center gap-2">
           <Button variant="ghost" asChild>
-            <Link href="/properties">Browse Hotels</Link>
+            <Link href="/properties">Browse Whole-Tels&trade;</Link>
           </Button>
           {user ? (
             <>

@@ -8,7 +8,6 @@ const DESTINATIONS = [
   { label: 'All', value: '' },
   { label: 'Cabo', value: 'Cabo San Lucas' },
   { label: 'Puerto Vallarta', value: 'Puerto Vallarta' },
-  { label: 'Miami', value: 'Miami' },
 ]
 
 interface DestinationFilterProps {

@@ -30,7 +30,7 @@ export function SignupForm({ returnTo }: { returnTo?: string }) {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Create your account</CardTitle>
-        <CardDescription>Join Whole-Tel to start booking</CardDescription>
+        <CardDescription>Join Whole-Tel&trade; to start booking</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
