@@ -250,8 +250,8 @@ export function ItineraryCalendar({
         </div>
       )}
 
-      {/* FullCalendar */}
-      <div className="rounded-xl border bg-card overflow-hidden">
+      {/* FullCalendar — styled via .itinerary-fc in globals.css */}
+      <div className="itinerary-fc rounded-xl border border-border bg-card overflow-hidden shadow-sm">
         <FullCalendar
           ref={calendarRef}
           plugins={[timeGridPlugin, interactionPlugin, dayGridPlugin]}
