@@ -45,6 +45,15 @@ function addMinutes(hhmm: string, durationMin: number, cap: string): string {
   return `${String(rh).padStart(2, '0')}:${String(rm).padStart(2, '0')}`
 }
 
+function parseSlots(raw: unknown): { start: string; end: string }[] {
+  if (Array.isArray(raw)) return raw
+  if (typeof raw === 'string') {
+    try { const parsed = JSON.parse(raw); return Array.isArray(parsed) ? parsed : [] }
+    catch { return [] }
+  }
+  return []
+}
+
 export function ActivityPicker({
   open,
   onOpenChange,
@@ -54,8 +63,14 @@ export function ActivityPicker({
 }: ActivityPickerProps) {
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null)
 
+  // Normalize available_slots (may arrive as JSON string from Supabase)
+  const normalized = activities.map((a) => ({
+    ...a,
+    available_slots: parseSlots(a.available_slots),
+  }))
+
   // Only show experiences that have time slots configured
-  const schedulable = activities.filter((a) => a.available_slots.length > 0 && a.duration_min)
+  const schedulable = normalized.filter((a) => a.available_slots.length > 0 && a.duration_min)
 
   const handleOpenChange = (val: boolean) => {
     if (!val) setSelectedActivityId(null)
