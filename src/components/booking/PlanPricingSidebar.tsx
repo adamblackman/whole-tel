@@ -21,6 +21,7 @@ interface PlanPricingSidebarProps {
   selectedAddOns: PricingInput['selectedAddOns']
   activities: AddOn[]
   selectedActivityIds: string[]
+  activityCounts: Record<string, number>
 }
 
 function formatPrice(price: number, unit: string): string {
@@ -40,6 +41,7 @@ export function PlanPricingSidebar({
   selectedAddOns,
   activities,
   selectedActivityIds,
+  activityCounts,
 }: PlanPricingSidebarProps) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -94,10 +96,15 @@ export function PlanPricingSidebar({
                       : 'border-border'
                   }`}
                 >
-                  {/* Added indicator */}
+                  {/* Added indicator with count */}
                   {isAdded && (
-                    <div className="absolute -top-1.5 -right-1.5 bg-brand-teal text-white rounded-full p-0.5">
+                    <div className="absolute -top-1.5 -right-1.5 bg-brand-teal text-white rounded-full flex items-center gap-0.5 px-1.5 py-0.5">
                       <Check className="h-3 w-3" />
+                      {(activityCounts[activity.id] ?? 0) > 1 && (
+                        <span className="text-[10px] font-bold leading-none">
+                          &times;{activityCounts[activity.id]}
+                        </span>
+                      )}
                     </div>
                   )}
 

@@ -85,7 +85,7 @@ export async function createPendingBooking(input: {
     .maybeSingle()
 
   if (existing) {
-    const { error: updateError } = await supabase
+    const { data: updated, error: updateError } = await supabase
       .from('bookings')
       .update({
         check_in: input.checkIn,
@@ -97,8 +97,15 @@ export async function createPendingBooking(input: {
         total: breakdown.total,
       })
       .eq('id', existing.id)
-    if (updateError) throw new Error('Failed to update booking')
-    redirect(`/bookings/${existing.id}/plan`)
+      .select('id')
+      .single()
+
+    if (updateError || !updated) {
+      // RLS may silently block updates — delete stale booking and fall through to insert
+      await supabase.from('bookings').delete().eq('id', existing.id)
+    } else {
+      redirect(`/bookings/${updated.id}/plan`)
+    }
   }
 
   const { data: booking, error: bookingError } = await supabase

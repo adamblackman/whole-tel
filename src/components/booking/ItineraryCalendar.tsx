@@ -64,7 +64,7 @@ interface ItineraryCalendarProps {
   initialEvents: ItineraryEvent[]
   activities: AddOn[]
   isLocked: boolean
-  onEventsChange?: (activityIds: string[]) => void
+  onEventsChange?: (activityIds: string[], allActivityIds: string[]) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -103,10 +103,10 @@ export function ItineraryCalendar({
   // Notify parent of activity changes (outside render cycle to avoid setState-during-render)
   useEffect(() => {
     if (!onEventsChange) return
-    const ids = events
+    const allIds = events
       .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
       .filter((id): id is string => id != null)
-    onEventsChange([...new Set(ids)])
+    onEventsChange([...new Set(allIds)], allIds)
   }, [events, onEventsChange])
 
   // Debounced auto-save (400ms)
@@ -151,6 +151,27 @@ export function ItineraryCalendar({
     [isLocked, bookingId, scheduleSave]
   )
 
+  // Check if a new event overlaps with existing events on the same day
+  const hasOverlap = useCallback(
+    (eventDate: string, startTime: string, endTime: string): string | null => {
+      const sameDay = events.filter(e => {
+        const start = e.start as string | undefined
+        return start?.startsWith(eventDate)
+      })
+      for (const existing of sameDay) {
+        const existStart = (existing.start as string).split('T')[1]
+        const existEnd = (existing.end as string).split('T')[1]
+        if (!existStart || !existEnd) continue
+        // Overlap: new starts before existing ends AND new ends after existing starts
+        if (startTime < existEnd && endTime > existStart) {
+          return existing.title as string
+        }
+      }
+      return null
+    },
+    [events]
+  )
+
   // Add event (from either dialog) — optimistic + auto-save
   const handleAddEvent = useCallback(
     (
@@ -164,6 +185,13 @@ export function ItineraryCalendar({
       },
       id: string
     ) => {
+      // Block overlapping events
+      const conflicting = hasOverlap(newEvent.eventDate, newEvent.startTime, newEvent.endTime)
+      if (conflicting) {
+        setSaveError(`Time conflict with "${conflicting}". Choose a different time.`)
+        return
+      }
+
       const calEvent: EventInput = {
         id,
         title: newEvent.title,
@@ -197,7 +225,7 @@ export function ItineraryCalendar({
         })
       )
     },
-    [bookingId, scheduleSave]
+    [bookingId, scheduleSave, hasOverlap]
   )
 
   return (

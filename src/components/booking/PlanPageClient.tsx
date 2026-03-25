@@ -48,9 +48,15 @@ export function PlanPageClient({
   ]
 
   const [selectedActivityIds, setSelectedActivityIds] = useState<string[]>(initialActivityIds)
+  const [activityCounts, setActivityCounts] = useState<Record<string, number>>({})
 
-  const handleEventsChange = useCallback((activityIds: string[]) => {
+  const handleEventsChange = useCallback((activityIds: string[], allActivityIds: string[]) => {
     setSelectedActivityIds(activityIds)
+    const counts: Record<string, number> = {}
+    for (const id of allActivityIds) {
+      counts[id] = (counts[id] ?? 0) + 1
+    }
+    setActivityCounts(counts)
   }, [])
 
   const selectedAddOns = allAddOns.filter((a) => selectedActivityIds.includes(a.id))
@@ -81,6 +87,7 @@ export function PlanPageClient({
           selectedAddOns={selectedAddOns}
           activities={activities}
           selectedActivityIds={selectedActivityIds}
+          activityCounts={activityCounts}
         />
       </div>
     </div>
