@@ -32,7 +32,7 @@ export async function createPendingBooking(input: {
   checkIn: string
   checkOut: string
   guestCount: number
-}): Promise<string> {
+}): Promise<void> {
   const user = await verifySession()
 
   const parsed = bookingInputSchema.safeParse(input)
@@ -97,9 +97,8 @@ export async function createPendingBooking(input: {
         total: breakdown.total,
       })
       .eq('id', existing.id)
-
     if (updateError) throw new Error('Failed to update booking')
-    return existing.id
+    redirect(`/bookings/${existing.id}/plan`)
   }
 
   const { data: booking, error: bookingError } = await supabase
@@ -129,7 +128,7 @@ export async function createPendingBooking(input: {
     })
     .eq('id', booking.id)
 
-  return booking.id
+  redirect(`/bookings/${booking.id}/plan`)
 }
 
 /**

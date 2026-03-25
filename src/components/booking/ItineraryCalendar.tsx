@@ -239,8 +239,9 @@ export function ItineraryCalendar({
           navLinkDayClick="timeGridDay"
           events={events}
           allDaySlot={false}
-          slotMinTime="06:00:00"
+          slotMinTime="00:00:00"
           slotMaxTime="24:00:00"
+          scrollTime="08:00:00"
           height="auto"
           dateClick={isLocked ? undefined : handleDateClick}
           eventClick={isLocked ? undefined : handleEventClick}

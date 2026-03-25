@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { createPendingBooking } from '@/lib/actions/bookings'
 import { calculatePricing } from '@/lib/pricing'
 import type { DateRange } from 'react-day-picker'
@@ -35,7 +34,6 @@ export function PricingWidget({
   const [guestCount, setGuestCount] = useState(1)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
 
   const nights =
     dateRange?.from && dateRange?.to
@@ -69,13 +67,14 @@ export function PricingWidget({
         const fmtDate = (d: Date) =>
           `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 
-        const bookingId = await createPendingBooking({
+        // Server action redirects to /bookings/[id]/plan via redirect()
+        // This ensures a fresh server render (no stale cache)
+        await createPendingBooking({
           propertyId,
           checkIn: fmtDate(dateRange.from!),
           checkOut: fmtDate(dateRange.to!),
           guestCount,
         })
-        router.push(`/bookings/${bookingId}/plan`)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
       }
