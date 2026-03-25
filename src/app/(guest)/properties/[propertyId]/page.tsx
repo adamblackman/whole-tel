@@ -214,7 +214,8 @@ export default async function PropertyListingPage({
             <>
               <Separator />
               <div>
-                <h2 className="text-xl font-semibold mb-4">Unique Experiences</h2>
+                <h2 className="text-xl font-semibold mb-1">Unique Experiences</h2>
+                <p className="text-sm text-muted-foreground mb-4">Some of the available experiences from this property:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {addOns.map((addOn) => (
                     <AddOnCard key={addOn.id} addOn={addOn} />

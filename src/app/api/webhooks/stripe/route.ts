@@ -107,7 +107,7 @@ async function sendBookingConfirmationEmail(bookingId: string, guestId: string) 
   })
 
   await getResend().emails.send({
-    from: 'Whole-Tel <bookings@whole-tel.com>',
+    from: 'Whole-Tel <onboarding@resend.dev>',
     to: user.email,
     subject: `Booking Confirmed - ${property.name}`,
     react: BookingConfirmedEmail({

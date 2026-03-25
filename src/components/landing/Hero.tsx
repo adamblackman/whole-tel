@@ -71,7 +71,7 @@ export async function Hero() {
 
       {/* Centered content */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center text-white">
-        <h1 className="animate-in fade-in duration-700 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="animate-in fade-in duration-700 flex flex-col gap-y-3 text-4xl font-bold tracking-tight sm:gap-y-4 sm:text-5xl md:gap-y-5 md:text-6xl">
           <span className="block">Your Own Private Resort.</span>
           <span className="block">No Strangers. No Compromises.</span>
           <span className="block">

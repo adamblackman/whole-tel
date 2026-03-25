@@ -27,7 +27,7 @@ export async function sendContactEmail(
 
   try {
     await getResend().emails.send({
-      from: 'Whole-Tel <noreply@whole-tel.com>',
+      from: 'Whole-Tel <onboarding@resend.dev>',
       to: 'adam@whole-tel.com',
       replyTo: email,
       subject: `Contact form: ${name}`,
@@ -35,7 +35,8 @@ export async function sendContactEmail(
     })
 
     return { success: 'Message sent! We will get back to you soon.' }
-  } catch {
+  } catch (err) {
+    console.error('[contact] Failed to send email:', err)
     return { error: 'Failed to send message. Please try again.' }
   }
 }

@@ -111,7 +111,7 @@ export async function sendInvitation(input: {
 
   // Send email via Resend
   await getResend().emails.send({
-    from: 'Whole-Tel <bookings@whole-tel.com>',
+    from: 'Whole-Tel <onboarding@resend.dev>',
     to: parsed.data.email,
     subject: `${inviterName} invited you to stay at ${property.name}`,
     react: BookingInvitationEmail({
