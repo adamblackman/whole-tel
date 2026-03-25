@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { createBookingAndCheckout } from '@/lib/actions/bookings'
+import { useRouter } from 'next/navigation'
+import { createPendingBooking } from '@/lib/actions/bookings'
 import { calculatePricing } from '@/lib/pricing'
 import type { DateRange } from 'react-day-picker'
 import { Minus, Plus } from 'lucide-react'
@@ -34,6 +35,7 @@ export function PricingWidget({
   const [guestCount, setGuestCount] = useState(1)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const nights =
     dateRange?.from && dateRange?.to
@@ -62,12 +64,13 @@ export function PricingWidget({
 
     startTransition(async () => {
       try {
-        await createBookingAndCheckout({
+        const bookingId = await createPendingBooking({
           propertyId,
           checkIn: dateRange.from!.toISOString().slice(0, 10),
           checkOut: dateRange.to!.toISOString().slice(0, 10),
           guestCount,
         })
+        router.push(`/bookings/${bookingId}/plan`)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
       }

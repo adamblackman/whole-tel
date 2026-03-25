@@ -21,27 +21,20 @@ function computeActivityDeadline(checkIn: string, createdAt: Date): string {
 }
 
 /**
- * Creates a pending booking and redirects to Stripe Checkout.
+ * Creates a pending booking (no Stripe session).
+ * Returns the booking ID for use in the itinerary planner.
  *
- * Experiences are NOT included at booking time — guests add them
- * post-booking via the itinerary calendar.
- *
- * Security model:
- * - verifySession() validates JWT against Supabase auth server (redirects if no session)
- * - All prices fetched server-side -- client-submitted prices are never trusted
- * - redirect() called OUTSIDE try/catch -- Next.js redirect throws internally
- * - Uses shared calculatePricing() for exact price parity with PricingWidget
+ * If a pending booking already exists for this user+property, it is
+ * updated instead of creating a duplicate.
  */
-export async function createBookingAndCheckout(input: {
+export async function createPendingBooking(input: {
   propertyId: string
   checkIn: string
   checkOut: string
   guestCount: number
-}): Promise<void> {
-  // Step 1: Validate auth -- redirects to /login if no valid session
+}): Promise<string> {
   const user = await verifySession()
 
-  // Step 2: Parse and validate input with Zod schema
   const parsed = bookingInputSchema.safeParse(input)
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid booking input')
@@ -49,7 +42,6 @@ export async function createBookingAndCheckout(input: {
 
   const supabase = await createClient()
 
-  // Step 3: Fetch property server-side for authoritative pricing
   const { data: property, error: propError } = await supabase
     .from('properties')
     .select('id, name, nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate, tax_rate')
@@ -58,12 +50,10 @@ export async function createBookingAndCheckout(input: {
 
   if (propError || !property) throw new Error('Property not found')
 
-  // Step 4: Validate guest count server-side
   if (input.guestCount < 1 || input.guestCount > property.max_guests) {
     throw new Error('Invalid guest count')
   }
 
-  // Step 5: Validate date range
   const checkInDate = new Date(input.checkIn)
   const checkOutDate = new Date(input.checkOut)
   const nights = Math.ceil(
@@ -71,7 +61,6 @@ export async function createBookingAndCheckout(input: {
   )
   if (nights < 1) throw new Error('Invalid date range')
 
-  // Step 6: Calculate totals (no add-ons at booking time)
   const breakdown = calculatePricing({
     nightlyRate: Number(property.nightly_rate),
     cleaningFee: Number(property.cleaning_fee),
@@ -83,135 +72,261 @@ export async function createBookingAndCheckout(input: {
     selectedAddOns: [],
   })
 
-  // Subtotal = accommodation + surcharge
   const subtotal = breakdown.accommodationSubtotal + breakdown.perPersonSurcharge
-  const processingFee = breakdown.processingFee
-  const total = breakdown.total
 
-  // Step 7: Insert booking, create Stripe session
-  // redirect() MUST be outside try/catch -- it throws internally in Next.js
-  let stripeUrl: string
+  // Check for existing pending booking for same property/user — reuse instead of creating duplicates
+  const { data: existing } = await supabase
+    .from('bookings')
+    .select('id')
+    .eq('property_id', input.propertyId)
+    .eq('guest_id', user.id)
+    .eq('status', 'pending')
+    .limit(1)
+    .maybeSingle()
 
-  try {
-    // Insert pending booking
-    const { data: booking, error: bookingError } = await supabase
+  if (existing) {
+    const { error: updateError } = await supabase
       .from('bookings')
-      .insert({
-        property_id: input.propertyId,
-        guest_id: user.id,
+      .update({
         check_in: input.checkIn,
         check_out: input.checkOut,
         guest_count: input.guestCount,
         subtotal,
         add_ons_total: 0,
-        processing_fee: processingFee,
-        total,
-        status: 'pending',
+        processing_fee: breakdown.processingFee,
+        total: breakdown.total,
       })
-      .select('id, created_at')
-      .single()
+      .eq('id', existing.id)
 
-    if (bookingError || !booking) throw new Error('Failed to create booking')
+    if (updateError) throw new Error('Failed to update booking')
+    return existing.id
+  }
 
-    // Build Stripe line items
-    const lineItems = [
-      // Accommodation (nightly rate * nights)
-      {
-        price_data: {
-          currency: 'usd',
-          unit_amount: Math.round(breakdown.accommodationSubtotal * 100),
-          product_data: {
-            name: `${property.name} -- ${nights} night${nights !== 1 ? 's' : ''}`,
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .insert({
+      property_id: input.propertyId,
+      guest_id: user.id,
+      check_in: input.checkIn,
+      check_out: input.checkOut,
+      guest_count: input.guestCount,
+      subtotal,
+      add_ons_total: 0,
+      processing_fee: breakdown.processingFee,
+      total: breakdown.total,
+      status: 'pending',
+    })
+    .select('id, created_at')
+    .single()
+
+  if (bookingError || !booking) throw new Error('Failed to create booking')
+
+  const bookingCreatedAt = new Date(booking.created_at)
+  await supabase
+    .from('bookings')
+    .update({
+      payment_deadline: new Date(bookingCreatedAt.getTime() + 36 * 3600 * 1000).toISOString(),
+    })
+    .eq('id', booking.id)
+
+  return booking.id
+}
+
+/**
+ * Fetches a pending booking + its itinerary events, recalculates pricing
+ * with experiences included, creates a Stripe Checkout session, and redirects.
+ *
+ * Security model:
+ * - verifySession() validates JWT against Supabase auth server
+ * - All prices fetched server-side -- client-submitted prices are never trusted
+ * - redirect() called OUTSIDE try/catch -- Next.js redirect throws internally
+ * - Uses shared calculatePricing() for exact price parity with PricingWidget
+ */
+export async function checkoutBooking(bookingId: string): Promise<void> {
+  const user = await verifySession()
+  const supabase = await createClient()
+
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .select('id, property_id, check_in, check_out, guest_count, status')
+    .eq('id', bookingId)
+    .eq('guest_id', user.id)
+    .eq('status', 'pending')
+    .single()
+
+  if (bookingError || !booking) throw new Error('Booking not found or already paid')
+
+  const { data: property, error: propError } = await supabase
+    .from('properties')
+    .select('id, name, nightly_rate, cleaning_fee, max_guests, guest_threshold, per_person_rate, tax_rate')
+    .eq('id', booking.property_id)
+    .single()
+
+  if (propError || !property) throw new Error('Property not found')
+
+  const { data: events } = await supabase
+    .from('itinerary_events')
+    .select('activity_id')
+    .eq('booking_id', bookingId)
+    .not('activity_id', 'is', null)
+
+  // Per-unique-activity pricing (not per-occurrence)
+  const activityIds = [...new Set((events ?? []).map(e => e.activity_id).filter(Boolean))] as string[]
+
+  let selectedAddOns: {
+    id: string
+    name: string
+    price: number
+    pricingUnit: 'per_person' | 'per_booking'
+    includedGuests: number | null
+    perPersonAbove: number | null
+  }[] = []
+
+  if (activityIds.length > 0) {
+    const { data: addOns } = await supabase
+      .from('add_ons')
+      .select('id, name, price, pricing_unit, included_guests, per_person_above')
+      .in('id', activityIds)
+
+    selectedAddOns = (addOns ?? []).map(a => ({
+      id: a.id,
+      name: a.name,
+      price: Number(a.price),
+      pricingUnit: a.pricing_unit as 'per_person' | 'per_booking',
+      includedGuests: a.included_guests != null ? Number(a.included_guests) : null,
+      perPersonAbove: a.per_person_above != null ? Number(a.per_person_above) : null,
+    }))
+  }
+
+  const nights = Math.ceil(
+    (new Date(booking.check_out).getTime() - new Date(booking.check_in).getTime()) / 86400000
+  )
+
+  const breakdown = calculatePricing({
+    nightlyRate: Number(property.nightly_rate),
+    cleaningFee: Number(property.cleaning_fee),
+    nights,
+    guestCount: booking.guest_count,
+    guestThreshold: property.guest_threshold != null ? Number(property.guest_threshold) : null,
+    perPersonRate: property.per_person_rate != null ? Number(property.per_person_rate) : null,
+    taxRate: property.tax_rate != null ? Number(property.tax_rate) : null,
+    selectedAddOns,
+  })
+
+  const subtotal = breakdown.accommodationSubtotal + breakdown.perPersonSurcharge
+  const total = breakdown.total
+
+  await supabase
+    .from('bookings')
+    .update({
+      subtotal,
+      add_ons_total: breakdown.addOnsTotal,
+      processing_fee: breakdown.processingFee,
+      total,
+    })
+    .eq('id', bookingId)
+
+  const lineItems = [
+    {
+      price_data: {
+        currency: 'usd',
+        unit_amount: Math.round(breakdown.accommodationSubtotal * 100),
+        product_data: {
+          name: `${property.name} -- ${nights} night${nights !== 1 ? 's' : ''}`,
+        },
+      },
+      quantity: 1,
+    },
+    ...(breakdown.perPersonSurcharge > 0
+      ? [{
+          price_data: {
+            currency: 'usd',
+            unit_amount: Math.round(breakdown.perPersonSurcharge * 100),
+            product_data: {
+              name: `Per-person surcharge (${breakdown.surchargeDetail!.extraGuests} extra guest${breakdown.surchargeDetail!.extraGuests !== 1 ? 's' : ''})`,
+            },
           },
-        },
-        quantity: 1,
+          quantity: 1,
+        }]
+      : []),
+    {
+      price_data: {
+        currency: 'usd',
+        unit_amount: Math.round(breakdown.cleaningFee * 100),
+        product_data: { name: 'Cleaning fee' },
       },
-      // Per-person surcharge (if applicable)
-      ...(breakdown.perPersonSurcharge > 0
-        ? [
-            {
-              price_data: {
-                currency: 'usd',
-                unit_amount: Math.round(breakdown.perPersonSurcharge * 100),
-                product_data: {
-                  name: `Per-person surcharge (${breakdown.surchargeDetail!.extraGuests} extra guest${breakdown.surchargeDetail!.extraGuests !== 1 ? 's' : ''})`,
-                },
-              },
-              quantity: 1,
+      quantity: 1,
+    },
+    ...breakdown.addOnItems.map(item => ({
+      price_data: {
+        currency: 'usd',
+        unit_amount: Math.round(item.totalCost * 100),
+        product_data: { name: item.name },
+      },
+      quantity: 1,
+    })),
+    ...(breakdown.hotelTax > 0
+      ? [{
+          price_data: {
+            currency: 'usd',
+            unit_amount: Math.round(breakdown.hotelTax * 100),
+            product_data: {
+              name: `Hotel Tax (${((breakdown.taxRate ?? 0) * 100).toFixed(0)}%)`,
             },
-          ]
-        : []),
-      // Cleaning fee
-      {
-        price_data: {
-          currency: 'usd',
-          unit_amount: Math.round(breakdown.cleaningFee * 100),
-          product_data: { name: 'Cleaning fee' },
-        },
-        quantity: 1,
+          },
+          quantity: 1,
+        }]
+      : []),
+    {
+      price_data: {
+        currency: 'usd',
+        unit_amount: Math.round(breakdown.processingFee * 100),
+        product_data: { name: 'Processing fee' },
       },
-      // Hotel tax (if applicable)
-      ...(breakdown.hotelTax > 0
-        ? [
-            {
-              price_data: {
-                currency: 'usd',
-                unit_amount: Math.round(breakdown.hotelTax * 100),
-                product_data: {
-                  name: `Hotel Tax (${((breakdown.taxRate ?? 0) * 100).toFixed(0)}%)`,
-                },
-              },
-              quantity: 1,
-            },
-          ]
-        : []),
-      // Processing fee
-      {
-        price_data: {
-          currency: 'usd',
-          unit_amount: Math.round(processingFee * 100),
-          product_data: { name: 'Processing fee' },
-        },
-        quantity: 1,
-      },
-    ]
+      quantity: 1,
+    },
+  ]
 
-    // Derive origin for success/cancel URLs
-    const headerStore = await headers()
-    const origin =
-      headerStore.get('origin') ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      'http://localhost:3000'
+  const headerStore = await headers()
+  const origin =
+    headerStore.get('origin') ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'http://localhost:3000'
 
-    // Create Stripe Checkout Session
+  let stripeUrl: string
+
+  try {
     const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card', 'us_bank_account'],
       line_items: lineItems,
-      client_reference_id: booking.id,
-      metadata: { booking_id: booking.id },
+      client_reference_id: bookingId,
+      metadata: { booking_id: bookingId },
       customer_email: user.email ?? undefined,
       success_url: `${origin}/bookings?success=true`,
-      cancel_url: `${origin}/properties/${input.propertyId}`,
+      cancel_url: `${origin}/bookings/${bookingId}/plan`,
     })
 
     stripeUrl = session.url!
 
-    // Store Stripe checkout URL and compute deadlines before redirecting
-    const bookingCreatedAt = new Date(booking.created_at)
+    const { data: bk } = await supabase
+      .from('bookings')
+      .select('created_at')
+      .eq('id', bookingId)
+      .single()
+    const createdAt = new Date(bk?.created_at ?? new Date())
+
     await supabase
       .from('bookings')
       .update({
         stripe_checkout_url: session.url,
-        payment_deadline: new Date(bookingCreatedAt.getTime() + 36 * 3600 * 1000).toISOString(),
-        activity_deadline: computeActivityDeadline(input.checkIn, bookingCreatedAt),
+        activity_deadline: computeActivityDeadline(booking.check_in, createdAt),
       })
-      .eq('id', booking.id)
+      .eq('id', bookingId)
   } catch (err) {
-    console.error('Booking creation failed:', err)
-    throw new Error('Failed to create booking. Please try again.')
+    console.error('Checkout failed:', err)
+    throw new Error('Failed to create checkout session. Please try again.')
   }
 
-  // redirect() MUST be outside try/catch -- it throws internally
   redirect(stripeUrl)
 }
