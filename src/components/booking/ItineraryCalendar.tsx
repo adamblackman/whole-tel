@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useCallback, useRef } from 'react'
+import { useState, useTransition, useCallback, useRef, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin, { type DateClickArg } from '@fullcalendar/interaction'
@@ -99,6 +99,15 @@ export function ItineraryCalendar({
   const [isPending, startTransition] = useTransition()
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Notify parent of activity changes (outside render cycle to avoid setState-during-render)
+  useEffect(() => {
+    if (!onEventsChange) return
+    const ids = events
+      .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
+      .filter((id): id is string => id != null)
+    onEventsChange([...new Set(ids)])
+  }, [events, onEventsChange])
+
   // Debounced auto-save (400ms)
   const scheduleSave = useCallback(
     (fn: () => Promise<{ error?: string; id?: string }>) => {
@@ -135,19 +144,10 @@ export function ItineraryCalendar({
       if (!confirmed) return
 
       const eventId = arg.event.id
-      setEvents((prev) => {
-        const next = prev.filter((e) => e.id !== eventId)
-        if (onEventsChange) {
-          const ids = next
-            .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
-            .filter((id): id is string => id != null)
-          onEventsChange([...new Set(ids)])
-        }
-        return next
-      })
+      setEvents((prev) => prev.filter((e) => e.id !== eventId))
       scheduleSave(() => deleteItineraryEvent(bookingId, eventId))
     },
-    [isLocked, bookingId, scheduleSave, onEventsChange]
+    [isLocked, bookingId, scheduleSave]
   )
 
   // Add event (from either dialog) — optimistic + auto-save
@@ -173,16 +173,7 @@ export function ItineraryCalendar({
           isCustom: !newEvent.activityId,
         },
       }
-      setEvents((prev) => {
-        const next = [...prev, calEvent]
-        if (onEventsChange) {
-          const ids = next
-            .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
-            .filter((id): id is string => id != null)
-          onEventsChange([...new Set(ids)])
-        }
-        return next
-      })
+      setEvents((prev) => [...prev, calEvent])
 
       scheduleSave(() =>
         upsertItineraryEvent(bookingId, {
@@ -196,7 +187,7 @@ export function ItineraryCalendar({
         })
       )
     },
-    [bookingId, scheduleSave, onEventsChange]
+    [bookingId, scheduleSave]
   )
 
   return (
