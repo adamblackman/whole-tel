@@ -64,10 +64,15 @@ export function PricingWidget({
 
     startTransition(async () => {
       try {
+        // Format as YYYY-MM-DD in local timezone (not UTC — toISOString shifts dates)
+        const pad = (n: number) => String(n).padStart(2, '0')
+        const fmtDate = (d: Date) =>
+          `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+
         const bookingId = await createPendingBooking({
           propertyId,
-          checkIn: dateRange.from!.toISOString().slice(0, 10),
-          checkOut: dateRange.to!.toISOString().slice(0, 10),
+          checkIn: fmtDate(dateRange.from!),
+          checkOut: fmtDate(dateRange.to!),
           guestCount,
         })
         router.push(`/bookings/${bookingId}/plan`)

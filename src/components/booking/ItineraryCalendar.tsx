@@ -98,6 +98,7 @@ export function ItineraryCalendar({
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const calendarRef = useRef<FullCalendar>(null)
 
   // Notify parent of activity changes (outside render cycle to avoid setState-during-render)
   useEffect(() => {
@@ -175,6 +176,15 @@ export function ItineraryCalendar({
       }
       setEvents((prev) => [...prev, calEvent])
 
+      // Navigate to the event's date in day view so it's visible
+      const api = calendarRef.current?.getApi()
+      if (api) {
+        api.gotoDate(newEvent.eventDate)
+        if (api.view.type !== 'timeGridDay') {
+          api.changeView('timeGridDay', newEvent.eventDate)
+        }
+      }
+
       scheduleSave(() =>
         upsertItineraryEvent(bookingId, {
           id,
@@ -215,6 +225,7 @@ export function ItineraryCalendar({
       {/* FullCalendar */}
       <div className="rounded-xl border bg-card overflow-hidden">
         <FullCalendar
+          ref={calendarRef}
           plugins={[timeGridPlugin, interactionPlugin, dayGridPlugin]}
           initialView="timeGridDay"
           initialDate={checkIn}
@@ -224,6 +235,8 @@ export function ItineraryCalendar({
             center: 'title',
             right: 'timeGridDay,dayGridMonth',
           }}
+          navLinks
+          navLinkDayClick="timeGridDay"
           events={events}
           allDaySlot={false}
           slotMinTime="06:00:00"
