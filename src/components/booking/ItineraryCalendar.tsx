@@ -64,6 +64,7 @@ interface ItineraryCalendarProps {
   initialEvents: ItineraryEvent[]
   activities: AddOn[]
   isLocked: boolean
+  onEventsChange?: (activityIds: string[]) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -88,6 +89,7 @@ export function ItineraryCalendar({
   initialEvents,
   activities,
   isLocked,
+  onEventsChange,
 }: ItineraryCalendarProps) {
   const [events, setEvents] = useState<EventInput[]>(
     initialEvents.map(toCalendarEvent)
@@ -133,10 +135,19 @@ export function ItineraryCalendar({
       if (!confirmed) return
 
       const eventId = arg.event.id
-      setEvents((prev) => prev.filter((e) => e.id !== eventId))
+      setEvents((prev) => {
+        const next = prev.filter((e) => e.id !== eventId)
+        if (onEventsChange) {
+          const ids = next
+            .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
+            .filter((id): id is string => id != null)
+          onEventsChange([...new Set(ids)])
+        }
+        return next
+      })
       scheduleSave(() => deleteItineraryEvent(bookingId, eventId))
     },
-    [isLocked, bookingId, scheduleSave]
+    [isLocked, bookingId, scheduleSave, onEventsChange]
   )
 
   // Add event (from either dialog) — optimistic + auto-save
@@ -162,7 +173,16 @@ export function ItineraryCalendar({
           isCustom: !newEvent.activityId,
         },
       }
-      setEvents((prev) => [...prev, calEvent])
+      setEvents((prev) => {
+        const next = [...prev, calEvent]
+        if (onEventsChange) {
+          const ids = next
+            .map(e => (e.extendedProps as { activityId?: string | null })?.activityId)
+            .filter((id): id is string => id != null)
+          onEventsChange([...new Set(ids)])
+        }
+        return next
+      })
 
       scheduleSave(() =>
         upsertItineraryEvent(bookingId, {
@@ -176,7 +196,7 @@ export function ItineraryCalendar({
         })
       )
     },
-    [bookingId, scheduleSave]
+    [bookingId, scheduleSave, onEventsChange]
   )
 
   return (
