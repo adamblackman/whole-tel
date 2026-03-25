@@ -79,6 +79,8 @@ export function PlanPageClient({
           perPersonRate={perPersonRate}
           taxRate={taxRate}
           selectedAddOns={selectedAddOns}
+          activities={activities}
+          selectedActivityIds={selectedActivityIds}
         />
       </div>
     </div>
