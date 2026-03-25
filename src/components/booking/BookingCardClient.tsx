@@ -116,6 +116,16 @@ export function BookingCardClient({
           activityDeadline={activityDeadline}
           stripeCheckoutUrl={stripeCheckoutUrl}
         />
+        {status === 'pending' && (
+          <div className="pt-3">
+            <Button variant="outline" size="sm" className="text-xs h-8 gap-1.5" asChild>
+              <Link href={`/bookings/${bookingId}/plan`}>
+                <CalendarPlus className="h-3.5 w-3.5" />
+                Continue Planning
+              </Link>
+            </Button>
+          </div>
+        )}
         {status === 'confirmed' && (
           <div className="pt-3">
             <Button variant="outline" size="sm" className="text-xs h-8 gap-1.5" asChild>
