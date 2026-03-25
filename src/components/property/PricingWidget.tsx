@@ -9,16 +9,6 @@ import { Calendar } from '@/components/ui/calendar'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 
-interface AddOnItem {
-  id: string
-  name: string
-  description: string | null
-  price: number
-  pricing_unit: 'per_person' | 'per_booking'
-  includedGuests: number | null
-  perPersonAbove: number | null
-}
-
 interface PricingWidgetProps {
   nightlyRate: number
   cleaningFee: number
@@ -27,7 +17,6 @@ interface PricingWidgetProps {
   perPersonRate: number | null
   taxRate: number | null
   disabledDates: { from: Date; to: Date }[]
-  addOns: AddOnItem[]
   propertyId: string
 }
 
@@ -39,12 +28,10 @@ export function PricingWidget({
   perPersonRate,
   taxRate,
   disabledDates,
-  addOns,
   propertyId,
 }: PricingWidgetProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [guestCount, setGuestCount] = useState(1)
-  const [selectedAddOnIds, setSelectedAddOnIds] = useState<Set<string>>(new Set())
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
@@ -56,18 +43,6 @@ export function PricingWidget({
         )
       : 0
 
-  // Use shared pricing module for all calculations
-  const selectedAddOns = addOns
-    .filter((a) => selectedAddOnIds.has(a.id))
-    .map((a) => ({
-      id: a.id,
-      name: a.name,
-      price: a.price,
-      pricingUnit: a.pricing_unit,
-      includedGuests: a.includedGuests,
-      perPersonAbove: a.perPersonAbove,
-    }))
-
   const breakdown = calculatePricing({
     nightlyRate,
     cleaningFee,
@@ -76,7 +51,7 @@ export function PricingWidget({
     guestThreshold,
     perPersonRate,
     taxRate,
-    selectedAddOns,
+    selectedAddOns: [],
   })
 
   const perPerson = guestCount > 1 && nights > 0 ? breakdown.total / guestCount : null
@@ -92,20 +67,10 @@ export function PricingWidget({
           checkIn: dateRange.from!.toISOString().slice(0, 10),
           checkOut: dateRange.to!.toISOString().slice(0, 10),
           guestCount,
-          selectedAddOnIds: Array.from(selectedAddOnIds),
         })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
       }
-    })
-  }
-
-  const toggleAddOn = (id: string) => {
-    setSelectedAddOnIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
     })
   }
 
@@ -156,52 +121,6 @@ export function PricingWidget({
       </div>
       <p className="text-xs text-muted-foreground text-right mt-1">Max {maxGuests} guests</p>
 
-      {/* Add-on experience toggles */}
-      {addOns.length > 0 && (
-        <div className="mt-4">
-          <p className="text-sm font-medium mb-2">Experiences</p>
-          <div className="space-y-2">
-            {addOns.map((addOn) => {
-              const isSelected = selectedAddOnIds.has(addOn.id)
-              const hasTier = addOn.includedGuests != null && addOn.perPersonAbove != null
-              return (
-                <button
-                  key={addOn.id}
-                  type="button"
-                  onClick={() => toggleAddOn(addOn.id)}
-                  className={`w-full text-left rounded-lg border p-3 transition-colors ${
-                    isSelected
-                      ? 'border-brand-teal bg-brand-teal/5'
-                      : 'border-border hover:border-brand-teal/50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{addOn.name}</span>
-                    <span className="text-sm font-medium shrink-0 ml-2">
-                      ${addOn.price.toLocaleString()}
-                      {hasTier ? (
-                        <span className="text-xs font-normal text-muted-foreground">
-                          {' '}(up to {addOn.includedGuests} people, ${addOn.perPersonAbove}/person above)
-                        </span>
-                      ) : (
-                        <span className="text-xs font-normal text-muted-foreground">
-                          {addOn.pricing_unit === 'per_person' ? '/person' : '/booking'}
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                  {addOn.description && (
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                      {addOn.description}
-                    </p>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Price breakdown */}
       {nights > 0 ? (
         <div className="mt-4 space-y-3">
@@ -231,21 +150,6 @@ export function PricingWidget({
               <span>${breakdown.hotelTax.toLocaleString()}</span>
             </div>
           )}
-          {breakdown.addOnItems.map((item) => (
-            <div key={item.id} className="flex justify-between text-sm">
-              <span>
-                {item.name}
-                {item.tierDetail ? (
-                  <span className="text-muted-foreground"> ({item.tierDetail.extraGuests} extra guest{item.tierDetail.extraGuests !== 1 ? 's' : ''})</span>
-                ) : (
-                  addOns.find((a) => a.id === item.id)?.pricing_unit === 'per_person' && (
-                    <span className="text-muted-foreground"> x {guestCount}</span>
-                  )
-                )}
-              </span>
-              <span>${item.totalCost.toLocaleString()}</span>
-            </div>
-          ))}
           <div className="flex justify-between text-sm">
             <span>Processing fee (card payments)</span>
             <span>${breakdown.processingFee.toLocaleString()}</span>
@@ -266,7 +170,7 @@ export function PricingWidget({
         <p className="mt-3 text-sm text-muted-foreground">Select dates for pricing</p>
       )}
 
-      {/* Reserve button -- wired to createBookingAndCheckout Server Action */}
+      {/* Reserve button */}
       {error && (
         <p className="text-sm text-destructive mt-2">{error}</p>
       )}

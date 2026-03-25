@@ -235,15 +235,6 @@ export default async function PropertyListingPage({
             perPersonRate={property.per_person_rate != null ? Number(property.per_person_rate) : null}
             taxRate={property.tax_rate != null ? Number(property.tax_rate) : null}
             disabledDates={disabledDates}
-            addOns={addOns.map((a) => ({
-              id: a.id,
-              name: a.name,
-              description: a.description,
-              price: Number(a.price),
-              pricing_unit: a.pricing_unit,
-              includedGuests: a.included_guests != null ? Number(a.included_guests) : null,
-              perPersonAbove: a.per_person_above != null ? Number(a.per_person_above) : null,
-            }))}
             propertyId={propertyId}
           />
         </div>

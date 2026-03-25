@@ -72,8 +72,11 @@ export async function Hero() {
       {/* Centered content */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center text-white">
         <h1 className="animate-in fade-in duration-700 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          Your Own Private Resort. No Strangers. No Compromises.{' '}
-          <span className="text-brand-amber">Custom-Inclusive</span>, Only Pay For What You Want
+          <span className="block">Your Own Private Resort.</span>
+          <span className="block">No Strangers. No Compromises.</span>
+          <span className="block">
+            <span className="text-brand-amber">Custom-Inclusive</span>, Only Pay For What You Want
+          </span>
         </h1>
         <p className="animate-in fade-in duration-700 delay-300 mt-4 max-w-2xl text-lg text-white/90 sm:text-xl md:text-2xl">
           Skip the all-inclusive package deal. Book the whole property, then choose only the experiences your group actually wants.
